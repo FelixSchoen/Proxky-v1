@@ -1,9 +1,10 @@
 class Card:
-    card_faces = []
     name = ""
-    type_line = ""
+    layout = ""
     mana_cost = ""
+    type_line = ""
     colors = []
+    card_faces = []
     oracle_text = ""
     power = ""
     toughness = ""
@@ -17,12 +18,17 @@ class Card:
 
         if "name" in args:
             self.name = args["name"]
+        if "layout" in args:
+            self.layout = args["layout"]
         if "type_line" in args:
             self.type_line = args["type_line"]
         if "mana_cost" in args:
             self.mana_cost = args["mana_cost"]
         if "colors" in args:
             self.colors = args["colors"]
+        if "card_faces" in args:
+            for card_face in args["card_faces"]:
+                self.card_faces.append(Card(card_face))
         if "oracle_text" in args:
             self.oracle_text = args["oracle_text"]
         if "power" in args:
@@ -37,3 +43,6 @@ class Card:
             self.set = args["set"]
         if "rarity" in args:
             self.rarity = args["rarity"]
+
+    def __repr__(self) -> str:
+        return "[{}]".format(self.name)
