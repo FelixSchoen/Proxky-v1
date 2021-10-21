@@ -1,5 +1,7 @@
 import json
+import math
 import os
+import re
 import shutil
 import urllib.parse
 import xml.etree.ElementTree
@@ -40,11 +42,7 @@ values_general_card = {
     "id_type": "u2d6",
     "id_name": "u2be",
     "id_type_line": "u2eb",
-    "id_mana_1": "u39b",
-    "id_mana_2": "u3a2",
-    "id_mana_3": "u694",
-    "id_mana_4": "u695",
-    "id_mana_5": "u696",
+    "id_mana": "u7fc",
     "id_transforms": "u320",
     "id_oracle_text": "u3ee",
     "id_value": "u49f",
@@ -54,18 +52,26 @@ values_general_card = {
     "id_set": "u293",
 }
 mana_mapping = {
-    "{T}": [""],
-    "{W}": [""],
-    "{U}": [""],
-    "{B}": [""],
-    "{R}": [""],
-    "{G}": [""],
-    "{C}": [""],
-    "{0}": ["", -0.5],
-    "{1}": ["", -0.5],
-    "{2}": ["", -0.5],
-    "{3}": ["", -0.5]
+    "{T}": "T",
+    "{W}": "W",
+    "{U}": "U",
+    "{B}": "B",
+    "{R}": "R",
+    "{G}": "G",
+    "{C}": "C",
+    "{0}": "0",
+    "{1}": "1",
+    "{2}": "2",
+    "{3}": "3",
+    "{4}": "5",
+    "{5}": "5",
+    "{6}": "6",
+    "{7}": "7",
+    "{8}": "8",
+    "{9}": "9",
+    "{10}": "",
 }
+ability_list = ["Landfall"]
 
 
 def process_cards(card_names: list[(str, str)]):
@@ -88,7 +94,7 @@ def process_cards(card_names: list[(str, str)]):
 def process_card(card: Card):
     # Check layout of card
     if card.layout not in supported_layouts:
-        info_fail(card.name, "Layout not supported")
+        info_fail(card.name, "\t\t\t\tLayout not supported")
         return False
 
     # Cleansed cardname for saving file
@@ -110,7 +116,8 @@ def process_card(card: Card):
 
     # Repackage preset, remove old files and rename to correct extension
     shutil.make_archive(target_file_path, "zip", "data/memory")
-    os.remove(target_file_full_path)
+    if helper_file_exists(target_file_full_path):
+        os.remove(target_file_full_path)
     os.rename(target_file_path + ".zip", target_file_path + ".idml")
 
     # Remove files from working memory
@@ -145,16 +152,8 @@ def card_fill(card: Card, id_set):
 
     # Mana Cost
     mana = list(filter(None, [s.replace("{", "") for s in card.mana_cost.split("}")]))
-    mana.reverse()
-
-    if len(mana) > 5:
-        info_warn(card.name, "Too many mana values")
-    else:
-        for i, cost in enumerate(mana):
-            if not helper_file_exists(f_icon_mana + "/" + cost.lower() + ".svg"):
-                info_warn(card.name, "No icon for mana type")
-            else:
-                insert_svg(id_set["id_spread"], id_set["id_mana_" + str(i + 1)], f_icon_mana, cost.lower())
+    mapping = "".join([mana_mapping["{" + m + "}"] for m in mana])
+    insert_value_content(id_set["id_mana"], mapping)
 
     # Oracle Text
     identifier = id_set["id_oracle_text"]
@@ -171,12 +170,18 @@ def card_fill(card: Card, id_set):
     while len(text_carry) > 0:
         if text_carry[0] == "{":
             mapping = mana_mapping[text_carry[:text_carry.find("}") + 1]]
-            parent.append(insert_text_element(mapping[0], "Mana", mapping[1] if len(mapping) > 1 else 0))
+            parent.append(insert_text_element(mapping, "KyMana"))
             text_carry = text_carry[text_carry.find("}") + 1:]
         elif text_carry.find("{") >= 0:
+            text_to_insert = text_carry[:text_carry.find("{")]
+            if any(ability in text_to_insert for ability in ability_list):
+                info_warn(card.name, "\t\t\t\tContains ability, cannot print in italics yet")
             parent.append(insert_text_element(text_carry[:text_carry.find("{")]))
             text_carry = text_carry[text_carry.find("{"):]
         else:
+            text_to_insert = text_carry
+            if any(ability in text_to_insert for ability in ability_list):
+                info_warn(card.name, "\t\t\t\tContains ability, cannot print in italics yet")
             parent.append(insert_text_element(text_carry))
             break
 
@@ -229,9 +234,16 @@ def insert_text_element(content, font="", point_size_correction=0):
         properties.append(applied_font)
         parent.append(properties)
 
-    content_node = xml.etree.ElementTree.Element("Content")
-    content_node.text = content
-    parent.append(content_node)
+    content_split = list(filter(None, content.split("\n")))
+
+    for i, line in enumerate(content_split):
+        if i > 0:
+            break_node = xml.etree.ElementTree.Element("Br")
+            parent.append(break_node)
+
+        content_node = xml.etree.ElementTree.Element("Content")
+        content_node.text = line
+        parent.append(content_node)
 
     return parent
 
@@ -289,6 +301,59 @@ def insert_svg(identifier_spread, identifier_field, path_svg, name_svg):
     tree.write("data/memory/Spreads/Spread_" + identifier_spread + ".xml")
 
 
+def helper_split_string_along_regex(string, *matchers: ([str], str, str)):
+    # Build list of all available regex
+    all_regex = []
+    for triple in matchers:
+        for regex in triple[0]:
+            all_regex.append(regex)
+    all_regex = list(dict.fromkeys(all_regex))
+
+    working_string = string
+    result = []
+
+    while len(working_string) > 0:
+        current_span = [math.inf, 0]
+        current_regex = ""
+
+        # Check which regex matches first, disregard regex that matches after already found ones
+        for regex in all_regex:
+            pattern = re.compile(regex)
+            matches = list(pattern.finditer(working_string))
+            if len(matches) > 0 and matches[0].span()[0] < current_span[0]:
+                current_span = matches[0].span()
+                current_regex = regex
+                if current_span[0] == 0:
+                    break
+
+        # If no regex matched we are dealing with a normal string
+        if current_span[0] == math.inf:
+            result.append((working_string, "type", "normal"))
+            working_string = ""
+        else:
+            # Split into two parts
+            part_one = working_string[:current_span[0]]
+            part_two = working_string[current_span[0]:]
+
+            # Everything before match is normal, remove it first
+            rectifier = 0
+            if current_span[0] > 0:
+                result.append((part_one, "type", "normal"))
+                rectifier = len(part_one)
+
+            part_one = part_two[:current_span[1] - rectifier]
+            part_two = part_two[current_span[1] - rectifier:]
+
+            # Search which regex matched and add to result
+            for triple in matchers:
+                if current_regex in triple[0]:
+                    result.append((part_one, triple[1], triple[2]))
+                    working_string = part_two
+                    break
+
+    return result
+
+
 def helper_file_exists(path):
     return os.path.exists(path)
 
@@ -297,6 +362,10 @@ def helper_vector_bounding_box(path, filename):
     tree = xml.etree.ElementTree.parse(path + "/" + filename + ".svg")
     values = tree.getroot().attrib["viewBox"].split(" ")
     return float(values[2]), float(values[3])
+
+
+def helper_truncate(string, size=20):
+    return string[:size - 2] + ".." if len(string) > size else string
 
 
 def indesign_get_coordinates(element):
@@ -321,16 +390,21 @@ def indesign_get_coordinates(element):
 
 
 def info_success(cardname, message):
-    print(f"{bcolors.OKGREEN}[{cardname}]{bcolors.ENDC} {message}")
+    print(f"{bcolors.OKGREEN}[{helper_truncate(cardname)}]{bcolors.ENDC} {message}")
 
 
 def info_warn(cardname, message):
-    print(f"{bcolors.WARNING}[{cardname}]{bcolors.ENDC} {message}")
+    print(f"{bcolors.WARNING}[{helper_truncate(cardname)}]{bcolors.ENDC} {message}")
 
 
 def info_fail(cardname, message):
-    print(f"{bcolors.FAIL}[{cardname}]{bcolors.ENDC} {message}")
+    print(f"{bcolors.FAIL}[{helper_truncate(cardname)}]{bcolors.ENDC} {message}")
 
 
 if __name__ == '__main__':
-    process_cards([("Neverwinter Dryad", ""), ("Kazandu Mammoth", "")])
+    print(helper_split_string_along_regex("Das{2} Das ist ein Test {T} Landfall {G}{G} Level 6+",
+                                          (["{[A-Z0-9]+}"], "font", "KyMana"),
+                                          (["Landfall"], "font", "MPlantin-Italic")))
+    print(helper_split_string_along_regex("Test LEVEL 6+\n*/*", (
+        ["LEVEL [\d]+(-[\d]+|\+)\\n([\d]+|\*)/([\d]+|\*)"], "type", "special")))
+    # process_cards([("Neverwinter Dryad", ""), ("Brushfire Elemental", "ZNR"), ("Kazandu Mammoth", "")])
