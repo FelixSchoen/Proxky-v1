@@ -34,13 +34,14 @@ api_url = "https://api.scryfall.com"
 f_preset = "D:/Drive/Creative/Magic/Proxky/Types/General.idml"
 f_output = "D:/Games/Magic/Proxky/v1/Documents/Test"
 f_artwork = "D:/Games/Magic/Proxky/v1/Artwork"
+f_artwork_downloaded = "D:/Games/Magic/Proxky/v1/ArtworkDownload"
 f_icon_types = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Card Types"
 f_icon_mana = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Mana"
 f_icon_set = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Set"
 
 # Enumerations
 supported_layouts = ["normal"]
-id_general_frontside = {
+id_general_front = {
     "id_spread": "uce",
     "id_artwork": "u128",
     "id_type": "u2d6",
@@ -51,12 +52,21 @@ id_general_frontside = {
     "id_color_bars": ["u12a", "u816", "u5e1", "u818"],
     "id_gradients": ["u9a0", "u9a2", "u9a1", "u9a3"],
     "id_oracle_text": "u3ee",
+    "id_oracle_text_tb": "u400",
+    "id_mask": "u5e7",
     "id_value": "u49f",
+    "id_value_tb": "u4b1",
+    "id_value_short_frame": "u4e7",
+    "id_value_long_frame": "u4fd",
+    "id_mask_short": "u41e",
+    "id_mask_long": "u4f1",
+    "id_bottom": "u5c1",
     "id_artist": "u23f",
     "id_side_indicator": "u3d2",
     "id_collector_information": "u25f",
     "id_set": "u293",
 }
+mana_types = ["W", "U", "B", "R", "G"]
 mana_mapping = {
     "{T}": "T",
     "{W}": "W",
@@ -141,8 +151,13 @@ def process_card(card: Card):
     with zipfile.ZipFile(f_preset, "r") as archive:
         archive.extractall("data/memory")
 
+    types = helper_get_card_types(card)
+
     if card.layout == "normal":
-        card_fill(card, id_general_frontside)
+        if "Creature" not in types:
+            set_layout_non_creature(card, id_general_front)
+
+        card_fill(card, id_general_front)
         # TODO Delete backside
 
     # Repackage preset, remove old files and rename to correct extension
@@ -195,8 +210,60 @@ def card_fill(card: Card, id_set):
 ### LAYOUT ###
 ##############
 
-def layout_basic():
+def set_layout_creature():
     print("not implemented")
+
+
+def set_layout_non_creature(card, id_set):
+    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set["id_spread"] + ".xml")
+
+    # Hide value
+    value_text = tree.find(".//TextFrame[@Self='" + id_set["id_value_tb"] + "']")
+    value_text.set("Visible", "false")
+
+    value_short_frame = tree.find(".//Rectangle[@Self='" + id_set["id_value_short_frame"] + "']")
+    value_short_frame.set("Visible", "false")
+    value_long_frame = tree.find(".//Rectangle[@Self='" + id_set["id_value_long_frame"] + "']")
+    value_long_frame.set("Visible", "false")
+
+    # Remove Mask
+    mask = tree.find(".//Group[@Self='" + id_set["id_mask"] + "']")
+    bottom = tree.find(".//Group[@Self='" + id_set["id_bottom"] + "']")
+    mask_short = tree.find(".//Polygon[@Self='" + id_set["id_mask_short"] + "']")
+    mask_long = tree.find(".//Polygon[@Self='" + id_set["id_mask_long"] + "']")
+
+    mask.append(bottom)
+
+    for child in mask_short.findall(".//Group[@Self='" + id_set["id_bottom"] + "']"):
+        mask_short.remove(child)
+    for child in mask_long.findall(".//Group[@Self='" + id_set["id_bottom"] + "']"):
+        mask_long.remove(child)
+
+    # Expand Oracle Text Box
+    oracle_text = tree.find(".//TextFrame[@Self='" + id_set["id_oracle_text_tb"] + "']")
+
+    shift_by = 42.0944859662393 - 37.13385826771649
+
+    bottom_left = oracle_text.find(".//PathPointType[2]")
+    bottom_right = oracle_text.find(".//PathPointType[3]")
+
+    for point in [bottom_left, bottom_right]:
+        x_coordinate, y_coordinate = point.attrib["Anchor"].split(" ")
+        point.attrib.pop("Anchor")
+        point.attrib.pop("LeftDirection")
+        point.attrib.pop("RightDirection")
+
+        coordinates = x_coordinate + " " + str(float(y_coordinate) + shift_by)
+        point.set("Anchor", coordinates)
+        point.set("LeftDirection", coordinates)
+        point.set("RightDirection", coordinates)
+
+    tree.write("data/memory/Spreads/Spread_" + id_set["id_spread"] + ".xml")
+
+
+########################
+### CARD INFORMATION ###
+########################
 
 
 def set_artwork(card, id_set):
@@ -204,6 +271,7 @@ def set_artwork(card, id_set):
     id_artwork = id_set["id_artwork"]
 
     path = f_artwork + "/" + card.set.upper() + "/" + card.name
+    path_auto = f_artwork_downloaded + "/" + card.set.upper() + "/" + card.name + ".jpg"
     image_type = "na"
 
     for possible_image_type in image_types:
@@ -213,7 +281,19 @@ def set_artwork(card, id_set):
             image_type = possible_image_type
 
     if image_type == "na":
-        info_warn(card.name, "No artwork for card exists")
+        info_warn(card.name, "No artwork exists, using Scryfall source")
+        response = requests.get(card.image_uris["art_crop"])
+
+        if response.status_code != 200:
+            info_fail(card.name, "Could not download artwork")
+            return
+
+        os.makedirs(f_artwork_downloaded + "/" + card.set.upper(), exist_ok=True)
+        with open(path_auto, "wb") as handler:
+            handler.write(response.content)
+        insert_graphic(card, id_spread, id_artwork, f_artwork_downloaded + "/" + card.set.upper(), card.name,
+                       type_file="jpg",
+                       mode_scale_image="fit_x", mode_align_vertical="top")
     else:
         insert_graphic(card, id_spread, id_artwork, f_artwork + "/" + card.set.upper(), card.name, type_file=image_type,
                        mode_scale_image="fit_x", mode_align_vertical="top")
@@ -224,16 +304,10 @@ def set_type_icon(card, id_set):
     id_type = id_set["id_type"]
 
     # Get types of card
-    card_type = "na"
-    types = card.type_line.split("—")
-    types = list(filter(None, types[0].split(" ")))
-
-    # Prioritize some types
-    for candidate in types:
-        if "creature" in candidate.lower():
-            card_type = "Creature"
-
-    if card_type == "na":
+    types = helper_get_card_types(card)
+    if len(types) > 1:
+        card_type = "Multiple"
+    else:
         card_type = types[0]
 
     if not helper_file_exists(f_icon_types + "/" + card_type.lower() + ".svg"):
@@ -260,6 +334,50 @@ def set_mana(card, id_set):
     mana = list(filter(None, [s.replace("{", "") for s in card.mana_cost.split("}")]))
     mapping = "".join([mana_mapping["{" + m + "}"] for m in mana])
     insert_value_content(id_mana, mapping)
+
+
+def set_color_bar(card, id_set):
+    id_gradients = id_set["id_gradients"]
+
+    distance = 1.5
+    colors_to_apply = list(filter(None, [s.replace("{", "") for s in card.mana_cost.split("}")]))
+    colors_to_apply = list(filter(lambda x: x in mana_types, colors_to_apply))
+
+    if len(colors_to_apply) == 0:
+        colors_to_apply.append("C")
+    if len(colors_to_apply) == 1:
+        colors_to_apply.append(colors_to_apply[0])
+
+    for id_gradient in id_gradients:
+        tree = xml.etree.ElementTree.parse("data/memory/Resources/Graphic.xml")
+        element = tree.find(".//Gradient[@Self='Gradient/" + id_gradient + "']")
+
+        for gradient_stop in element.findall(".//GradientStop"):
+            element.remove(gradient_stop)
+
+        for i, color in enumerate(colors_to_apply):
+            position = i * 100 / (len(colors_to_apply))
+            position_next = (i + 1) * 100 / (len(colors_to_apply))
+
+            # Left boundary
+            position_adjusted = position
+            if i > 0:
+                position_adjusted += distance
+            gradient_stop = xml.etree.ElementTree.Element("GradientStop")
+            gradient_stop.set("StopColor", "Color/" + color_mapping[color])
+            gradient_stop.set("Location", str(position_adjusted))
+            element.append(gradient_stop)
+
+            # Right boundary
+            position_adjusted = position_next
+            if i < len(colors_to_apply) - 1:
+                position_adjusted -= distance
+            gradient_stop = xml.etree.ElementTree.Element("GradientStop")
+            gradient_stop.set("StopColor", "Color/" + color_mapping[color])
+            gradient_stop.set("Location", str(position_adjusted))
+            element.append(gradient_stop)
+
+            tree.write("data/memory/Resources/Graphic.xml")
 
 
 def set_oracle_text(card, id_set, left_align=False):
@@ -322,49 +440,6 @@ def set_set(card, id_set):
         insert_graphic(card, id_spread, id_set_icon, f_icon_set, card.set.lower())
 
 
-def set_color_bar(card, id_set):
-    id_gradients = id_set["id_gradients"]
-
-    distance = 1.5
-    colors_to_apply = list(filter(None, [s.replace("{", "") for s in card.mana_cost.split("}")]))
-
-    if len(colors_to_apply) == 0:
-        colors_to_apply.append("C")
-    if len(colors_to_apply) == 1:
-        colors_to_apply.append(colors_to_apply[0])
-
-    for id_gradient in id_gradients:
-        tree = xml.etree.ElementTree.parse("data/memory/Resources/Graphic.xml")
-        element = tree.find(".//Gradient[@Self='Gradient/" + id_gradient + "']")
-
-        for gradient_stop in element.findall(".//GradientStop"):
-            element.remove(gradient_stop)
-
-        for i, color in enumerate(colors_to_apply):
-            position = i * 100 / (len(colors_to_apply))
-            position_next = (i + 1) * 100 / (len(colors_to_apply))
-
-            # Left boundary
-            position_adjusted = position
-            if i > 0:
-                position_adjusted += distance
-            gradient_stop = xml.etree.ElementTree.Element("GradientStop")
-            gradient_stop.set("StopColor", "Color/" + color_mapping[color])
-            gradient_stop.set("Location", str(position_adjusted))
-            element.append(gradient_stop)
-
-            # Right boundary
-            position_adjusted = position_next
-            if i < len(colors_to_apply) - 1:
-                position_adjusted -= distance
-            gradient_stop = xml.etree.ElementTree.Element("GradientStop")
-            gradient_stop.set("StopColor", "Color/" + color_mapping[color])
-            gradient_stop.set("Location", str(position_adjusted))
-            element.append(gradient_stop)
-
-            tree.write("data/memory/Resources/Graphic.xml")
-
-
 ##############
 ### INSERT ###
 ##############
@@ -407,7 +482,7 @@ def insert_text_element(content, font="", point_size_correction=0):
 def insert_graphic(card, identifier_spread, identifier_field, path_file, name_file, type_file="svg",
                    mode_scale_image="fit", mode_align_vertical="center"):
     if not helper_file_exists(path_file + "/" + name_file + "." + type_file):
-        info_warn(card.name, "Specified graphic does not exist")
+        info_fail(card.name, "Specified graphic does not exist")
         return
 
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + identifier_spread + ".xml")
@@ -477,6 +552,12 @@ def insert_graphic(card, identifier_spread, identifier_field, path_file, name_fi
 ##############
 ### HELPER ###
 ##############
+
+def helper_get_card_types(card):
+    types = card.type_line.split("—")
+    types = list(filter(None, types[0].split(" ")))
+    return types
+
 
 def helper_split_string_along_regex(string, *matchers: ([str], str, str)):
     # Build list of all available regex
@@ -587,4 +668,5 @@ def info_fail(cardname, message):
 
 
 if __name__ == '__main__':
-    process_cards([("Neverwinter Dryad", ""), ("Brushfire Elemental", "ZNR"), ("Kazandu Mammoth", "")])
+    process_cards([("Neverwinter Dryad", ""), ("Brushfire Elemental", "ZNR"), ("Roiling Regrowth", "ZNR"),
+                   ("Kazandu Mammoth", "")])

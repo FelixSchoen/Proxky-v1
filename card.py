@@ -12,6 +12,7 @@ class Card:
     collector_number = ""
     set = ""
     rarity = ""
+    image_uris = None
 
     def __init__(self, args: dict):
         super().__init__()
@@ -43,6 +44,8 @@ class Card:
             self.set = args["set"]
         if "rarity" in args:
             self.rarity = args["rarity"]
+        if "image_uris" in args:
+            self.image_uris = args["image_uris"]
 
     def __repr__(self) -> str:
         return "[{}]".format(self.name)
