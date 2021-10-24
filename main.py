@@ -27,6 +27,33 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
+class ids:
+    SPREAD = "id_spread"
+    ARTWORK_O = "id_artwork"
+    TYPE_O = "id_type"
+    NAME_T = "id_name"
+    TYPE_LINE_T = "id_type_line"
+    MANA_COST_T = "id_mana_cost"
+    MODAL_T = "id_modal"
+    MODAL_O = "id_modal_tb"
+    COLOR_BARS_O = "id_color_bars"
+    GRADIENTS_O = "id_gradients"
+    ORACLE_TEXT_T = "id_oracle_text"
+    ORACLE_TEXT_O = "id_oracle_text_tb"
+    MASK_O = "id_mask"
+    VALUE_T = "id_value"
+    VALUE_O = "id_value_tb"
+    VALUE_SHORT_FRAME_O = "id_value_short_frame"
+    VALUE_LONG_FRAME_O = "id_value_long_frame"
+    MASK_SHORT_O = "id_mask_short"
+    MASK_LONG_O = "id_mask_long"
+    BOTTOM_O = "id_bottom"
+    ARTIST_T = "id_artist"
+    SIDE_INDICATOR_O = "id_side_indicator"
+    COLLECTOR_INFORMATION_T = "id_collector_information"
+    SET_O = "id_set"
+
+
 # API
 api_url = "https://api.scryfall.com"
 
@@ -40,32 +67,60 @@ f_icon_mana = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Mana"
 f_icon_set = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Set"
 
 # Enumerations
-supported_layouts = ["normal"]
+supported_layouts = ["normal", "modal_dfc"]
 id_general_front = {
-    "id_spread": "uce",
-    "id_artwork": "u128",
-    "id_type": "u2d6",
-    "id_name": "u2be",
-    "id_type_line": "u2eb",
-    "id_mana": "u7fc",
-    "id_transforms": "u320",
-    "id_color_bars": ["u12a", "u816", "u5e1", "u818"],
-    "id_gradients": ["u9a0", "u9a2", "u9a1", "u9a3"],
-    "id_oracle_text": "u3ee",
-    "id_oracle_text_tb": "u400",
-    "id_mask": "u5e7",
-    "id_value": "u49f",
-    "id_value_tb": "u4b1",
-    "id_value_short_frame": "u4e7",
-    "id_value_long_frame": "u4fd",
-    "id_mask_short": "u41e",
-    "id_mask_long": "u4f1",
-    "id_bottom": "u5c1",
-    "id_artist": "u23f",
-    "id_side_indicator": "u3d2",
-    "id_collector_information": "u25f",
-    "id_set": "u293",
+    ids.SPREAD: "uce",
+    ids.ARTWORK_O: "u128",
+    ids.TYPE_O: "u2d6",
+    ids.NAME_T: "u2be",
+    ids.TYPE_LINE_T: "u2eb",
+    ids.MANA_COST_T: "u7fc",
+    ids.MODAL_T: "u320",
+    ids.MODAL_O: "u597",
+    ids.COLOR_BARS_O: ["u12a", "u816", "u5e1", "u818"],
+    ids.GRADIENTS_O: ["u9a0", "u9a2", "u9a1", "u9a3"],
+    ids.ORACLE_TEXT_T: "u3ee",
+    ids.ORACLE_TEXT_O: "u400",
+    ids.MASK_O: "u5e7",
+    ids.VALUE_T: "u49f",
+    ids.VALUE_O: "u4b1",
+    ids.VALUE_SHORT_FRAME_O: "u4e7",
+    ids.VALUE_LONG_FRAME_O: "u4fd",
+    ids.MASK_SHORT_O: "u41e",
+    ids.MASK_LONG_O: "u4f1",
+    ids.BOTTOM_O: "u5c1",
+    ids.ARTIST_T: "u23f",
+    ids.SIDE_INDICATOR_O: "u698",
+    ids.COLLECTOR_INFORMATION_T: "u25f",
+    ids.SET_O: "u293",
 }
+id_general_back = {
+    "id_spread": "ub1e",
+    "id_artwork": "uc6a",
+    "id_type": "uc69",
+    "id_name": "uc55",
+    "id_type_line": "uc3e",
+    "id_mana_cost": "uc27",
+    "id_modal": "uc07",
+    "id_modal_tb": "ubfc",
+    "id_oracle_text": "ube7",
+    "id_oracle_text_tb": "ube4",
+    "id_mask": "ub25",
+    "id_value": "ub9f",
+    "id_value_tb": "ub9c",
+    "id_value_short_frame": "ub4a",
+    "id_value_long_frame": "ub43",
+    "id_mask_short": "ub49",
+    "id_mask_long": "ub27",
+    "id_bottom": "ub28",
+    "id_artist": "ub85",
+    "id_side_indicator": "ub66",
+    "id_collector_information": "ub52",
+    "id_set": "ub4e",
+    "id_color_bars": ['uc21', 'uc20', 'ub42', 'ub41'],
+    "id_gradients": ['u832', 'u832', 'u832', 'u832'],
+}
+
 mana_types = ["W", "U", "B", "R", "G"]
 mana_mapping = {
     "{T}": "T",
@@ -88,6 +143,7 @@ mana_mapping = {
     "{10}": "",
 }
 color_mapping = {
+    "C": "Magic Grey",
     "W": "Magic White",
     "U": "Magic Blue",
     "B": "Magic Black",
@@ -151,14 +207,14 @@ def process_card(card: Card):
     with zipfile.ZipFile(f_preset, "r") as archive:
         archive.extractall("data/memory")
 
-    types = helper_get_card_types(card)
-
     if card.layout == "normal":
-        if "Creature" not in types:
-            set_layout_non_creature(card, id_general_front)
-
         card_fill(card, id_general_front)
-        # TODO Delete backside
+        card_delete_backside(id_general_back)
+    elif card.layout == "modal_dfc":
+        set_layout_double_faced([id_general_front, id_general_back])
+        set_modal(card, [id_general_front, id_general_back])
+        card_fill(card.card_faces[0], id_general_front)
+        card_fill(card.card_faces[1], id_general_back)
 
     # Repackage preset, remove old files and rename to correct extension
     shutil.make_archive(target_file_path, "zip", "data/memory")
@@ -172,6 +228,10 @@ def process_card(card: Card):
 
 
 def card_fill(card: Card, id_set):
+    types = helper_get_card_types(card)
+    if "Creature" not in types:
+        set_layout_non_creature(id_set)
+
     # Artwork
     set_artwork(card, id_set)
 
@@ -206,41 +266,89 @@ def card_fill(card: Card, id_set):
     set_set(card, id_set)
 
 
+def card_delete_backside(id_set):
+    os.remove("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+    tree = xml.etree.ElementTree.parse("data/memory/designmap.xml")
+    element = tree.getroot().find(".//*[@src='Spreads/Spread_" + id_set[ids.SPREAD] + ".xml']")
+    tree.getroot().remove(element)
+
+    with open("data/memory/designmap.xml", "wb") as file:
+        file.write(b'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
+        file.write(b'<?aid style="50" type="document" readerVersion="6.0" featureSet="257" product="16.4(55)" ?>')
+        tree.write(file, xml_declaration=False, encoding="utf-8")
+
+
 ##############
 ### LAYOUT ###
 ##############
 
-def set_layout_creature():
-    print("not implemented")
+def set_layout_double_faced(id_sets):
+    for id_set in id_sets:
+        tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+        modal = tree.find(".//Group[@Self='" + id_set[ids.MODAL_O] + "']")
+        modal.set("Visible", "true")
+
+        shift_by = 10.27559055118109
+
+        color_bars = [tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_BARS_O][0] + "']"),
+                      tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_BARS_O][1] + "']")]
+
+        for color_bar in color_bars:
+            coordinates = color_bar.attrib["ItemTransform"].split(" ")
+            color_bar.set("ItemTransform",
+                          coordinates[0] + " " + coordinates[1] + " " + coordinates[2] + " " + coordinates[3] + " " +
+                          coordinates[4] + " " + str(float(coordinates[5]) + shift_by))
+
+        oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
+
+        top_left = oracle_text.find(".//PathPointType[1]")
+        top_right = oracle_text.find(".//PathPointType[4]")
+
+        for point in [top_left, top_right]:
+            x_coordinate, y_coordinate = point.attrib["Anchor"].split(" ")
+            point.attrib.pop("Anchor")
+            point.attrib.pop("LeftDirection")
+            point.attrib.pop("RightDirection")
+
+            coordinates = x_coordinate + " " + str(float(y_coordinate) + shift_by)
+            point.set("Anchor", coordinates)
+            point.set("LeftDirection", coordinates)
+            point.set("RightDirection", coordinates)
+
+        side_indicator = tree.find(".//Group[@Self='" + id_set[ids.SIDE_INDICATOR_O] + "']")
+        side_indicator.set("Visible", "true")
+
+        tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
 
-def set_layout_non_creature(card, id_set):
-    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set["id_spread"] + ".xml")
+def set_layout_non_creature(id_set):
+    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
     # Hide value
-    value_text = tree.find(".//TextFrame[@Self='" + id_set["id_value_tb"] + "']")
+    value_text = tree.find(".//TextFrame[@Self='" + id_set[ids.VALUE_O] + "']")
     value_text.set("Visible", "false")
 
-    value_short_frame = tree.find(".//Rectangle[@Self='" + id_set["id_value_short_frame"] + "']")
+    value_short_frame = tree.find(".//Rectangle[@Self='" + id_set[ids.VALUE_SHORT_FRAME_O] + "']")
     value_short_frame.set("Visible", "false")
-    value_long_frame = tree.find(".//Rectangle[@Self='" + id_set["id_value_long_frame"] + "']")
+    value_long_frame = tree.find(".//Rectangle[@Self='" + id_set[ids.VALUE_LONG_FRAME_O] + "']")
     value_long_frame.set("Visible", "false")
 
     # Remove Mask
-    mask = tree.find(".//Group[@Self='" + id_set["id_mask"] + "']")
-    bottom = tree.find(".//Group[@Self='" + id_set["id_bottom"] + "']")
-    mask_short = tree.find(".//Polygon[@Self='" + id_set["id_mask_short"] + "']")
-    mask_long = tree.find(".//Polygon[@Self='" + id_set["id_mask_long"] + "']")
+    mask = tree.find(".//Group[@Self='" + id_set[ids.MASK_O] + "']")
+    bottom = tree.find(".//Group[@Self='" + id_set[ids.BOTTOM_O] + "']")
+    mask_short = tree.find(".//Polygon[@Self='" + id_set[ids.MASK_SHORT_O] + "']")
+    mask_long = tree.find(".//Polygon[@Self='" + id_set[ids.MASK_LONG_O] + "']")
 
     mask.append(bottom)
 
-    for child in mask_short.findall(".//Group[@Self='" + id_set["id_bottom"] + "']"):
+    for child in mask_short.findall(".//Group[@Self='" + id_set[ids.BOTTOM_O] + "']"):
         mask_short.remove(child)
-    for child in mask_long.findall(".//Group[@Self='" + id_set["id_bottom"] + "']"):
+    for child in mask_long.findall(".//Group[@Self='" + id_set[ids.BOTTOM_O] + "']"):
         mask_long.remove(child)
 
     # Expand Oracle Text Box
-    oracle_text = tree.find(".//TextFrame[@Self='" + id_set["id_oracle_text_tb"] + "']")
+    oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
 
     shift_by = 42.0944859662393 - 37.13385826771649
 
@@ -258,7 +366,7 @@ def set_layout_non_creature(card, id_set):
         point.set("LeftDirection", coordinates)
         point.set("RightDirection", coordinates)
 
-    tree.write("data/memory/Spreads/Spread_" + id_set["id_spread"] + ".xml")
+    tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
 
 ########################
@@ -267,8 +375,8 @@ def set_layout_non_creature(card, id_set):
 
 
 def set_artwork(card, id_set):
-    id_spread = id_set["id_spread"]
-    id_artwork = id_set["id_artwork"]
+    id_spread = id_set[ids.SPREAD]
+    id_artwork = id_set[ids.ARTWORK_O]
 
     path = f_artwork + "/" + card.set.upper() + "/" + card.name
     path_auto = f_artwork_downloaded + "/" + card.set.upper() + "/" + card.name + ".jpg"
@@ -282,6 +390,11 @@ def set_artwork(card, id_set):
 
     if image_type == "na":
         info_warn(card.name, "No artwork exists, using Scryfall source")
+
+        if "art_crop" not in card.image_uris:
+            info_fail("No artwork on Scryfall")
+            return
+
         response = requests.get(card.image_uris["art_crop"])
 
         if response.status_code != 200:
@@ -300,8 +413,8 @@ def set_artwork(card, id_set):
 
 
 def set_type_icon(card, id_set):
-    id_spread = id_set["id_spread"]
-    id_type = id_set["id_type"]
+    id_spread = id_set[ids.SPREAD]
+    id_type = id_set[ids.TYPE_O]
 
     # Get types of card
     types = helper_get_card_types(card)
@@ -317,31 +430,36 @@ def set_type_icon(card, id_set):
 
 
 def set_card_name(card, id_set):
-    id_name = id_set["id_name"]
+    id_name = id_set[ids.NAME_T]
 
     insert_value_content(id_name, card.name)
 
 
 def set_type_line(card, id_set):
-    id_type_line = id_set["id_type_line"]
+    id_type_line = id_set[ids.TYPE_LINE_T]
 
     insert_value_content(id_type_line, card.type_line.replace("—", "•"))
 
 
 def set_mana(card, id_set):
-    id_mana = id_set["id_mana"]
+    id_mana_cost = id_set[ids.MANA_COST_T]
 
     mana = list(filter(None, [s.replace("{", "") for s in card.mana_cost.split("}")]))
     mapping = "".join([mana_mapping["{" + m + "}"] for m in mana])
-    insert_value_content(id_mana, mapping)
+    insert_value_content(id_mana_cost, mapping)
+
+
+def set_modal(card, id_sets, type="MODAL"):
+    for i, id_set in enumerate(id_sets):
+        face = card.card_faces[(i + 1) % 2]
+        insert_value_content(id_set[ids.MODAL_T], type + " — " + face.type_line.replace("—", "•"))
 
 
 def set_color_bar(card, id_set):
-    id_gradients = id_set["id_gradients"]
+    id_gradients = id_set[ids.GRADIENTS_O]
 
     distance = 1.5
-    colors_to_apply = list(filter(None, [s.replace("{", "") for s in card.mana_cost.split("}")]))
-    colors_to_apply = list(filter(lambda x: x in mana_types, colors_to_apply))
+    colors_to_apply = card.colors
 
     if len(colors_to_apply) == 0:
         colors_to_apply.append("C")
@@ -381,7 +499,7 @@ def set_color_bar(card, id_set):
 
 
 def set_oracle_text(card, id_set, left_align=False):
-    id_oracle_text = id_set["id_oracle_text"]
+    id_oracle_text = id_set[ids.ORACLE_TEXT_T]
 
     tree = xml.etree.ElementTree.parse("data/memory/Stories/Story_" + id_oracle_text + ".xml")
     parent = tree.find(".//ParagraphStyleRange[1]")
@@ -407,7 +525,7 @@ def set_oracle_text(card, id_set, left_align=False):
 
 
 def set_value(card, id_set):
-    id_value = id_set["id_value"]
+    id_value = id_set[ids.VALUE_T]
 
     if card.power != "" or card.toughness != "":
         value_string = card.power + " / " + card.toughness
@@ -418,7 +536,7 @@ def set_value(card, id_set):
 
 
 def set_artist(card, id_set):
-    id_artist = id_set["id_artist"]
+    id_artist = id_set[ids.ARTIST_T]
 
     insert_value_content(id_artist, card.artist)
 
@@ -431,8 +549,8 @@ def set_collector_information(card, id_set):
 
 
 def set_set(card, id_set):
-    id_spread = id_set["id_spread"]
-    id_set_icon = id_set["id_set"]
+    id_spread = id_set[ids.SPREAD]
+    id_set_icon = id_set[ids.SET_O]
 
     if not helper_file_exists(f_icon_set + "/" + card.set.lower() + ".svg"):
         info_warn(card.name, "No icon for set")
@@ -647,9 +765,80 @@ def helper_indesign_get_coordinates(element):
     return coordinates_top_left, coordinates_top_right, coordinates_bottom_left, coordinates_bottom_right
 
 
+def helper_generate_ids(spread):
+    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + spread + ".xml")
+
+    names = [("Artwork", ids.ARTWORK_O),
+             ("Type", ids.TYPE_O),
+             ("Name", ids.NAME_T, True),
+             ("Type Line", ids.TYPE_LINE_T, True),
+             ("Mana Cost", ids.MANA_COST_T, True),
+             ("Modal Text", ids.MODAL_T, True),
+             ("Modal", ids.MODAL_O),
+             ("Upper Color Bar", ids.COLOR_BARS_O),
+             ("Upper Color Bar Bleed", ids.COLOR_BARS_O),
+             ("Lower Color Bar", ids.COLOR_BARS_O),
+             ("Lower Color Bar Bleed", ids.COLOR_BARS_O),
+             ("Upper Color Bar", ids.GRADIENTS_O, "FillColor"),
+             ("Upper Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
+             ("Lower Color Bar", ids.GRADIENTS_O, "FillColor"),
+             ("Lower Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
+             ("Oracle Text", ids.ORACLE_TEXT_T, True),
+             ("Oracle Text", ids.ORACLE_TEXT_O),
+             ("Mask", ids.MASK_O),
+             ("Value", ids.VALUE_T, True),
+             ("Value", ids.VALUE_O),
+             ("Value Short Frame", ids.VALUE_SHORT_FRAME_O),
+             ("Value Long Frame", ids.VALUE_LONG_FRAME_O),
+             ("Mask Short", ids.MASK_SHORT_O),
+             ("Mask Long", ids.MASK_LONG_O),
+             ("Bottom", ids.BOTTOM_O),
+             ("Artist", ids.ARTIST_T, True),
+             ("Side Indicator", ids.SIDE_INDICATOR_O),
+             ("Collector Information", ids.COLLECTOR_INFORMATION_T, True),
+             ("Set Icon", ids.SET_O)]
+
+    print("id_general_xyz = {")
+    print("\"" + ids.SPREAD + "\": " + "\"" + spread + "\",")
+
+    array = []
+
+    for name in names:
+        element = tree.find(".//*[@Name='" + name[0] + "']")
+        if len(name) > 2 and name[2] is True:
+            array.append(("\"" + name[1] + "\"", "\"" + element.attrib["ParentStory"] + "\","))
+        elif len(name) > 2:
+            array.append(("\"" + name[1] + "\"", "\"" + element.attrib[name[2]].split("/")[1] + "\","))
+        else:
+            array.append(("\"" + name[1] + "\"", "\"" + element.attrib["Self"] + "\","))
+
+    for entry in array:
+        if "color_bars" not in entry[0] and "gradients" not in entry[0]:
+            print(entry[0] + ": " + entry[1])
+
+    color_bars = []
+
+    for entry in array:
+        if "color_bars" in entry[0]:
+            color_bars.append(entry[1].split(",")[0].replace("\"", ""))
+
+    print("\"id_color_bars\": " + str(color_bars) + ",")
+
+    gradients = []
+
+    for entry in array:
+        if "gradients" in entry[0]:
+            gradients.append(entry[1].split(",")[0].replace("\"", ""))
+
+    print("\"id_gradients\": " + str(gradients) + ",")
+
+    print("}")
+
+
 ############
 ### INFO ###
 ############
+
 
 def info_success(cardname, message):
     print(f"{bcolors.OKGREEN}[{helper_truncate(cardname)}]{bcolors.ENDC} \t\t{message}")
@@ -668,5 +857,6 @@ def info_fail(cardname, message):
 
 
 if __name__ == '__main__':
-    process_cards([("Neverwinter Dryad", ""), ("Brushfire Elemental", "ZNR"), ("Roiling Regrowth", "ZNR"),
-                   ("Kazandu Mammoth", "")])
+    # process_cards([("Neverwinter Dryad", ""), ("Brushfire Elemental", "ZNR"), ("Roiling Regrowth", "ZNR")])
+    process_cards([("Kazandu Mammoth", ""), ("Tangled Florahedron", "")])
+    # helper_generate_ids(id_general_back["id_spread"])
