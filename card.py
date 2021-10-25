@@ -12,6 +12,7 @@ class Card:
         self.oracle_text = ""
         self.power = ""
         self.toughness = ""
+        self.loyalty = ""
         self.artist = ""
         self.collector_number = ""
         self.set = ""
@@ -40,6 +41,8 @@ class Card:
             self.power = args["power"]
         if "toughness" in args:
             self.toughness = args["toughness"]
+        if "loyalty" in args:
+            self.loyalty = args["loyalty"]
         if "artist" in args:
             self.artist = args["artist"]
         if "collector_number" in args:

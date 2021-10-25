@@ -1,3 +1,4 @@
+import copy
 import json
 import math
 import os
@@ -29,30 +30,37 @@ class bcolors:
 
 class ids:
     SPREAD = "id_spread"
-    ARTWORK_O = "id_artwork"
-    TYPE_O = "id_type"
-    NAME_T = "id_name"
-    TYPE_LINE_T = "id_type_line"
-    MANA_COST_T = "id_mana_cost"
-    MODAL_T = "id_modal"
-    MODAL_O = "id_modal_tb"
-    COLOR_BARS_O = "id_color_bars"
-    GRADIENTS_O = "id_gradients"
-    ORACLE_TEXT_T = "id_oracle_text"
-    ORACLE_TEXT_O = "id_oracle_text_tb"
-    MASK_O = "id_mask"
-    VALUE_T = "id_value"
-    VALUE_O = "id_value_tb"
-    VALUE_SHORT_FRAME_O = "id_value_short_frame"
-    VALUE_LONG_FRAME_O = "id_value_long_frame"
-    MASK_SHORT_O = "id_mask_short"
-    MASK_LONG_O = "id_mask_long"
-    BOTTOM_O = "id_bottom"
-    ARTIST_T = "id_artist"
-    SIDE_INDICATOR_O = "id_side_indicator"
-    COLLECTOR_INFORMATION_T = "id_collector_information"
-    SET_O = "id_set"
+    ARTWORK_O = "id_artwork_o"
+    TYPE_O = "id_type_o"
+    NAME_T = "id_name_t"
+    TYPE_LINE_T = "id_type_line_t"
+    MANA_COST_T = "id_mana_cost_t"
+    MODAL_T = "id_modal_t"
+    GROUP_MODAL_O = "id_group_modal_o"
+    COLOR_BARS_O = "id_color_bars_o"
+    GRADIENTS_O = "id_gradients_o"
+    ORACLE_TEXT_T = "id_oracle_text_t"
+    ORACLE_TEXT_O = "id_oracle_text_o"
+    GROUP_ORACLE_PLANESWALKER_O = "id_group_oracle_planeswalker_o"
+    PLANESWALKER_VALUE_T = "id_planeswalker_value_t"
+    PLANESWALKER_VALUE_O = "id_planeswalker_value_o"
+    PLANESWALKER_TEXT_T = "id_planeswalker_text_t"
+    PLANESWALKER_TEXT_O = "id_planeswalker_text_o"
+    MASK_O = "id_mask_o"
+    VALUE_T = "id_value_t"
+    VALUE_O = "id_value_o"
+    VALUE_SHORT_FRAME_O = "id_value_short_frame_o"
+    VALUE_LONG_FRAME_O = "id_value_long_frame_o"
+    MASK_SHORT_O = "id_mask_short_o"
+    MASK_LONG_O = "id_mask_long_o"
+    GROUP_BOTTOM_O = "id_bottom_o"
+    ARTIST_T = "id_artist_t"
+    SIDE_INDICATOR_O = "id_side_indicator_o"
+    COLLECTOR_INFORMATION_T = "id_collector_information_t"
+    SET_O = "id_set_o"
 
+
+MODAL_HEIGHT = 23.822047244094502 - 13.546456692913399
 
 # API
 api_url = "https://api.scryfall.com"
@@ -67,58 +75,68 @@ f_icon_mana = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Mana"
 f_icon_set = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Set"
 
 # Enumerations
-supported_layouts = ["normal", "modal_dfc"]
+supported_layouts = ["normal", "modal_dfc", "class"]
 id_general_front = {
-    ids.SPREAD: "uce",
-    ids.ARTWORK_O: "u128",
-    ids.TYPE_O: "u2d6",
-    ids.NAME_T: "u2be",
-    ids.TYPE_LINE_T: "u2eb",
-    ids.MANA_COST_T: "u7fc",
-    ids.MODAL_T: "u320",
-    ids.MODAL_O: "u597",
-    ids.COLOR_BARS_O: ["u12a", "u816", "u5e1", "u818"],
-    ids.GRADIENTS_O: ["u9a0", "u9a2", "u9a1", "u9a3"],
-    ids.ORACLE_TEXT_T: "u3ee",
-    ids.ORACLE_TEXT_O: "u400",
-    ids.MASK_O: "u5e7",
-    ids.VALUE_T: "u49f",
-    ids.VALUE_O: "u4b1",
-    ids.VALUE_SHORT_FRAME_O: "u4e7",
-    ids.VALUE_LONG_FRAME_O: "u4fd",
-    ids.MASK_SHORT_O: "u41e",
-    ids.MASK_LONG_O: "u4f1",
-    ids.BOTTOM_O: "u5c1",
-    ids.ARTIST_T: "u23f",
-    ids.SIDE_INDICATOR_O: "u698",
-    ids.COLLECTOR_INFORMATION_T: "u25f",
-    ids.SET_O: "u293",
+    "id_spread": "uce",
+    "id_artwork_o": "u128",
+    "id_type_o": "u2d6",
+    "id_name_t": "u2be",
+    "id_type_line_t": "u2eb",
+    "id_mana_cost_t": "u7fc",
+    "id_modal_t": "u320",
+    "id_group_modal_o": "u597",
+    "id_color_bars_o": ['u12a', 'u816', 'u5e1', 'u818'],
+    "id_gradients_o": ['u9a0', 'u9a2', 'u9a1', 'u9a3'],
+    "id_oracle_text_t": "u3ee",
+    "id_oracle_text_o": "u400",
+    "id_group_oracle_planeswalker_o": "u748",
+    "id_planeswalker_value_t": ['u6e9', 'uc9b', 'ucf7', 'ud29'],
+    "id_planeswalker_value_o": ['u6e6', 'uc98', 'ucf4', 'ud26'],
+    "id_planeswalker_text_t": ['u733', 'uc84', 'uce0', 'ud12'],
+    "id_planeswalker_text_o": ['u730', 'uc81', 'ucdd', 'ud0f'],
+    "id_mask_o": "u5e7",
+    "id_value_t": "u49f",
+    "id_value_o": "u4b1",
+    "id_value_short_frame_o": "u4e7",
+    "id_value_long_frame_o": "u4fd",
+    "id_mask_short_o": "u41e",
+    "id_mask_long_o": "u4f1",
+    "id_bottom_o": "u5c1",
+    "id_artist_t": "u23f",
+    "id_side_indicator_o": "u698",
+    "id_collector_information_t": "u25f",
+    "id_set_o": "u293",
 }
 id_general_back = {
-    "id_spread": "ub1e",
-    "id_artwork": "uc6a",
-    "id_type": "uc69",
-    "id_name": "uc55",
-    "id_type_line": "uc3e",
-    "id_mana_cost": "uc27",
-    "id_modal": "uc07",
-    "id_modal_tb": "ubfc",
-    "id_oracle_text": "ube7",
-    "id_oracle_text_tb": "ube4",
-    "id_mask": "ub25",
-    "id_value": "ub9f",
-    "id_value_tb": "ub9c",
-    "id_value_short_frame": "ub4a",
-    "id_value_long_frame": "ub43",
-    "id_mask_short": "ub49",
-    "id_mask_long": "ub27",
-    "id_bottom": "ub28",
-    "id_artist": "ub85",
-    "id_side_indicator": "ub66",
-    "id_collector_information": "ub52",
-    "id_set": "ub4e",
-    "id_color_bars": ['uc21', 'uc20', 'ub42', 'ub41'],
-    "id_gradients": ['u832', 'u832', 'u832', 'u832'],
+    "id_spread": "u13b9",
+    "id_artwork_o": "u158e",
+    "id_type_o": "u158d",
+    "id_name_t": "u1579",
+    "id_type_line_t": "u1562",
+    "id_mana_cost_t": "u154a",
+    "id_modal_t": "u152b",
+    "id_group_modal_o": "u1520",
+    "id_color_bars_o": ['u1544', 'u1543', 'u13dd', 'u13dc'],
+    "id_gradients_o": ['u832', 'u832', 'u832', 'u832'],
+    "id_oracle_text_t": "u150b",
+    "id_oracle_text_o": "u1508",
+    "id_group_oracle_planeswalker_o": "u144e",
+    "id_planeswalker_value_t": ['u14f4', 'u14c6', 'u1498', 'u146a'],
+    "id_planeswalker_value_o": ['u14f1', 'u14c3', 'u1495', 'u1467'],
+    "id_planeswalker_text_t": ['u14dd', 'u14af', 'u1481', 'u1453'],
+    "id_planeswalker_text_o": ['u14da', 'u14ac', 'u147e', 'u144f'],
+    "id_mask_o": "u13c0",
+    "id_value_t": "u1439",
+    "id_value_o": "u1436",
+    "id_value_short_frame_o": "u13e4",
+    "id_value_long_frame_o": "u13de",
+    "id_mask_short_o": "u13e3",
+    "id_mask_long_o": "u13c2",
+    "id_bottom_o": "u13c3",
+    "id_artist_t": "u141f",
+    "id_side_indicator_o": "u1400",
+    "id_collector_information_t": "u13ec",
+    "id_set_o": "u13e8",
 }
 
 mana_types = ["W", "U", "B", "R", "G"]
@@ -154,16 +172,17 @@ image_types = ["png", "jpg", "jpeg"]
 
 # Other
 regex = [
-    (["{[A-Z0-9]+}"], "font", "KyMana"),
+    (["({[A-Z0-9]+})+"], "font", "KyMana"),
     (["Adamant", "Addendum", "Battalion", "Bloodrush", "Channel", "Chroma", "Cohort", "Constellation", "Converge",
       "Council's dilemma", "Coven", "Delirium", "Domain", "Eminence", "Enrage", "Fateful hour", "Ferocious",
       "Formidable", "Grandeur", "Hellbent", "Heroic", "Imprint", "Join forces", "Kinship", "Landfall", "Lieutenant",
       "Magecraft", "Metalcraft", "Morbid", "Pack tactics", "Parley", "Radiance", "Raid", "Rally", "Revolt",
       "Spell mastery", "Strive", "Sweep", "Tempting offer", "Threshold", "Underdog", "Undergrowth",
       "Will of the council"], "font", "MPlantin-Italic"),
-    ([" ?\(.+\)"], "type", "reminder"),
-    # (["LEVEL [\d]+(-[\d]+|\+)\\n([\d]+|\*)/([\d]+|\*)"], "type", "special")
+    ([" ?\(.+\)"], "type", "reminder")
 ]
+regex_planeswalker = [(["[\+|−]?\d+: "], "type", "loyalty")]
+regex_leveler = r"[\"LEVEL [\d]+(-[\d]+|\+)\\n([\d]+|\*)/([\d]+|\*)\"]"
 
 
 def process_cards(card_names: list[(str, str)]):
@@ -207,11 +226,11 @@ def process_card(card: Card):
     with zipfile.ZipFile(f_preset, "r") as archive:
         archive.extractall("data/memory")
 
-    if card.layout == "normal":
+    if card.layout in ["normal", "class"]:
         card_fill(card, id_general_front)
         card_delete_backside(id_general_back)
     elif card.layout == "modal_dfc":
-        set_layout_double_faced([id_general_front, id_general_back])
+        card_layout_double_faced([id_general_front, id_general_back])
         set_modal(card, [id_general_front, id_general_back])
         card_fill(card.card_faces[0], id_general_front)
         card_fill(card.card_faces[1], id_general_back)
@@ -229,8 +248,11 @@ def process_card(card: Card):
 
 def card_fill(card: Card, id_set):
     types = helper_get_card_types(card)
-    if "Creature" not in types:
-        set_layout_non_creature(id_set)
+
+    if "Planeswalker" in types:
+        card_layout_planeswalker(id_set)
+    elif card.power == "" and card.toughness == "":
+        card_layout_no_value(id_set)
 
     # Artwork
     set_artwork(card, id_set)
@@ -251,7 +273,10 @@ def card_fill(card: Card, id_set):
     set_color_bar(card, id_set)
 
     # Oracle Text
-    set_oracle_text(card, id_set)
+    if "Planeswalker" in types:
+        set_planeswalker_text(card, id_set)
+    else:
+        set_default_oracle_text(card, id_set)
 
     # Value
     set_value(card, id_set)
@@ -266,30 +291,17 @@ def card_fill(card: Card, id_set):
     set_set(card, id_set)
 
 
-def card_delete_backside(id_set):
-    os.remove("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
-
-    tree = xml.etree.ElementTree.parse("data/memory/designmap.xml")
-    element = tree.getroot().find(".//*[@src='Spreads/Spread_" + id_set[ids.SPREAD] + ".xml']")
-    tree.getroot().remove(element)
-
-    with open("data/memory/designmap.xml", "wb") as file:
-        file.write(b'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
-        file.write(b'<?aid style="50" type="document" readerVersion="6.0" featureSet="257" product="16.4(55)" ?>')
-        tree.write(file, xml_declaration=False, encoding="utf-8")
-
-
 ##############
 ### LAYOUT ###
 ##############
 
-def set_layout_double_faced(id_sets):
+def card_layout_double_faced(id_sets):
     for id_set in id_sets:
         tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
-        modal = tree.find(".//Group[@Self='" + id_set[ids.MODAL_O] + "']")
+        modal = tree.find(".//Group[@Self='" + id_set[ids.GROUP_MODAL_O] + "']")
         modal.set("Visible", "true")
 
-        shift_by = 10.27559055118109
+        shift_by = MODAL_HEIGHT
 
         color_bars = [tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_BARS_O][0] + "']"),
                       tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_BARS_O][1] + "']")]
@@ -302,19 +314,7 @@ def set_layout_double_faced(id_sets):
 
         oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
 
-        top_left = oracle_text.find(".//PathPointType[1]")
-        top_right = oracle_text.find(".//PathPointType[4]")
-
-        for point in [top_left, top_right]:
-            x_coordinate, y_coordinate = point.attrib["Anchor"].split(" ")
-            point.attrib.pop("Anchor")
-            point.attrib.pop("LeftDirection")
-            point.attrib.pop("RightDirection")
-
-            coordinates = x_coordinate + " " + str(float(y_coordinate) + shift_by)
-            point.set("Anchor", coordinates)
-            point.set("LeftDirection", coordinates)
-            point.set("RightDirection", coordinates)
+        helper_indesign_shift_y_coordinates(oracle_text, [shift_by, shift_by, 0, 0])
 
         side_indicator = tree.find(".//Group[@Self='" + id_set[ids.SIDE_INDICATOR_O] + "']")
         side_indicator.set("Visible", "true")
@@ -322,7 +322,42 @@ def set_layout_double_faced(id_sets):
         tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
 
-def set_layout_non_creature(id_set):
+def card_layout_planeswalker(id_set):
+    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+    # Show value
+    value_text = tree.find(".//TextFrame[@Self='" + id_set[ids.VALUE_O] + "']")
+    value_text.set("Visible", "true")
+
+    # Show Planeswalker
+    oracle_planeswalker = tree.find(".//Group[@Self='" + id_set[ids.GROUP_ORACLE_PLANESWALKER_O] + "']")
+    oracle_planeswalker.set("Visible", "true")
+
+    value_short_frame = tree.find(".//Rectangle[@Self='" + id_set[ids.VALUE_SHORT_FRAME_O] + "']")
+    value_short_frame.set("Visible", "true")
+    value_long_frame = tree.find(".//Rectangle[@Self='" + id_set[ids.VALUE_LONG_FRAME_O] + "']")
+    value_long_frame.set("Visible", "false")
+
+    # Change Mask
+    mask = tree.find(".//Group[@Self='" + id_set[ids.MASK_O] + "']")
+    bottom = tree.find(".//Group[@Self='" + id_set[ids.GROUP_BOTTOM_O] + "']")
+    mask_short = tree.find(".//Polygon[@Self='" + id_set[ids.MASK_SHORT_O] + "']")
+    mask_long = tree.find(".//Polygon[@Self='" + id_set[ids.MASK_LONG_O] + "']")
+
+    for child in mask.findall("./Group[@Self='" + id_set[ids.GROUP_BOTTOM_O] + "']"):
+        mask.remove(child)
+    for child in mask_long.findall("./Group[@Self='" + id_set[ids.GROUP_BOTTOM_O] + "']"):
+        mask_long.remove(child)
+
+    mask_short.append(bottom)
+
+    oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
+    oracle_text.set("Visible", "false")
+
+    tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+
+def card_layout_no_value(id_set):
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
     # Hide value
@@ -336,15 +371,15 @@ def set_layout_non_creature(id_set):
 
     # Remove Mask
     mask = tree.find(".//Group[@Self='" + id_set[ids.MASK_O] + "']")
-    bottom = tree.find(".//Group[@Self='" + id_set[ids.BOTTOM_O] + "']")
+    bottom = tree.find(".//Group[@Self='" + id_set[ids.GROUP_BOTTOM_O] + "']")
     mask_short = tree.find(".//Polygon[@Self='" + id_set[ids.MASK_SHORT_O] + "']")
     mask_long = tree.find(".//Polygon[@Self='" + id_set[ids.MASK_LONG_O] + "']")
 
     mask.append(bottom)
 
-    for child in mask_short.findall(".//Group[@Self='" + id_set[ids.BOTTOM_O] + "']"):
+    for child in mask_short.findall(".//Group[@Self='" + id_set[ids.GROUP_BOTTOM_O] + "']"):
         mask_short.remove(child)
-    for child in mask_long.findall(".//Group[@Self='" + id_set[ids.BOTTOM_O] + "']"):
+    for child in mask_long.findall(".//Group[@Self='" + id_set[ids.GROUP_BOTTOM_O] + "']"):
         mask_long.remove(child)
 
     # Expand Oracle Text Box
@@ -367,6 +402,19 @@ def set_layout_non_creature(id_set):
         point.set("RightDirection", coordinates)
 
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+
+def card_delete_backside(id_set):
+    os.remove("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+    tree = xml.etree.ElementTree.parse("data/memory/designmap.xml")
+    element = tree.getroot().find(".//*[@src='Spreads/Spread_" + id_set[ids.SPREAD] + ".xml']")
+    tree.getroot().remove(element)
+
+    with open("data/memory/designmap.xml", "wb") as file:
+        file.write(b'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
+        file.write(b'<?aid style="50" type="document" readerVersion="6.0" featureSet="257" product="16.4(55)" ?>')
+        tree.write(file, xml_declaration=False, encoding="utf-8")
 
 
 ########################
@@ -406,10 +454,10 @@ def set_artwork(card, id_set):
             handler.write(response.content)
         insert_graphic(card, id_spread, id_artwork, f_artwork_downloaded + "/" + card.set.upper(), card.name,
                        type_file="jpg",
-                       mode_scale_image="fit_x", mode_align_vertical="top")
+                       mode_scale_image="fit_priority_x", mode_align_vertical="top")
     else:
         insert_graphic(card, id_spread, id_artwork, f_artwork + "/" + card.set.upper(), card.name, type_file=image_type,
-                       mode_scale_image="fit_x", mode_align_vertical="top")
+                       mode_scale_image="fit_priority_x", mode_align_vertical="top")
 
 
 def set_type_icon(card, id_set):
@@ -418,6 +466,9 @@ def set_type_icon(card, id_set):
 
     # Get types of card
     types = helper_get_card_types(card)
+    if "Legendary" in types:
+        types.remove("Legendary")
+
     if len(types) > 1:
         card_type = "Multiple"
     else:
@@ -498,18 +549,90 @@ def set_color_bar(card, id_set):
             tree.write("data/memory/Resources/Graphic.xml")
 
 
-def set_oracle_text(card, id_set, left_align=False):
-    id_oracle_text = id_set[ids.ORACLE_TEXT_T]
+def set_planeswalker_text(card, id_set):
+    planeswalker_text = helper_split_string_along_regex(card.oracle_text, *regex_planeswalker)
+    amount_abilities = sum(x[2] == "loyalty" for x in planeswalker_text)
+
+    if amount_abilities > 4:
+        info_fail(card.name, "Too many abilities")
+        return
+
+    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+    modal = tree.find(".//Group[@Self='" + id_set[ids.GROUP_MODAL_O] + "']")
+
+    amount_textboxes = amount_abilities
+    top_y_coordinate = -46.2047244094489
+
+    if modal.attrib["Visible"] == "true":
+        top_y_coordinate += MODAL_HEIGHT
+
+    total_height = 37.13385826771649 + abs(top_y_coordinate)
+
+    text_boxes = [[(id_set[ids.PLANESWALKER_VALUE_T][0], id_set[ids.PLANESWALKER_VALUE_O][0]),
+                   (id_set[ids.PLANESWALKER_TEXT_T][0], id_set[ids.PLANESWALKER_TEXT_O][0])],
+
+                  [(id_set[ids.PLANESWALKER_VALUE_T][1], id_set[ids.PLANESWALKER_VALUE_O][1]),
+                   (id_set[ids.PLANESWALKER_TEXT_T][1], id_set[ids.PLANESWALKER_TEXT_O][1])],
+
+                  [(id_set[ids.PLANESWALKER_VALUE_T][2], id_set[ids.PLANESWALKER_VALUE_O][2]),
+                   (id_set[ids.PLANESWALKER_TEXT_T][2], id_set[ids.PLANESWALKER_TEXT_O][2])],
+
+                  [(id_set[ids.PLANESWALKER_VALUE_T][3], id_set[ids.PLANESWALKER_VALUE_O][3]),
+                   (id_set[ids.PLANESWALKER_TEXT_T][3], id_set[ids.PLANESWALKER_TEXT_O][3])]]
+
+    if planeswalker_text[0][2] != "loyalty":
+        text_boxes.insert(0, [(id_set[ids.ORACLE_TEXT_T], id_set[ids.ORACLE_TEXT_O])])
+        amount_textboxes += 1
+        set_oracle_text(planeswalker_text[0][0], id_set[ids.ORACLE_TEXT_T], left_align=True)
+        planeswalker_text = planeswalker_text[1:]
+
+    step_size = total_height / amount_textboxes
+    shifter = amount_textboxes - amount_abilities
+
+    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+    for i, level in enumerate(text_boxes):
+        j = i - shifter
+
+        for pair in level:
+            object_box = tree.find(".//TextFrame[@Self='" + pair[1] + "']")
+
+            if i < amount_textboxes:
+                object_box.set("Visible", "true")
+                if i % 2 == 1:
+                    object_box.set("FillColor", "Color/Grey")
+
+                helper_indesign_set_y_coordinates(object_box,
+                                                  [top_y_coordinate, top_y_coordinate,
+                                                   top_y_coordinate + step_size, top_y_coordinate + step_size])
+                shift_coordinates = [step_size * i, step_size * i, step_size * i, step_size * i]
+                helper_indesign_shift_y_coordinates(object_box, shift_coordinates)
+            else:
+                object_box.set("Visible", "false")
+
+        if 0 <= j < amount_abilities:
+            set_oracle_text(planeswalker_text[0][0][:-1], level[0][0])
+            set_oracle_text(planeswalker_text[1][0], level[1][0])
+
+    tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+
+def set_oracle_text(oracle_text, object_id, left_align=False):
+    id_oracle_text = object_id
 
     tree = xml.etree.ElementTree.parse("data/memory/Stories/Story_" + id_oracle_text + ".xml")
     parent = tree.find(".//ParagraphStyleRange[1]")
     child = tree.find(".//CharacterStyleRange[1]")
     parent.remove(child)
 
-    if len(card.oracle_text) > 100 | left_align:
+    if len(oracle_text) > 100 | left_align:
         parent.set("Justification", "LeftAlign")
 
-    oracle_text_array = helper_split_string_along_regex(card.oracle_text, *regex)
+    oracle_text_array = helper_split_string_along_regex(oracle_text, *regex)
+
+    oracle_text_array = list(filter(lambda x: (x[2] != "reminder"), oracle_text_array))
+    if oracle_text_array[0][0].find("\n") == 0:
+        oracle_text_array[0] = (oracle_text_array[0][0][1:], oracle_text_array[0][1], oracle_text_array[0][2])
 
     for part in oracle_text_array:
         if part[1] == "type":
@@ -517,11 +640,19 @@ def set_oracle_text(card, id_set, left_align=False):
                 parent.append(insert_text_element(part[0]))
         elif part[1] == "font":
             if part[2] == "KyMana":
-                parent.append(insert_text_element(mana_mapping[part[0]], part[2]))
+                mana = []
+                for item in re.findall("({[A-Z0-9]+})", part[0]):
+                    mana.append(mana_mapping[item])
+                mana = "".join(mana)
+                parent.append(insert_text_element(mana, part[2]))
             else:
                 parent.append(insert_text_element(part[0], part[2]))
 
     tree.write("data/memory/Stories/Story_" + id_oracle_text + ".xml")
+
+
+def set_default_oracle_text(card, id_set, left_align=False):
+    set_oracle_text(card.oracle_text, id_set[ids.ORACLE_TEXT_T], left_align)
 
 
 def set_value(card, id_set):
@@ -534,6 +665,9 @@ def set_value(card, id_set):
 
         insert_value_content(id_value, value_string)
 
+    if card.loyalty != "":
+        insert_value_content(id_value, card.loyalty)
+
 
 def set_artist(card, id_set):
     id_artist = id_set[ids.ARTIST_T]
@@ -542,7 +676,7 @@ def set_artist(card, id_set):
 
 
 def set_collector_information(card, id_set):
-    id_collector_information = id_set["id_collector_information"]
+    id_collector_information = id_set[ids.COLLECTOR_INFORMATION_T]
 
     insert_value_content(id_collector_information,
                          card.collector_number.zfill(3) + " • " + card.set.upper() + " • " + card.rarity.upper()[0])
@@ -629,8 +763,11 @@ def insert_graphic(card, identifier_spread, identifier_field, path_file, name_fi
 
     if mode_scale_image == "fit":
         factor = min(factor_x, factor_y)
-    elif mode_scale_image == "fit_x":
-        factor = factor_x
+    elif mode_scale_image == "fit_priority_x":
+        if factor_x * size_box_y >= bounding_box[1]:
+            factor = factor_x
+        else:
+            factor = factor_y
 
     # Final size of the scaled graphic
     size_insert_x = bounding_box[0] * factor
@@ -765,16 +902,52 @@ def helper_indesign_get_coordinates(element):
     return coordinates_top_left, coordinates_top_right, coordinates_bottom_left, coordinates_bottom_right
 
 
-def helper_generate_ids(spread):
+def helper_indesign_set_y_coordinates(indesign_object, set_to):
+    top_left = indesign_object.find(".//PathPointType[1]")
+    top_right = indesign_object.find(".//PathPointType[4]")
+    bottom_left = indesign_object.find(".//PathPointType[2]")
+    bottom_right = indesign_object.find(".//PathPointType[3]")
+
+    for i, point in enumerate([top_left, top_right, bottom_left, bottom_right]):
+        x_coordinate, y_coordinate = point.attrib["Anchor"].split(" ")
+        point.attrib.pop("Anchor")
+        point.attrib.pop("LeftDirection")
+        point.attrib.pop("RightDirection")
+
+        coordinates = x_coordinate + " " + str(set_to[i])
+        point.set("Anchor", coordinates)
+        point.set("LeftDirection", coordinates)
+        point.set("RightDirection", coordinates)
+
+    return indesign_object
+
+
+def helper_indesign_shift_y_coordinates(indesign_object, shift_by):
+    top_left = indesign_object.find(".//PathPointType[1]")
+    top_right = indesign_object.find(".//PathPointType[4]")
+    bottom_left = indesign_object.find(".//PathPointType[2]")
+    bottom_right = indesign_object.find(".//PathPointType[3]")
+
+    set_to = []
+
+    for i, point in enumerate([top_left, top_right, bottom_left, bottom_right]):
+        x_coordinate, y_coordinate = point.attrib["Anchor"].split(" ")
+        set_to.append(float(y_coordinate) + shift_by[i])
+
+    return helper_indesign_set_y_coordinates(indesign_object, set_to)
+
+
+def helper_generate_ids(name, spread):
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + spread + ".xml")
 
+    # IDs to determine
     names = [("Artwork", ids.ARTWORK_O),
              ("Type", ids.TYPE_O),
              ("Name", ids.NAME_T, True),
              ("Type Line", ids.TYPE_LINE_T, True),
              ("Mana Cost", ids.MANA_COST_T, True),
              ("Modal Text", ids.MODAL_T, True),
-             ("Modal", ids.MODAL_O),
+             ("Modal", ids.GROUP_MODAL_O),
              ("Upper Color Bar", ids.COLOR_BARS_O),
              ("Upper Color Bar Bleed", ids.COLOR_BARS_O),
              ("Lower Color Bar", ids.COLOR_BARS_O),
@@ -785,6 +958,23 @@ def helper_generate_ids(spread):
              ("Lower Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
              ("Oracle Text", ids.ORACLE_TEXT_T, True),
              ("Oracle Text", ids.ORACLE_TEXT_O),
+             ("Oracle Planeswalker", ids.GROUP_ORACLE_PLANESWALKER_O),
+             ("Planeswalker Value 1", ids.PLANESWALKER_VALUE_T, True),
+             ("Planeswalker Value 2", ids.PLANESWALKER_VALUE_T, True),
+             ("Planeswalker Value 3", ids.PLANESWALKER_VALUE_T, True),
+             ("Planeswalker Value 4", ids.PLANESWALKER_VALUE_T, True),
+             ("Planeswalker Value 1", ids.PLANESWALKER_VALUE_O),
+             ("Planeswalker Value 2", ids.PLANESWALKER_VALUE_O),
+             ("Planeswalker Value 3", ids.PLANESWALKER_VALUE_O),
+             ("Planeswalker Value 4", ids.PLANESWALKER_VALUE_O),
+             ("Planeswalker Text 1", ids.PLANESWALKER_TEXT_T, True),
+             ("Planeswalker Text 2", ids.PLANESWALKER_TEXT_T, True),
+             ("Planeswalker Text 3", ids.PLANESWALKER_TEXT_T, True),
+             ("Planeswalker Text 4", ids.PLANESWALKER_TEXT_T, True),
+             ("Planeswalker Text 1", ids.PLANESWALKER_TEXT_O),
+             ("Planeswalker Text 2", ids.PLANESWALKER_TEXT_O),
+             ("Planeswalker Text 3", ids.PLANESWALKER_TEXT_O),
+             ("Planeswalker Text 4", ids.PLANESWALKER_TEXT_O),
              ("Mask", ids.MASK_O),
              ("Value", ids.VALUE_T, True),
              ("Value", ids.VALUE_O),
@@ -792,45 +982,55 @@ def helper_generate_ids(spread):
              ("Value Long Frame", ids.VALUE_LONG_FRAME_O),
              ("Mask Short", ids.MASK_SHORT_O),
              ("Mask Long", ids.MASK_LONG_O),
-             ("Bottom", ids.BOTTOM_O),
+             ("Bottom", ids.GROUP_BOTTOM_O),
              ("Artist", ids.ARTIST_T, True),
              ("Side Indicator", ids.SIDE_INDICATOR_O),
              ("Collector Information", ids.COLLECTOR_INFORMATION_T, True),
              ("Set Icon", ids.SET_O)]
 
-    print("id_general_xyz = {")
+    print("id_general_" + name + " = {")
     print("\"" + ids.SPREAD + "\": " + "\"" + spread + "\",")
 
-    array = []
+    entries = []
 
     for name in names:
         element = tree.find(".//*[@Name='" + name[0] + "']")
+
         if len(name) > 2 and name[2] is True:
-            array.append(("\"" + name[1] + "\"", "\"" + element.attrib["ParentStory"] + "\","))
+            to_add = "\"" + element.attrib["ParentStory"] + "\","
         elif len(name) > 2:
-            array.append(("\"" + name[1] + "\"", "\"" + element.attrib[name[2]].split("/")[1] + "\","))
+            to_add = "\"" + element.attrib[name[2]].split("/")[1] + "\","
         else:
-            array.append(("\"" + name[1] + "\"", "\"" + element.attrib["Self"] + "\","))
+            to_add = "\"" + element.attrib["Self"] + "\","
 
-    for entry in array:
-        if "color_bars" not in entry[0] and "gradients" not in entry[0]:
+        entries.append(("\"" + name[1] + "\"", to_add))
+
+    duplicates = dict()
+
+    # Count occurrences
+    for name in names:
+        if name[1] not in duplicates:
+            duplicates[name[1]] = 0
+        duplicates[name[1]] += 1
+
+    # Print non-duplicates
+    carry = []
+    previous_entry = ""
+    for i, entry in enumerate(entries):
+        key = entry[0].replace("\"", "")
+
+        if len(carry) > 1 and entry[0] != previous_entry:
+            print(previous_entry + ": " + str(carry) + ",")
+            carry = []
+
+        if duplicates[key] <= 1:
             print(entry[0] + ": " + entry[1])
+        else:
+            previous_entry = entry[0]
+            carry.append(entry[1].split(",")[0].replace("\"", ""))
 
-    color_bars = []
-
-    for entry in array:
-        if "color_bars" in entry[0]:
-            color_bars.append(entry[1].split(",")[0].replace("\"", ""))
-
-    print("\"id_color_bars\": " + str(color_bars) + ",")
-
-    gradients = []
-
-    for entry in array:
-        if "gradients" in entry[0]:
-            gradients.append(entry[1].split(",")[0].replace("\"", ""))
-
-    print("\"id_gradients\": " + str(gradients) + ",")
+        if i == len(entries) - 1 and len(carry) > 1:
+            print(previous_entry + ": " + str(carry) + ",")
 
     print("}")
 
@@ -857,6 +1057,9 @@ def info_fail(cardname, message):
 
 
 if __name__ == '__main__':
-    # process_cards([("Neverwinter Dryad", ""), ("Brushfire Elemental", "ZNR"), ("Roiling Regrowth", "ZNR")])
-    process_cards([("Kazandu Mammoth", ""), ("Tangled Florahedron", "")])
-    # helper_generate_ids(id_general_back["id_spread"])
+    # process_cards([("Neverwinter Dryad", ""), ("Brushfire Elemental", "ZNR"), ("Roiling Regrowth", "ZNR"),
+    #                ("Kazandu Mammoth", "")])
+    process_cards([("Roiling Regrowth", "ZNR"), ("Arlinn, Voice of the Pack", "")])
+
+    # helper_generate_ids("front", "uce")
+    # helper_generate_ids("back", "u13b9")
