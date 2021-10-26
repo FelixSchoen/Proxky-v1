@@ -55,6 +55,7 @@ class ids:
     MASK_LONG_O = "id_mask_long_o"
     GROUP_BOTTOM_O = "id_bottom_o"
     ARTIST_T = "id_artist_t"
+    SIDE_INDICATOR_T = "id_side_indicator_t"
     SIDE_INDICATOR_O = "id_side_indicator_o"
     COLLECTOR_INFORMATION_T = "id_collector_information_t"
     SET_O = "id_set_o"
@@ -75,71 +76,73 @@ f_icon_mana = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Mana"
 f_icon_set = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Set"
 
 # Enumerations
-supported_layouts = ["normal", "modal_dfc", "class"]
+supported_layouts = ["normal", "modal_dfc", "transform", "class", "saga"]
 id_general_front = {
-    "id_spread": "uce",
-    "id_artwork_o": "u128",
-    "id_type_o": "u2d6",
-    "id_name_t": "u2be",
-    "id_type_line_t": "u2eb",
-    "id_mana_cost_t": "u7fc",
-    "id_modal_t": "u320",
-    "id_group_modal_o": "u597",
-    "id_color_bars_o": ['u12a', 'u816', 'u5e1', 'u818'],
-    "id_gradients_o": ['u9a0', 'u9a2', 'u9a1', 'u9a3'],
-    "id_oracle_text_t": "u3ee",
-    "id_oracle_text_o": "u400",
-    "id_group_oracle_planeswalker_o": "u748",
-    "id_planeswalker_value_t": ['u6e9', 'uc9b', 'ucf7', 'ud29'],
-    "id_planeswalker_value_o": ['u6e6', 'uc98', 'ucf4', 'ud26'],
-    "id_planeswalker_text_t": ['u733', 'uc84', 'uce0', 'ud12'],
-    "id_planeswalker_text_o": ['u730', 'uc81', 'ucdd', 'ud0f'],
-    "id_mask_o": "u5e7",
-    "id_value_t": "u49f",
-    "id_value_o": "u4b1",
-    "id_value_short_frame_o": "u4e7",
-    "id_value_long_frame_o": "u4fd",
-    "id_mask_short_o": "u41e",
-    "id_mask_long_o": "u4f1",
-    "id_bottom_o": "u5c1",
-    "id_artist_t": "u23f",
-    "id_side_indicator_o": "u698",
-    "id_collector_information_t": "u25f",
-    "id_set_o": "u293",
+"id_spread": "uff",
+"id_artwork_o": "u2e6",
+"id_type_o": "u2e5",
+"id_name_t": "u2d0",
+"id_type_line_t": "u2ba",
+"id_mana_cost_t": "u2a4",
+"id_modal_t": "u281",
+"id_group_modal_o": "u274",
+"id_color_bars_o": ['u2a0', 'u29f', 'u122', 'u121'],
+"id_gradients_o": ['ue1', 'ue3', 'ue2', 'ue4'],
+"id_oracle_text_t": "u25e",
+"id_oracle_text_o": "u270",
+"id_group_oracle_planeswalker_o": "u1ac",
+"id_planeswalker_value_t": ['u248', 'u21c', 'u1f0', 'u1c4'],
+"id_planeswalker_value_o": ['u25a', 'u22e', 'u202', 'u1d6'],
+"id_planeswalker_text_t": ['u232', 'u206', 'u1da', 'u1ae'],
+"id_planeswalker_text_o": ['u244', 'u218', 'u1ec', 'u1c0'],
+"id_mask_o": "u106",
+"id_value_t": "u196",
+"id_value_o": "u1a8",
+"id_value_short_frame_o": "u130",
+"id_value_long_frame_o": "u123",
+"id_mask_short_o": "u12f",
+"id_mask_long_o": "u108",
+"id_bottom_o": "u109",
+"id_artist_t": "u176",
+"id_side_indicator_t": "u160",
+"id_side_indicator_o": "u153",
+"id_collector_information_t": "u13e",
+"id_set_o": "u13c",
 }
 id_general_back = {
-    "id_spread": "u13b9",
-    "id_artwork_o": "u158e",
-    "id_type_o": "u158d",
-    "id_name_t": "u1579",
-    "id_type_line_t": "u1562",
-    "id_mana_cost_t": "u154a",
-    "id_modal_t": "u152b",
-    "id_group_modal_o": "u1520",
-    "id_color_bars_o": ['u1544', 'u1543', 'u13dd', 'u13dc'],
-    "id_gradients_o": ['u832', 'u832', 'u832', 'u832'],
-    "id_oracle_text_t": "u150b",
-    "id_oracle_text_o": "u1508",
-    "id_group_oracle_planeswalker_o": "u144e",
-    "id_planeswalker_value_t": ['u14f4', 'u14c6', 'u1498', 'u146a'],
-    "id_planeswalker_value_o": ['u14f1', 'u14c3', 'u1495', 'u1467'],
-    "id_planeswalker_text_t": ['u14dd', 'u14af', 'u1481', 'u1453'],
-    "id_planeswalker_text_o": ['u14da', 'u14ac', 'u147e', 'u144f'],
-    "id_mask_o": "u13c0",
-    "id_value_t": "u1439",
-    "id_value_o": "u1436",
-    "id_value_short_frame_o": "u13e4",
-    "id_value_long_frame_o": "u13de",
-    "id_mask_short_o": "u13e3",
-    "id_mask_long_o": "u13c2",
-    "id_bottom_o": "u13c3",
-    "id_artist_t": "u141f",
-    "id_side_indicator_o": "u1400",
-    "id_collector_information_t": "u13ec",
-    "id_set_o": "u13e8",
+"id_spread": "u96e",
+"id_artwork_o": "ub43",
+"id_type_o": "ub42",
+"id_name_t": "ub2e",
+"id_type_line_t": "ub17",
+"id_mana_cost_t": "uaff",
+"id_modal_t": "uae0",
+"id_group_modal_o": "uad7",
+"id_color_bars_o": ['uaf9', 'uaf8', 'u992', 'u991'],
+"id_gradients_o": ['udf', 'udf', 'udf', 'udf'],
+"id_oracle_text_t": "uac2",
+"id_oracle_text_o": "uabf",
+"id_group_oracle_planeswalker_o": "ua05",
+"id_planeswalker_value_t": ['uaab', 'ua7d', 'ua4f', 'ua21'],
+"id_planeswalker_value_o": ['uaa8', 'ua7a', 'ua4c', 'ua1e'],
+"id_planeswalker_text_t": ['ua94', 'ua66', 'ua38', 'ua0a'],
+"id_planeswalker_text_o": ['ua91', 'ua63', 'ua35', 'ua06'],
+"id_mask_o": "u975",
+"id_value_t": "u9f0",
+"id_value_o": "u9ed",
+"id_value_short_frame_o": "u999",
+"id_value_long_frame_o": "u993",
+"id_mask_short_o": "u998",
+"id_mask_long_o": "u977",
+"id_bottom_o": "u978",
+"id_artist_t": "u9d6",
+"id_side_indicator_t": "u9bf",
+"id_side_indicator_o": "u9b6",
+"id_collector_information_t": "u9a2",
+"id_set_o": "u99e",
 }
 
-mana_types = ["W", "U", "B", "R", "G"]
+mana_types = ["W", "U", "B", "R", "G", "C"]
 mana_mapping = {
     "{T}": "T",
     "{W}": "W",
@@ -159,6 +162,7 @@ mana_mapping = {
     "{8}": "8",
     "{9}": "9",
     "{10}": "",
+    "{E}": "E",
 }
 color_mapping = {
     "C": "Magic Grey",
@@ -172,13 +176,13 @@ image_types = ["png", "jpg", "jpeg"]
 
 # Other
 regex = [
-    (["({[A-Z0-9]+})+"], "font", "KyMana"),
+    (["({[A-Z0-9]+})+"], "font", ("KyMana", "")),
     (["Adamant", "Addendum", "Battalion", "Bloodrush", "Channel", "Chroma", "Cohort", "Constellation", "Converge",
       "Council's dilemma", "Coven", "Delirium", "Domain", "Eminence", "Enrage", "Fateful hour", "Ferocious",
       "Formidable", "Grandeur", "Hellbent", "Heroic", "Imprint", "Join forces", "Kinship", "Landfall", "Lieutenant",
       "Magecraft", "Metalcraft", "Morbid", "Pack tactics", "Parley", "Radiance", "Raid", "Rally", "Revolt",
       "Spell mastery", "Strive", "Sweep", "Tempting offer", "Threshold", "Underdog", "Undergrowth",
-      "Will of the council"], "font", "MPlantin-Italic"),
+      "Will of the council"], "font", ("Plantin MT Pro", "Italic")),
     ([" ?\(.+\)"], "type", "reminder")
 ]
 regex_planeswalker = [(["[\+|−]?\d+: "], "type", "loyalty")]
@@ -226,14 +230,15 @@ def process_card(card: Card):
     with zipfile.ZipFile(f_preset, "r") as archive:
         archive.extractall("data/memory")
 
-    if card.layout in ["normal", "class"]:
+    if card.layout in ["normal", "class", "saga"]:
         card_fill(card, id_general_front)
         card_delete_backside(id_general_back)
-    elif card.layout == "modal_dfc":
+    elif card.layout in ["modal_dfc", "transform"]:
         card_layout_double_faced([id_general_front, id_general_back])
-        set_modal(card, [id_general_front, id_general_back])
+        set_modal(card, [id_general_front, id_general_back], card.layout)
         card_fill(card.card_faces[0], id_general_front)
         card_fill(card.card_faces[1], id_general_back)
+
 
     # Repackage preset, remove old files and rename to correct extension
     shutil.make_archive(target_file_path, "zip", "data/memory")
@@ -251,6 +256,8 @@ def card_fill(card: Card, id_set):
 
     if "Planeswalker" in types:
         card_layout_planeswalker(id_set)
+        if card.loyalty == "":
+            card_layout_no_value(id_set)
     elif card.power == "" and card.toughness == "":
         card_layout_no_value(id_set)
 
@@ -267,7 +274,7 @@ def card_fill(card: Card, id_set):
     set_type_line(card, id_set)
 
     # Mana Cost
-    set_mana(card, id_set)
+    set_mana_cost(card, id_set)
 
     # Color Bar
     set_color_bar(card, id_set)
@@ -296,7 +303,7 @@ def card_fill(card: Card, id_set):
 ##############
 
 def card_layout_double_faced(id_sets):
-    for id_set in id_sets:
+    for i, id_set in enumerate(id_sets):
         tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
         modal = tree.find(".//Group[@Self='" + id_set[ids.GROUP_MODAL_O] + "']")
         modal.set("Visible", "true")
@@ -316,8 +323,13 @@ def card_layout_double_faced(id_sets):
 
         helper_indesign_shift_y_coordinates(oracle_text, [shift_by, shift_by, 0, 0])
 
-        side_indicator = tree.find(".//Group[@Self='" + id_set[ids.SIDE_INDICATOR_O] + "']")
-        side_indicator.set("Visible", "true")
+        side_indicator_o = tree.find(".//Group[@Self='" + id_set[ids.SIDE_INDICATOR_O] + "']")
+        side_indicator_o.set("Visible", "true")
+
+        if i == 0:
+            insert_value_content(id_set[ids.SIDE_INDICATOR_T], "FRONT")
+        elif i == 1:
+            insert_value_content(id_set[ids.SIDE_INDICATOR_T], "BACK")
 
         tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
@@ -492,18 +504,28 @@ def set_type_line(card, id_set):
     insert_value_content(id_type_line, card.type_line.replace("—", "•"))
 
 
-def set_mana(card, id_set):
+def set_mana_cost(card, id_set):
     id_mana_cost = id_set[ids.MANA_COST_T]
 
     mana = list(filter(None, [s.replace("{", "") for s in card.mana_cost.split("}")]))
     mapping = "".join([mana_mapping["{" + m + "}"] for m in mana])
+    if len(mapping) > 5:
+        mapping = mapping[:5] + "\n" + mapping[5:]
     insert_value_content(id_mana_cost, mapping)
 
 
-def set_modal(card, id_sets, type="MODAL"):
+def set_modal(card, id_sets, modal_type="modal"):
     for i, id_set in enumerate(id_sets):
         face = card.card_faces[(i + 1) % 2]
-        insert_value_content(id_set[ids.MODAL_T], type + " — " + face.type_line.replace("—", "•"))
+
+        caps_type = ""
+
+        if modal_type == "modal_dfc":
+            caps_type = "MODAL"
+        elif modal_type == "transform":
+            caps_type = "TRANSFORM"
+
+        insert_value_content(id_set[ids.MODAL_T], caps_type + " — " + face.type_line.replace("—", "•"))
 
 
 def set_color_bar(card, id_set):
@@ -516,6 +538,8 @@ def set_color_bar(card, id_set):
         colors_to_apply.append("C")
     if len(colors_to_apply) == 1:
         colors_to_apply.append(colors_to_apply[0])
+
+    helper_sort_mana_array(colors_to_apply)
 
     for id_gradient in id_gradients:
         tree = xml.etree.ElementTree.parse("data/memory/Resources/Graphic.xml")
@@ -568,6 +592,9 @@ def set_planeswalker_text(card, id_set):
 
     total_height = 37.13385826771649 + abs(top_y_coordinate)
 
+    if card.loyalty == "":
+        total_height += 4.960627698522806
+
     text_boxes = [[(id_set[ids.PLANESWALKER_VALUE_T][0], id_set[ids.PLANESWALKER_VALUE_O][0]),
                    (id_set[ids.PLANESWALKER_TEXT_T][0], id_set[ids.PLANESWALKER_TEXT_O][0])],
 
@@ -611,8 +638,8 @@ def set_planeswalker_text(card, id_set):
                 object_box.set("Visible", "false")
 
         if 0 <= j < amount_abilities:
-            set_oracle_text(planeswalker_text[0][0][:-1], level[0][0])
-            set_oracle_text(planeswalker_text[1][0], level[1][0])
+            set_oracle_text(planeswalker_text[2 * j][0][:-1].replace("−", "-"), level[0][0])
+            set_oracle_text(planeswalker_text[2 * j + 1][0].rstrip(), level[1][0])
 
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
@@ -639,7 +666,7 @@ def set_oracle_text(oracle_text, object_id, left_align=False):
             if part[2] == "normal":
                 parent.append(insert_text_element(part[0]))
         elif part[1] == "font":
-            if part[2] == "KyMana":
+            if part[2][0] == "KyMana":
                 mana = []
                 for item in re.findall("({[A-Z0-9]+})", part[0]):
                     mana.append(mana_mapping[item])
@@ -704,15 +731,18 @@ def insert_value_content(identifier, value):
     tree.write("data/memory/Stories/Story_" + identifier + ".xml")
 
 
-def insert_text_element(content, font="", point_size_correction=0):
+def insert_text_element(content, font=("", ""), point_size_correction=0):
     parent = xml.etree.ElementTree.Element("CharacterStyleRange")
     parent.set("PointSize", str(8 + point_size_correction))
 
-    if font != "":
+    if font != ("", ""):
+        if font[1] != "":
+            parent.set("FontStyle", font[1])
+
         properties = xml.etree.ElementTree.Element("Properties")
         applied_font = xml.etree.ElementTree.Element("AppliedFont")
         applied_font.set("type", "string")
-        applied_font.text = font
+        applied_font.text = font[0]
 
         properties.append(applied_font)
         parent.append(properties)
@@ -764,7 +794,7 @@ def insert_graphic(card, identifier_spread, identifier_field, path_file, name_fi
     if mode_scale_image == "fit":
         factor = min(factor_x, factor_y)
     elif mode_scale_image == "fit_priority_x":
-        if factor_x * size_box_y >= bounding_box[1]:
+        if factor_x * bounding_box[1] >= size_box_y:
             factor = factor_x
         else:
             factor = factor_y
@@ -937,6 +967,10 @@ def helper_indesign_shift_y_coordinates(indesign_object, shift_by):
     return helper_indesign_set_y_coordinates(indesign_object, set_to)
 
 
+def helper_sort_mana_array(mana_array):
+    mana_array.sort(key=lambda x: mana_types.index(x))
+
+
 def helper_generate_ids(name, spread):
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + spread + ".xml")
 
@@ -958,7 +992,7 @@ def helper_generate_ids(name, spread):
              ("Lower Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
              ("Oracle Text", ids.ORACLE_TEXT_T, True),
              ("Oracle Text", ids.ORACLE_TEXT_O),
-             ("Oracle Planeswalker", ids.GROUP_ORACLE_PLANESWALKER_O),
+             ("Layout Planeswalker", ids.GROUP_ORACLE_PLANESWALKER_O),
              ("Planeswalker Value 1", ids.PLANESWALKER_VALUE_T, True),
              ("Planeswalker Value 2", ids.PLANESWALKER_VALUE_T, True),
              ("Planeswalker Value 3", ids.PLANESWALKER_VALUE_T, True),
@@ -984,6 +1018,7 @@ def helper_generate_ids(name, spread):
              ("Mask Long", ids.MASK_LONG_O),
              ("Bottom", ids.GROUP_BOTTOM_O),
              ("Artist", ids.ARTIST_T, True),
+             ("Side Indicator Text", ids.SIDE_INDICATOR_T, True),
              ("Side Indicator", ids.SIDE_INDICATOR_O),
              ("Collector Information", ids.COLLECTOR_INFORMATION_T, True),
              ("Set Icon", ids.SET_O)]
@@ -1057,9 +1092,8 @@ def info_fail(cardname, message):
 
 
 if __name__ == '__main__':
-    # process_cards([("Neverwinter Dryad", ""), ("Brushfire Elemental", "ZNR"), ("Roiling Regrowth", "ZNR"),
-    #                ("Kazandu Mammoth", "")])
-    process_cards([("Roiling Regrowth", "ZNR"), ("Arlinn, Voice of the Pack", "")])
+    process_cards([("Waking the Trolls", ""),
+                   ("Druid Class", "")])
 
-    # helper_generate_ids("front", "uce")
-    # helper_generate_ids("back", "u13b9")
+    # helper_generate_ids("front", "uff")
+    # helper_generate_ids("back", "u96e")

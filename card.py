@@ -9,6 +9,8 @@ class Card:
         self.type_line = ""
         self.colors = []
         self.color_identity = []
+        self.produced_mana = []
+        self.keywords = []
         self.oracle_text = ""
         self.power = ""
         self.toughness = ""
@@ -32,6 +34,10 @@ class Card:
             self.colors = args["colors"]
         if "color_identity" in args:
             self.color_identity = args["color_identity"]
+        if "produced_mana" in args:
+            self.produced_mana = args["produced_mana"]
+        if "keywords" in args:
+            self.keywords = args["keywords"]
         if "card_faces" in args:
             for card_face in args["card_faces"]:
                 self.card_faces.append(Card(card_face))
@@ -55,6 +61,9 @@ class Card:
             self.image_uris = args["image_uris"]
 
         for face in self.card_faces:
+            if len(face.colors) == 0:
+                if "Land" in face.type_line:
+                    face.colors.extend(self.produced_mana)
             if face.artist == "":
                 face.artist = self.artist
             if face.collector_number == "":
