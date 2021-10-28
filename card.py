@@ -1,3 +1,6 @@
+from helper import helper_mana_cost_to_color_array
+
+
 class Card:
 
     def __init__(self, args: dict):
@@ -62,8 +65,10 @@ class Card:
 
         for face in self.card_faces:
             if len(face.colors) == 0:
-                if "Land" in face.type_line:
+                if face.type_line in ["Land"]:
                     face.colors.extend(self.produced_mana)
+                if self.layout in ["split"]:
+                    face.colors.extend(helper_mana_cost_to_color_array(face.mana_cost))
             if face.artist == "":
                 face.artist = self.artist
             if face.collector_number == "":
