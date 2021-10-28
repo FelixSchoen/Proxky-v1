@@ -69,6 +69,9 @@ def card_layout_planeswalker(id_set):
 
 
 def card_layout_no_value(id_set):
+    if ids.VALUE_O not in id_set:
+        return
+
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
     # Hide value
@@ -123,6 +126,18 @@ def card_layout_split(id_set):
 
     group_normal = tree.find(".//Group[@Self='" + id_set[ids.GROUP_SPLIT_O] + "']")
     group_normal.set("Visible", "true")
+
+    tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+
+def card_layout_adventure(id_set):
+    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+    oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
+    oracle_text.set("Visible", "false")
+
+    layout_adventure = tree.find(".//Group[@Self='" + id_set[ids.GROUP_ORACLE_ADVENTURE_O] + "']")
+    layout_adventure.set("Visible", "true")
 
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 

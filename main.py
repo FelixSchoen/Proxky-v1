@@ -10,13 +10,42 @@ from carddata import *
 from layout import *
 
 
-def process_cards(card_names: list[(str, str)]):
+def process_decklist(path):
+    cards = []
+
+    with open(path) as f:
+        lines = f.readlines()
+        for line in lines:
+            if re.match(regex_decklist_id, line) is not None:
+                result = re.match(regex_decklist_id, line)
+                id = result.group("id")
+                cards.append(("Cardname", "id", id))
+            else:
+                result = re.match(regex_decklist, line)
+                name = result.group("name")
+                card_set = result.group("set")
+
+                if card_set is not None:
+                    cards.append((name, "set", card_set))
+                else:
+                    cards.append((name, "normal"))
+    process_cards(cards)
+
+
+def process_cards(card_names: list[(str, str, str)]):
     for i, card_name in enumerate(card_names):
         start_time = time.time()
 
-        response = requests.get(
-            api_url + "/cards/named?exact=" + urllib.parse.quote(card_name[0]) + "&set=" + urllib.parse.quote(
-                card_name[1]))
+        if card_name[1] == "set":
+            response = requests.get(
+                api_url + "/cards/named?exact=" + urllib.parse.quote(card_name[0]) + "&set=" + urllib.parse.quote(
+                    card_name[2]))
+        elif card_name[1] == "id":
+            response = requests.get(
+                api_url + "/cards/" + urllib.parse.quote(card_name[2]))
+        else:
+            response = requests.get(
+                api_url + "/cards/named?exact=" + urllib.parse.quote(card_name[0]))
 
         # Check status code
         if response.status_code != 200:
@@ -25,7 +54,7 @@ def process_cards(card_names: list[(str, str)]):
 
         card = Card(json.loads(response.text))
         if process_card(card):
-            info_success(card_name[0], "Successfully processed card")
+            info_success(card.name, "Successfully processed card")
 
         end_time = time.time()
         if (end_time - start_time) * 1000 < 100 and i < len(card_names) - 1:
@@ -54,20 +83,33 @@ def process_card(card: Card):
     if card.layout in ["normal", "class", "saga"]:
         card_delete_backside(id_general_back)
 
-        card_fill(card, id_general_front)
+        card_fill(card, id_general_front, card.layout)
     elif card.layout in ["modal_dfc", "transform"]:
         card_layout_double_faced([id_general_front, id_general_back])
 
         set_modal(card, [id_general_front, id_general_back], card.layout)
 
-        card_fill(card.card_faces[0], id_general_front)
-        card_fill(card.card_faces[1], id_general_back)
+        card_fill(card.card_faces[0], id_general_front, card.layout)
+        card_fill(card.card_faces[1], id_general_back, card.layout)
     elif card.layout in ["split"]:
         card_layout_split(id_general_front)
         card_delete_backside(id_general_back)
 
-        card_fill(card.card_faces[0], id_general_front_st)
-        card_fill(card.card_faces[1], id_general_front_sb)
+        card_fill(card.card_faces[0], id_general_front_st, card.layout)
+        card_fill(card.card_faces[1], id_general_front_sb, card.layout)
+    elif card.layout in ["adventure"]:
+        card_layout_adventure(id_general_front)
+        card_delete_backside(id_general_back)
+
+        id_adventure_right = id_general_front.copy()
+        id_adventure_right[ids.ORACLE_TEXT_T] = id_general_front_adventure[ids.ADVENTURE_ORACLE_TEXT_R_T]
+        id_adventure_right[ids.ORACLE_TEXT_O] = id_general_front_adventure[ids.ADVENTURE_ORACLE_TEXT_R_O]
+
+        id_adventure_left = id_general_front_adventure.copy()
+        id_adventure_left[ids.ORACLE_TEXT_T] = id_adventure_left[ids.ADVENTURE_ORACLE_TEXT_L_T]
+
+        card_fill(card.card_faces[1], id_adventure_left, card.layout)
+        card_fill(card.card_faces[0], id_adventure_right, card.layout)
 
     # Repackage preset, remove old files and rename to correct extension
     shutil.make_archive(target_file_path, "zip", "data/memory")
@@ -80,7 +122,7 @@ def process_card(card: Card):
     return True
 
 
-def card_fill(card: Card, id_set):
+def card_fill(card: Card, id_set, layout):
     types = helper_get_card_types(card)
 
     if "Planeswalker" in types:
@@ -111,6 +153,8 @@ def card_fill(card: Card, id_set):
     # Oracle Text
     if "Planeswalker" in types:
         set_planeswalker_text(card, id_set)
+    elif layout in ["adventure"]:
+        set_default_oracle_text(card, id_set, left_align=True)
     else:
         set_default_oracle_text(card, id_set)
 
@@ -128,9 +172,11 @@ def card_fill(card: Card, id_set):
 
 
 if __name__ == '__main__':
-    process_cards([("Life // Death", ""), ])
+    process_decklist("data/decklist.txt")
+    # process_cards([("Lotus Cobra", "set", "ZNR"), ("Lotus Cobra", "id", "151bdf3a-4445-43b1-8cea-2737c13d9dee")])
 
     # helper_generate_ids("front", "uff")
     # helper_generate_ids("front", "uff", mode="split", prefix="ST")
     # helper_generate_ids("front", "uff", mode="split", prefix="SB")
+    # helper_generate_ids("front_adventure", "uff", mode="adventure")
     # helper_generate_ids("back", "u2635")

@@ -201,13 +201,30 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
                       ("Planeswalker Text 2", ids.PLANESWALKER_TEXT_O),
                       ("Planeswalker Text 3", ids.PLANESWALKER_TEXT_O),
                       ("Planeswalker Text 4", ids.PLANESWALKER_TEXT_O),
+                      ("Layout Adventure", ids.GROUP_ORACLE_ADVENTURE_O),
                       ("Side Indicator Text", ids.SIDE_INDICATOR_T, True),
                       ("Side Indicator", ids.SIDE_INDICATOR_O)]
+
+    # IDs to add for adventure cards
+    names_adventure = [("Adventure Type", ids.TYPE_O),
+                       ("Adventure Name", ids.NAME_T, True),
+                       ("Adventure Type Line", ids.TYPE_LINE_T, True),
+                       ("Adventure Mana Cost", ids.MANA_COST_T, True),
+                       ("Adventure Color Bar", ids.COLOR_BARS_O),
+                       ("Adventure Color Bar Bleed", ids.COLOR_BARS_O),
+                       ("Adventure Color Bar", ids.GRADIENTS_O, "FillColor"),
+                       ("Adventure Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
+                       ("Adventure Oracle Text Left", ids.ADVENTURE_ORACLE_TEXT_L_T, True),
+                       ("Adventure Oracle Text Left", ids.ADVENTURE_ORACLE_TEXT_L_O),
+                       ("Adventure Oracle Text Right", ids.ADVENTURE_ORACLE_TEXT_R_T, True),
+                       ("Adventure Oracle Text Right", ids.ADVENTURE_ORACLE_TEXT_R_O)]
 
     names = names_base
 
     if mode == "standard":
         names.extend(names_standard)
+    elif mode == "adventure":
+        names = names_adventure
 
     with open("data/ids.txt", "a") as f:
         if prefix == "":

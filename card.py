@@ -63,11 +63,17 @@ class Card:
         if "image_uris" in args:
             self.image_uris = args["image_uris"]
 
+        if len(self.colors) == 0:
+            if "Land" in self.type_line:
+                self.colors.extend(self.produced_mana)
+
         for face in self.card_faces:
+            if len(face.image_uris) == 0:
+                face.image_uris = self.image_uris
             if len(face.colors) == 0:
-                if face.type_line in ["Land"]:
+                if "Land" in face.type_line:
                     face.colors.extend(self.produced_mana)
-                if self.layout in ["split"]:
+                if self.layout in ["split", "adventure"]:
                     face.colors.extend(helper_mana_cost_to_color_array(face.mana_cost))
             if face.artist == "":
                 face.artist = self.artist

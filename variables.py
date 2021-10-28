@@ -25,11 +25,16 @@ class ids:
     GRADIENTS_O = "id_gradients_o"
     ORACLE_TEXT_T = "id_oracle_text_t"
     ORACLE_TEXT_O = "id_oracle_text_o"
+    ADVENTURE_ORACLE_TEXT_L_T = "id_adventure_oracle_text_l_t"
+    ADVENTURE_ORACLE_TEXT_L_O = "id_adventure_oracle_text_l_o"
+    ADVENTURE_ORACLE_TEXT_R_T = "id_adventure_oracle_text_r_t"
+    ADVENTURE_ORACLE_TEXT_R_O = "id_adventure_oracle_text_r_o"
     GROUP_ORACLE_PLANESWALKER_O = "id_group_oracle_planeswalker_o"
     PLANESWALKER_VALUE_T = "id_planeswalker_value_t"
     PLANESWALKER_VALUE_O = "id_planeswalker_value_o"
     PLANESWALKER_TEXT_T = "id_planeswalker_text_t"
     PLANESWALKER_TEXT_O = "id_planeswalker_text_o"
+    GROUP_ORACLE_ADVENTURE_O = "id_group_oracle_adventure_o"
     MASK_O = "id_mask_o"
     VALUE_T = "id_value_t"
     VALUE_O = "id_value_o"
@@ -77,6 +82,7 @@ id_general_front = {
     "id_planeswalker_value_o": ['u25a', 'u22e', 'u202', 'u1d6'],
     "id_planeswalker_text_t": ['u232', 'u206', 'u1da', 'u1ae'],
     "id_planeswalker_text_o": ['u244', 'u218', 'u1ec', 'u1c0'],
+    "id_group_oracle_adventure_o": "ub82",
     "id_side_indicator_t": "u160",
     "id_side_indicator_o": "u153",
 }
@@ -126,6 +132,19 @@ id_general_front_sb = {
     "id_collector_information_t": "u1c24",
     "id_set_o": "u1c20",
 }
+id_general_front_adventure = {
+    "id_spread": "uff",
+    "id_type_o": "ubca",
+    "id_name_t": "ubb6",
+    "id_type_line_t": "ub9f",
+    "id_mana_cost_t": "ub88",
+    "id_color_bars_o": ['uc15', 'uc16'],
+    "id_gradients_o": ['udf', 'udf'],
+    "id_adventure_oracle_text_l_t": "uc00",
+    "id_adventure_oracle_text_l_o": "ubfd",
+    "id_adventure_oracle_text_r_t": "ube9",
+    "id_adventure_oracle_text_r_o": "ube6",
+}
 id_general_back = {
     "id_spread": "u2635",
     "id_artwork_o": "u2a41",
@@ -157,6 +176,7 @@ id_general_back = {
     "id_planeswalker_value_o": ['u29a6', 'u2978', 'u294a', 'u291b'],
     "id_planeswalker_text_t": ['u2992', 'u2964', 'u2936', 'u2907'],
     "id_planeswalker_text_o": ['u298f', 'u2961', 'u2932', 'u2904'],
+    "id_group_oracle_adventure_o": "u2888",
     "id_side_indicator_t": "u2840",
     "id_side_indicator_o": "u2838",
 }
@@ -172,7 +192,7 @@ api_url = "https://api.scryfall.com"
 
 # Folders
 f_preset = "D:/Drive/Creative/Magic/Proxky/Types/General.idml"
-f_output = "D:/Games/Magic/Proxky/v1/Documents/Test"
+f_output = "D:/Games/Magic/Proxky/v1/Documents"
 f_artwork = "D:/Games/Magic/Proxky/v1/Artwork"
 f_artwork_downloaded = "D:/Games/Magic/Proxky/v1/ArtworkDownload"
 f_icon_types = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Card Types"
@@ -180,7 +200,7 @@ f_icon_mana = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Mana"
 f_icon_set = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Set"
 
 # Enumerations
-supported_layouts = ["normal", "modal_dfc", "transform", "split", "class", "saga"]
+supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga"]
 
 # Types
 mana_types = ["W", "U", "B", "R", "G", "C"]
@@ -206,6 +226,7 @@ mana_mapping = {
     "{8}": "8",
     "{9}": "9",
     "{10}": "",
+    "{X}": "X",
     "{E}": "E",
 }
 color_mapping = {
@@ -219,14 +240,16 @@ color_mapping = {
 
 # Regex
 regex = [
-    (["({[A-Z0-9]+})+"], "font", ("KyMana", "")),
-    (["Adamant", "Addendum", "Battalion", "Bloodrush", "Channel", "Chroma", "Cohort", "Constellation", "Converge",
+    ([r"({[A-Z0-9]+})+"], "font", ("KyMana", "")),
+    ([r"Adamant", "Addendum", "Battalion", "Bloodrush", "Channel", "Chroma", "Cohort", "Constellation", "Converge",
       "Council's dilemma", "Coven", "Delirium", "Domain", "Eminence", "Enrage", "Fateful hour", "Ferocious",
       "Formidable", "Grandeur", "Hellbent", "Heroic", "Imprint", "Join forces", "Kinship", "Landfall", "Lieutenant",
       "Magecraft", "Metalcraft", "Morbid", "Pack tactics", "Parley", "Radiance", "Raid", "Rally", "Revolt",
       "Spell mastery", "Strive", "Sweep", "Tempting offer", "Threshold", "Underdog", "Undergrowth",
       "Will of the council"], "font", ("Plantin MT Pro", "Italic")),
-    ([" ?\(.+\)"], "type", "reminder")
+    ([r" ?\(.+\)"], "type", "reminder")
 ]
-regex_planeswalker = [(["[\+|−]?\d+: "], "type", "loyalty")]
+regex_planeswalker = [([r"[\+|−]?\d+: "], "type", "loyalty")]
 regex_leveler = r"[\"LEVEL [\d]+(-[\d]+|\+)\\n([\d]+|\*)/([\d]+|\*)\"]"
+regex_decklist_id = r"ID: (?P<id>.+)"
+regex_decklist = r"^(?P<amount>\d+) (?P<name>.+?)(?: \[(?P<set>.+)\])?$"

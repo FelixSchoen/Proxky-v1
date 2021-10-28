@@ -4,6 +4,9 @@ from insert_xml import *
 
 
 def set_artwork(card, id_set):
+    if ids.ARTWORK_O not in id_set:
+        return
+
     id_spread = id_set[ids.SPREAD]
     id_artwork = id_set[ids.ARTWORK_O]
 
@@ -49,6 +52,8 @@ def set_type_icon(card, id_set):
     types = helper_get_card_types(card)
     if "Legendary" in types:
         types.remove("Legendary")
+    if "Basic" in types:
+        types.remove("Basic")
 
     if len(types) > 1:
         card_type = "Multiple"
@@ -221,13 +226,13 @@ def set_oracle_text(oracle_text, object_id, left_align=False):
     child = tree.find(".//CharacterStyleRange[1]")
     parent.remove(child)
 
-    if len(oracle_text) > 100 | left_align:
+    if len(oracle_text) > 100 or left_align:
         parent.set("Justification", "LeftAlign")
 
     oracle_text_array = helper_split_string_along_regex(oracle_text, *regex)
 
     oracle_text_array = list(filter(lambda x: (x[2] != "reminder"), oracle_text_array))
-    if oracle_text_array[0][0].find("\n") == 0:
+    if len(oracle_text_array) > 0 and oracle_text_array[0][0].find("\n") == 0:
         oracle_text_array[0] = (oracle_text_array[0][0][1:], oracle_text_array[0][1], oracle_text_array[0][2])
 
     for part in oracle_text_array:
@@ -248,10 +253,15 @@ def set_oracle_text(oracle_text, object_id, left_align=False):
 
 
 def set_default_oracle_text(card, id_set, left_align=False):
+    if ids.ORACLE_TEXT_T not in id_set:
+        return
     set_oracle_text(card.oracle_text, id_set[ids.ORACLE_TEXT_T], left_align)
 
 
 def set_value(card, id_set):
+    if ids.VALUE_T not in id_set:
+        return
+
     id_value = id_set[ids.VALUE_T]
 
     if card.power != "" or card.toughness != "":
@@ -266,12 +276,18 @@ def set_value(card, id_set):
 
 
 def set_artist(card, id_set):
+    if ids.ARTIST_T not in id_set:
+        return
+
     id_artist = id_set[ids.ARTIST_T]
 
     insert_value_content(id_artist, card.artist)
 
 
 def set_collector_information(card, id_set):
+    if ids.COLLECTOR_INFORMATION_T not in id_set:
+        return
+
     id_collector_information = id_set[ids.COLLECTOR_INFORMATION_T]
 
     insert_value_content(id_collector_information,
@@ -279,6 +295,9 @@ def set_collector_information(card, id_set):
 
 
 def set_set(card, id_set):
+    if ids.SET_O not in id_set:
+        return
+
     id_spread = id_set[ids.SPREAD]
     id_set_icon = id_set[ids.SET_O]
 
