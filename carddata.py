@@ -54,8 +54,10 @@ def set_type_icon(card, id_set):
         types.remove("Legendary")
     if "Basic" in types:
         types.remove("Basic")
+    if "Token" in types:
+        types.remove("Token")
 
-    if len(types) > 1:
+    if len(types) != 1:
         card_type = "Multiple"
     else:
         card_type = types[0]
@@ -229,7 +231,7 @@ def set_oracle_text(oracle_text, object_id, left_align=False):
     if len(oracle_text) > 100 or left_align:
         parent.set("Justification", "LeftAlign")
 
-    oracle_text_array = helper_split_string_along_regex(oracle_text, *regex)
+    oracle_text_array = helper_split_string_along_regex(oracle_text, *regex_oracle)
 
     oracle_text_array = list(filter(lambda x: (x[2] != "reminder"), oracle_text_array))
     if len(oracle_text_array) > 0 and oracle_text_array[0][0].find("\n") == 0:

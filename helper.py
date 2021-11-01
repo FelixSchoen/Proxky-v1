@@ -153,6 +153,7 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
 
     # IDs base case
     names_base = [("Artwork", ids.ARTWORK_O),
+                  ("Header", ids.GROUP_HEADER_O),
                   ("Type", ids.TYPE_O),
                   ("Name", ids.NAME_T, True),
                   ("Type Line", ids.TYPE_LINE_T, True),
@@ -280,3 +281,14 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
                 print(previous_entry + ": " + str(carry) + ",", file=f)
 
         print("}", file=f)
+
+
+def helper_generate_all_ids():
+    front_id = "uff"
+    back_id = "u2ade"
+
+    helper_generate_ids("front", front_id)
+    helper_generate_ids("front", front_id, mode="split", prefix="ST")
+    helper_generate_ids("front", front_id, mode="split", prefix="SB")
+    helper_generate_ids("front_adventure", front_id, mode="adventure")
+    helper_generate_ids("back", back_id)

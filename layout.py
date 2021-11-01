@@ -142,6 +142,40 @@ def card_layout_adventure(id_set):
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
 
+def card_layout_token(id_set, card):
+    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+    oracle_entries = helper_split_string_along_regex(card.oracle_text, *regex_oracle)
+    if all(oracle_type == "reminder" for (_, _, oracle_type) in oracle_entries):
+        card_layout_no_oracle_text(id_set, card)
+
+
+def card_layout_no_oracle_text(id_set, card):
+    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+    oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
+    oracle_text.set("Visible", "false")
+
+    artwork = tree.find(".//Rectangle[@Self='" + id_set[ids.ARTWORK_O] + "']")
+    header = tree.find(".//Group[@Self='" + id_set[ids.GROUP_HEADER_O] + "']")
+
+    additional_shift = 0
+
+    if card.power == "" and card.toughness == "":
+        additional_shift = VALUE_SHIFT_TOKEN_NO_VALUE
+
+    helper_indesign_shift_y_coordinates(artwork, [0, 0, VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE + additional_shift,
+                                                  VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE + additional_shift])
+
+    coordinates = header.attrib["ItemTransform"].split(" ")
+    header.set("ItemTransform",
+               coordinates[0] + " " + coordinates[1] + " " + coordinates[2] + " " + coordinates[3] + " " +
+               coordinates[4] + " " + str(
+                   float(coordinates[5]) + VALUE_SHIFT_HEADER_TOKEN_WITH_VALUE + additional_shift))
+
+    tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+
 def card_delete_backside(id_set):
     os.remove("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 

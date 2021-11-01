@@ -110,6 +110,11 @@ def process_card(card: Card):
 
         card_fill(card.card_faces[1], id_adventure_left, card.layout)
         card_fill(card.card_faces[0], id_adventure_right, card.layout)
+    elif card.layout in ["token"]:
+        card_layout_token(id_general_front, card)
+        card_delete_backside(id_general_back)
+
+        card_fill(card, id_general_front, card.layout)
 
     # Repackage preset, remove old files and rename to correct extension
     shutil.make_archive(target_file_path, "zip", "data/memory")
@@ -125,6 +130,11 @@ def process_card(card: Card):
 def card_fill(card: Card, id_set, layout):
     types = helper_get_card_types(card)
 
+    # Check if basic
+    if "Basic Land" in card.type_line:
+        card_layout_no_oracle_text(id_set, card)
+
+    # Value
     if "Planeswalker" in types:
         card_layout_planeswalker(id_set)
         if card.loyalty == "":
@@ -172,11 +182,7 @@ def card_fill(card: Card, id_set, layout):
 
 
 if __name__ == '__main__':
-    process_decklist("data/decklist.txt")
+     process_decklist("data/decklist.txt")
     # process_cards([("Lotus Cobra", "set", "ZNR"), ("Lotus Cobra", "id", "151bdf3a-4445-43b1-8cea-2737c13d9dee")])
 
-    # helper_generate_ids("front", "uff")
-    # helper_generate_ids("front", "uff", mode="split", prefix="ST")
-    # helper_generate_ids("front", "uff", mode="split", prefix="SB")
-    # helper_generate_ids("front_adventure", "uff", mode="adventure")
-    # helper_generate_ids("back", "u2635")
+    # helper_generate_all_ids()

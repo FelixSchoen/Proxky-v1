@@ -14,6 +14,7 @@ class ids:
     SPREAD = "id_spread"
     GROUP_NORMAL_O = "id_group_normal_o"
     GROUP_SPLIT_O = "id_group_split_o"
+    GROUP_HEADER_O = "id_group_header_o"
     ARTWORK_O = "id_artwork_o"
     TYPE_O = "id_type_o"
     NAME_T = "id_name_t"
@@ -54,6 +55,7 @@ class ids:
 id_general_front = {
     "id_spread": "uff",
     "id_artwork_o": "u2e6",
+    "id_group_header_o": "u273",
     "id_type_o": "u2e5",
     "id_name_t": "u2d0",
     "id_type_line_t": "u2ba",
@@ -89,6 +91,7 @@ id_general_front = {
 id_general_front_st = {
     "id_spread": "uff",
     "id_artwork_o": "u18f4",
+    "id_group_header_o": "u1886",
     "id_type_o": "u18f3",
     "id_name_t": "u18df",
     "id_type_line_t": "u18c8",
@@ -112,6 +115,7 @@ id_general_front_st = {
 id_general_front_sb = {
     "id_spread": "uff",
     "id_artwork_o": "u1ccf",
+    "id_group_header_o": "u1c81",
     "id_type_o": "u1cce",
     "id_name_t": "u1cba",
     "id_type_line_t": "u1ca3",
@@ -146,39 +150,40 @@ id_general_front_adventure = {
     "id_adventure_oracle_text_r_o": "ube6",
 }
 id_general_back = {
-    "id_spread": "u2635",
-    "id_artwork_o": "u2a41",
-    "id_type_o": "u2a40",
-    "id_name_t": "u2a2c",
-    "id_type_line_t": "u2a15",
-    "id_mana_cost_t": "u29fe",
-    "id_color_bars_o": ['u29f8', 'u29f6', 'u2812', 'u2811'],
+    "id_spread": "u2ade",
+    "id_artwork_o": "u2eea",
+    "id_group_header_o": "u2e7d",
+    "id_type_o": "u2ee9",
+    "id_name_t": "u2ed5",
+    "id_type_line_t": "u2ebe",
+    "id_mana_cost_t": "u2ea7",
+    "id_color_bars_o": ['u2ea1', 'u2ea0', 'u2cbb', 'u2cba'],
     "id_gradients_o": ['udf', 'udf', 'udf', 'udf'],
-    "id_oracle_text_t": "u29c0",
-    "id_oracle_text_o": "u29bd",
-    "id_mask_o": "u27f4",
-    "id_value_t": "u2873",
-    "id_value_o": "u2870",
-    "id_value_short_frame_o": "u281a",
-    "id_value_long_frame_o": "u2813",
-    "id_mask_short_o": "u2819",
-    "id_mask_long_o": "u27f6",
-    "id_bottom_o": "u27f7",
-    "id_artist_t": "u2857",
-    "id_collector_information_t": "u2824",
-    "id_set_o": "u2820",
-    "id_group_normal_o": "u27f2",
-    "id_group_split_o": "u263b",
-    "id_modal_t": "u29de",
-    "id_group_modal_o": "u29d5",
-    "id_group_oracle_planeswalker_o": "u2903",
-    "id_planeswalker_value_t": ['u29a9', 'u297b', 'u294d', 'u291e'],
-    "id_planeswalker_value_o": ['u29a6', 'u2978', 'u294a', 'u291b'],
-    "id_planeswalker_text_t": ['u2992', 'u2964', 'u2936', 'u2907'],
-    "id_planeswalker_text_o": ['u298f', 'u2961', 'u2932', 'u2904'],
-    "id_group_oracle_adventure_o": "u2888",
-    "id_side_indicator_t": "u2840",
-    "id_side_indicator_o": "u2838",
+    "id_oracle_text_t": "u2e69",
+    "id_oracle_text_o": "u2e66",
+    "id_mask_o": "u2c9e",
+    "id_value_t": "u2d1c",
+    "id_value_o": "u2d19",
+    "id_value_short_frame_o": "u2cc3",
+    "id_value_long_frame_o": "u2cbd",
+    "id_mask_short_o": "u2cc2",
+    "id_mask_long_o": "u2ca0",
+    "id_bottom_o": "u2ca1",
+    "id_artist_t": "u2d00",
+    "id_collector_information_t": "u2ccd",
+    "id_set_o": "u2cc9",
+    "id_group_normal_o": "u2c9c",
+    "id_group_split_o": "u2ae4",
+    "id_modal_t": "u2e87",
+    "id_group_modal_o": "u2e7e",
+    "id_group_oracle_planeswalker_o": "u2dac",
+    "id_planeswalker_value_t": ['u2e52', 'u2e23', 'u2df5', 'u2dc7'],
+    "id_planeswalker_value_o": ['u2e4f', 'u2e20', 'u2df2', 'u2dc4'],
+    "id_planeswalker_text_t": ['u2e3b', 'u2e0c', 'u2dde', 'u2db0'],
+    "id_planeswalker_text_o": ['u2e37', 'u2e09', 'u2ddb', 'u2dad'],
+    "id_group_oracle_adventure_o": "u2d31",
+    "id_side_indicator_t": "u2ce9",
+    "id_side_indicator_o": "u2ce1",
 }
 
 # Values
@@ -186,6 +191,9 @@ VALUE_MODAL_HEIGHT = 23.822047244094502 - 13.546456692913399
 VALUE_DISTANCE_VALUE = 4.960627698522806
 VALUE_TOP_PLANESWALKER = -46.204724409448914
 VALUE_BOT_PLANESWALKER = 38.83464566929126
+VALUE_SHIFT_HEADER_TOKEN_WITH_VALUE = 80.50393700787403 + abs(-1.559055118110237)
+VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE = abs(-200.6929133858268) - abs(-118.62992125984258)
+VALUE_SHIFT_TOKEN_NO_VALUE = abs(-210.6141732283465) - abs(-200.6929133858268)
 
 # API
 api_url = "https://api.scryfall.com"
@@ -200,7 +208,7 @@ f_icon_mana = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Mana"
 f_icon_set = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Set"
 
 # Enumerations
-supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga"]
+supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga", "token"]
 
 # Types
 mana_types = ["W", "U", "B", "R", "G", "C"]
@@ -239,7 +247,7 @@ color_mapping = {
 }
 
 # Regex
-regex = [
+regex_oracle = [
     ([r"({[A-Z0-9]+})+"], "font", ("KyMana", "")),
     ([r"Adamant", "Addendum", "Battalion", "Bloodrush", "Channel", "Chroma", "Cohort", "Constellation", "Converge",
       "Council's dilemma", "Coven", "Delirium", "Domain", "Eminence", "Enrage", "Fateful hour", "Ferocious",
