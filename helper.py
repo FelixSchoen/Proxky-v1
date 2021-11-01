@@ -285,7 +285,7 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
 
 def helper_generate_all_ids():
     front_id = "uff"
-    back_id = "u2ade"
+    back_id = "u2f79"
 
     helper_generate_ids("front", front_id)
     helper_generate_ids("front", front_id, mode="split", prefix="ST")

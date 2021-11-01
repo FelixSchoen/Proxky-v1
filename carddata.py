@@ -304,6 +304,10 @@ def set_set(card, id_set):
     id_set_icon = id_set[ids.SET_O]
 
     if not helper_file_exists(f_icon_set + "/" + card.set.lower() + ".svg"):
-        info_warn(card.name, "No icon for set")
+        if card.set.lower()[0] == "t" and helper_file_exists(f_icon_set + "/" + card.set.lower()[1:] + ".svg"):
+            info_warn(card.name, "Assuming that card is token")
+            insert_graphic(card, id_spread, id_set_icon, f_icon_set, card.set.lower()[1:])
+        else:
+            info_warn(card.name, "No icon for set")
     else:
         insert_graphic(card, id_spread, id_set_icon, f_icon_set, card.set.lower())

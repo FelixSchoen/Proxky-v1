@@ -183,6 +183,5 @@ def card_fill(card: Card, id_set, layout):
 
 if __name__ == '__main__':
      process_decklist("data/decklist.txt")
-    # process_cards([("Lotus Cobra", "set", "ZNR"), ("Lotus Cobra", "id", "151bdf3a-4445-43b1-8cea-2737c13d9dee")])
 
     # helper_generate_all_ids()
