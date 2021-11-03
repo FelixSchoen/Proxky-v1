@@ -1,5 +1,10 @@
 from helper import *
 
+
+def info_normal(cardname, message):
+    print(f"[{helper_truncate(cardname)}]{bcolors.ENDC} \t\t{message}")
+
+
 def info_success(cardname, message):
     print(f"{bcolors.OKGREEN}[{helper_truncate(cardname)}]{bcolors.ENDC} \t\t{message}")
 

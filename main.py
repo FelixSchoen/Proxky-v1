@@ -3,6 +3,7 @@ import shutil
 import time
 import urllib.parse
 import zipfile
+from os import listdir
 from time import sleep
 
 from card import *
@@ -19,7 +20,7 @@ def process_decklist(path):
             if re.match(regex_decklist_id, line) is not None:
                 result = re.match(regex_decklist_id, line)
                 id = result.group("id")
-                cards.append(("Cardname", "id", id))
+                cards.append(("ID Card", "id", id))
             else:
                 result = re.match(regex_decklist, line)
                 name = result.group("name")
@@ -182,6 +183,6 @@ def card_fill(card: Card, id_set, layout):
 
 
 if __name__ == '__main__':
-     process_decklist("data/decklist.txt")
+    process_decklist("data/decks/decklist.txt")
 
     # helper_generate_all_ids()

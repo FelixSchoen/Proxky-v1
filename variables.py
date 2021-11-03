@@ -227,7 +227,7 @@ mana_mapping = {
     "{1}": "1",
     "{2}": "2",
     "{3}": "3",
-    "{4}": "5",
+    "{4}": "4",
     "{5}": "5",
     "{6}": "6",
     "{7}": "7",
@@ -259,5 +259,5 @@ regex_oracle = [
 ]
 regex_planeswalker = [([r"[\+|−]?\d+: "], "type", "loyalty")]
 regex_leveler = r"[\"LEVEL [\d]+(-[\d]+|\+)\\n([\d]+|\*)/([\d]+|\*)\"]"
-regex_decklist_id = r"ID: (?P<id>.+)"
+regex_decklist_id = r"^(?P<amount>\d+) (?P<name>.+?)(?: \[(ID: (?P<id>.+))\])$"
 regex_decklist = r"^(?P<amount>\d+) (?P<name>.+?)(?: \[(?P<set>.+)\])?$"

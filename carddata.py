@@ -1,3 +1,5 @@
+from os import listdir
+
 import requests
 
 from insert_xml import *
@@ -16,12 +18,18 @@ def set_artwork(card, id_set):
 
     for possible_image_type in image_types:
         if not helper_file_exists(path + "." + possible_image_type):
+            if any(helper_file_exists(f_artwork + "/" + possible_set + "/" + card.name + "." + possible_image_type) for possible_set in listdir(f_artwork)):
+                image_type = "other"
             continue
         else:
             image_type = possible_image_type
 
+    if image_type == "other":
+        info_warn(card.name, "Artwork from different set exists")
+        image_type = "na"
+
     if image_type == "na":
-        info_warn(card.name, "No artwork exists, using Scryfall source")
+        info_normal(card.name, "No artwork exists, using Scryfall source")
 
         if "art_crop" not in card.image_uris:
             info_fail(card.name, "No artwork on Scryfall")
