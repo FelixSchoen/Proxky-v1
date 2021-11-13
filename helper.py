@@ -3,6 +3,9 @@ import os
 import re
 import xml.etree.ElementTree
 
+import win32com.client
+
+from info import info_normal
 from variables import *
 
 
@@ -75,9 +78,6 @@ def helper_vector_bounding_box(path, filename):
     return float(values[2]), float(values[3])
 
 
-def helper_truncate(string, size=20):
-    return string[:size - 2] + ".." if len(string) > size else string
-
 
 def helper_indesign_get_coordinates(element):
     point_top_left = element.find(".//PathPointType[1]")
@@ -148,8 +148,43 @@ def helper_mana_cost_to_color_array(mana_cost):
     return color_array
 
 
+def helper_cardfile_to_pdf(card):
+    cleansed_name = card.name.replace("//", "--")
+    input_folder_path = f_documents + "/" + card.set.upper()
+    input_file_path = input_folder_path + "/" + cleansed_name + ".idml"
+    output_folder_path = f_pdf + "/" + card.set.upper()
+    output_file_path = output_folder_path + "/" + cleansed_name + ".pdf"
+
+    if helper_file_exists(output_file_path):
+        info_normal(card.name, "PDF already exists, skipping creation...")
+        return
+
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)
+
+    app = win32com.client.Dispatch("InDesign.Application.2021")
+
+    myDocument = app.Open(input_file_path)
+
+    # myProfile = app.PreflightProfiles.Item(1)
+    # myPreflight = app.PreflightProcesses.add(myDocument, myProfile)
+
+    myPDFPreset = app.PDFExportPresets.Item(7)
+    idPDFType = 1952403524
+    myDocument.Export(idPDFType, output_file_path, False, myPDFPreset)
+    myDocument.Close(1852776480)
+    return app
+
+
+def helper_divide_chunks(l, n):
+    # looping till length l
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+
 def helper_generate_ids(name, spread, mode="standard", prefix=""):
-    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + spread + ".xml")
+    if mode != "printing":
+        tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + spread + ".xml")
 
     # IDs base case
     names_base = [("Artwork", ids.ARTWORK_O),
@@ -202,6 +237,8 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
                       ("Planeswalker Text 2", ids.PLANESWALKER_TEXT_O),
                       ("Planeswalker Text 3", ids.PLANESWALKER_TEXT_O),
                       ("Planeswalker Text 4", ids.PLANESWALKER_TEXT_O),
+                      ("Planeswalker Oracle Text", ids.PLANESWALKER_ORACLE_T, True),
+                      ("Planeswalker Oracle Text", ids.PLANESWALKER_ORACLE_O),
                       ("Layout Adventure", ids.GROUP_ORACLE_ADVENTURE_O),
                       ("Side Indicator Text", ids.SIDE_INDICATOR_T, True),
                       ("Side Indicator", ids.SIDE_INDICATOR_O)]
@@ -220,12 +257,27 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
                        ("Adventure Oracle Text Right", ids.ADVENTURE_ORACLE_TEXT_R_T, True),
                        ("Adventure Oracle Text Right", ids.ADVENTURE_ORACLE_TEXT_R_O)]
 
+    names_printing = [
+        ("Frame 1", ids.PRINTING_FRAME_O),
+        ("Frame 2", ids.PRINTING_FRAME_O),
+        ("Frame 3", ids.PRINTING_FRAME_O),
+        ("Frame 4", ids.PRINTING_FRAME_O),
+        ("Frame 5", ids.PRINTING_FRAME_O),
+        ("Frame 6", ids.PRINTING_FRAME_O),
+        ("Frame 7", ids.PRINTING_FRAME_O),
+        ("Frame 8", ids.PRINTING_FRAME_O),
+        ("Frame 9", ids.PRINTING_FRAME_O),
+    ]
+
     names = names_base
 
     if mode == "standard":
         names.extend(names_standard)
     elif mode == "adventure":
         names = names_adventure
+    elif mode == "printing":
+        names = names_printing
+        tree = xml.etree.ElementTree.parse("data/memory_print/Spreads/Spread_" + spread + ".xml")
 
     with open("data/ids.txt", "a") as f:
         if prefix == "":
@@ -285,10 +337,14 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
 
 def helper_generate_all_ids():
     front_id = "uff"
-    back_id = "u2f79"
+    back_id = "u38f2"
+    print_front_id = "uce"
+    print_back_id = "u20b"
 
     helper_generate_ids("front", front_id)
     helper_generate_ids("front", front_id, mode="split", prefix="ST")
     helper_generate_ids("front", front_id, mode="split", prefix="SB")
     helper_generate_ids("front_adventure", front_id, mode="adventure")
     helper_generate_ids("back", back_id)
+    helper_generate_ids("print_front", print_front_id, mode="printing")
+    helper_generate_ids("print_back", print_back_id, mode="printing")

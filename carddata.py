@@ -18,7 +18,8 @@ def set_artwork(card, id_set):
 
     for possible_image_type in image_types:
         if not helper_file_exists(path + "." + possible_image_type):
-            if any(helper_file_exists(f_artwork + "/" + possible_set + "/" + card.name + "." + possible_image_type) for possible_set in listdir(f_artwork)):
+            if any(helper_file_exists(f_artwork + "/" + possible_set + "/" + card.name + "." + possible_image_type) for
+                   possible_set in listdir(f_artwork)):
                 image_type = "other"
             continue
         else:
@@ -169,12 +170,12 @@ def set_planeswalker_text(card, id_set):
     modal = tree.find(".//Group[@Self='" + id_set[ids.GROUP_MODAL_O] + "']")
 
     amount_textboxes = amount_abilities
-    top_y_coordinate = VALUE_TOP_PLANESWALKER
+    top_y_coordinate = COORDINATE_TOP_ORACLE_TEXT
 
     if modal.attrib["Visible"] == "true":
         top_y_coordinate += VALUE_MODAL_HEIGHT
 
-    total_height = VALUE_BOT_PLANESWALKER + abs(top_y_coordinate)
+    total_height = COORDINATE_BOT_ORACLE_TEXT + abs(top_y_coordinate)
 
     if card.loyalty == "":
         total_height += VALUE_DISTANCE_VALUE
@@ -192,13 +193,37 @@ def set_planeswalker_text(card, id_set):
                    (id_set[ids.PLANESWALKER_TEXT_T][3], id_set[ids.PLANESWALKER_TEXT_O][3])]]
 
     if planeswalker_text[0][2] != "loyalty":
+        tf = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
+        tfp = tf.find(".//TextFramePreference[1]")
+        tfp.set("VerticalJustification", "CenterAlign")
+
         text_boxes.insert(0, [(id_set[ids.ORACLE_TEXT_T], id_set[ids.ORACLE_TEXT_O])])
         amount_textboxes += 1
         set_oracle_text(planeswalker_text[0][0], id_set[ids.ORACLE_TEXT_T], left_align=True)
         planeswalker_text = planeswalker_text[1:]
 
+    potential_additional_box = helper_split_string_along_regex(planeswalker_text[-1][0], ("\n", "type", "break"))
+    if len(potential_additional_box) > 1:
+        tf = tree.find(".//TextFrame[@Self='" + id_set[ids.PLANESWALKER_ORACLE_O] + "']")
+        tfp = tf.find(".//TextFramePreference[1]")
+        tfp.set("VerticalJustification", "CenterAlign")
+
+        text_boxes = text_boxes[0:amount_textboxes]
+        text_boxes.append([(id_set[ids.PLANESWALKER_ORACLE_T], id_set[ids.PLANESWALKER_ORACLE_O])])
+        amount_textboxes += 1
+
+        insert_string = ""
+
+        for i in range(2, len(potential_additional_box)):
+            insert_string += potential_additional_box[i][0]
+
+        set_oracle_text(insert_string, id_set[ids.PLANESWALKER_ORACLE_T], left_align=True)
+
+        planeswalker_text.pop()
+        planeswalker_text.append(potential_additional_box[0])
+
     step_size = total_height / amount_textboxes
-    shifter = amount_textboxes - amount_abilities
+    shifter = 1 if amount_textboxes > amount_abilities else 0
 
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
@@ -213,9 +238,13 @@ def set_planeswalker_text(card, id_set):
                 if i % 2 == 1:
                     object_box.set("FillColor", "Color/Grey")
 
+                top_left = object_box.find(".//PathPointType[1]")
+                x_coordinate, y_coordinate = top_left.attrib["Anchor"].split(" ")
+                y_coordinate = float(y_coordinate)
+
                 helper_indesign_set_y_coordinates(object_box,
-                                                  [top_y_coordinate, top_y_coordinate,
-                                                   top_y_coordinate + step_size, top_y_coordinate + step_size])
+                                                  [y_coordinate, y_coordinate,
+                                                   y_coordinate + step_size, y_coordinate + step_size])
                 shift_coordinates = [step_size * i, step_size * i, step_size * i, step_size * i]
                 helper_indesign_shift_y_coordinates(object_box, shift_coordinates)
             else:
@@ -277,7 +306,7 @@ def set_value(card, id_set):
     if card.power != "" or card.toughness != "":
         value_string = card.power + " / " + card.toughness
         if len(card.power) > 1 or len(card.toughness) > 1:
-            value_string.replace(" ", "")
+            value_string = value_string.replace(" ", "")
 
         insert_value_content(id_value, value_string)
 
@@ -316,6 +345,6 @@ def set_set(card, id_set):
             info_warn(card.name, "Assuming that card is token")
             insert_graphic(card, id_spread, id_set_icon, f_icon_set, card.set.lower()[1:])
         else:
-            info_warn(card.name, "No icon for set")
+            info_warn(card.name, "No icon for set: " + card.set.lower())
     else:
         insert_graphic(card, id_spread, id_set_icon, f_icon_set, card.set.lower())

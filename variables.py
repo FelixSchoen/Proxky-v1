@@ -35,6 +35,8 @@ class ids:
     PLANESWALKER_VALUE_O = "id_planeswalker_value_o"
     PLANESWALKER_TEXT_T = "id_planeswalker_text_t"
     PLANESWALKER_TEXT_O = "id_planeswalker_text_o"
+    PLANESWALKER_ORACLE_T = "id_planeswalker_oracle_t"
+    PLANESWALKER_ORACLE_O = "id_planeswalker_oracle_o"
     GROUP_ORACLE_ADVENTURE_O = "id_group_oracle_adventure_o"
     MASK_O = "id_mask_o"
     VALUE_T = "id_value_t"
@@ -49,6 +51,7 @@ class ids:
     SIDE_INDICATOR_O = "id_side_indicator_o"
     COLLECTOR_INFORMATION_T = "id_collector_information_t"
     SET_O = "id_set_o"
+    PRINTING_FRAME_O = "pid_frame_o"
 
 
 # IDs
@@ -84,6 +87,8 @@ id_general_front = {
     "id_planeswalker_value_o": ['u25a', 'u22e', 'u202', 'u1d6'],
     "id_planeswalker_text_t": ['u232', 'u206', 'u1da', 'u1ae'],
     "id_planeswalker_text_o": ['u244', 'u218', 'u1ec', 'u1c0'],
+    "id_planeswalker_oracle_t": "u342c",
+    "id_planeswalker_oracle_o": "u3429",
     "id_group_oracle_adventure_o": "ub82",
     "id_side_indicator_t": "u160",
     "id_side_indicator_o": "u153",
@@ -150,57 +155,73 @@ id_general_front_adventure = {
     "id_adventure_oracle_text_r_o": "ube6",
 }
 id_general_back = {
-    "id_spread": "u2f79",
-    "id_artwork_o": "u3384",
-    "id_group_header_o": "u3317",
-    "id_type_o": "u3383",
-    "id_name_t": "u336f",
-    "id_type_line_t": "u3358",
-    "id_mana_cost_t": "u3341",
-    "id_color_bars_o": ['u333b', 'u333a', 'u3155', 'u3154'],
+    "id_spread": "u38f2",
+    "id_artwork_o": "u3d16",
+    "id_group_header_o": "u3ca9",
+    "id_type_o": "u3d15",
+    "id_name_t": "u3d01",
+    "id_type_line_t": "u3ce9",
+    "id_mana_cost_t": "u3cd2",
+    "id_color_bars_o": ['u3ccc', 'u3ccb', 'u3ad0', 'u3acf'],
     "id_gradients_o": ['udf', 'udf', 'udf', 'udf'],
-    "id_oracle_text_t": "u3303",
-    "id_oracle_text_o": "u3300",
-    "id_mask_o": "u3138",
-    "id_value_t": "u31b6",
-    "id_value_o": "u31b3",
-    "id_value_short_frame_o": "u315d",
-    "id_value_long_frame_o": "u3157",
-    "id_mask_short_o": "u315c",
-    "id_mask_long_o": "u313a",
-    "id_bottom_o": "u313b",
-    "id_artist_t": "u319a",
-    "id_collector_information_t": "u3167",
-    "id_set_o": "u3163",
-    "id_group_normal_o": "u3136",
-    "id_group_split_o": "u2f7f",
-    "id_modal_t": "u3321",
-    "id_group_modal_o": "u3318",
-    "id_group_oracle_planeswalker_o": "u3247",
-    "id_planeswalker_value_t": ['u32ec', 'u32be', 'u3290', 'u3262'],
-    "id_planeswalker_value_o": ['u32e9', 'u32bb', 'u328d', 'u325f'],
-    "id_planeswalker_text_t": ['u32d5', 'u32a7', 'u3279', 'u324b'],
-    "id_planeswalker_text_o": ['u32d2', 'u32a4', 'u3276', 'u3248'],
-    "id_group_oracle_adventure_o": "u31cb",
-    "id_side_indicator_t": "u3183",
-    "id_side_indicator_o": "u317b",
+    "id_oracle_text_t": "u3c95",
+    "id_oracle_text_o": "u3c92",
+    "id_mask_o": "u3ab3",
+    "id_value_t": "u3b31",
+    "id_value_o": "u3b2e",
+    "id_value_short_frame_o": "u3ad7",
+    "id_value_long_frame_o": "u3ad1",
+    "id_mask_short_o": "u3ad6",
+    "id_mask_long_o": "u3ab5",
+    "id_bottom_o": "u3ab6",
+    "id_artist_t": "u3b15",
+    "id_collector_information_t": "u3ae1",
+    "id_set_o": "u3add",
+    "id_group_normal_o": "u3ab1",
+    "id_group_split_o": "u38f8",
+    "id_modal_t": "u3cb3",
+    "id_group_modal_o": "u3caa",
+    "id_group_oracle_planeswalker_o": "u3bc0",
+    "id_planeswalker_value_t": ['u3c7e', 'u3c4f', 'u3c21', 'u3bf3'],
+    "id_planeswalker_value_o": ['u3c7b', 'u3c4c', 'u3c1e', 'u3bef'],
+    "id_planeswalker_text_t": ['u3c67', 'u3c38', 'u3c0a', 'u3bdb'],
+    "id_planeswalker_text_o": ['u3c63', 'u3c35', 'u3c07', 'u3bd8'],
+    "id_planeswalker_oracle_t": "u3bc4",
+    "id_planeswalker_oracle_o": "u3bc1",
+    "id_group_oracle_adventure_o": "u3b46",
+    "id_side_indicator_t": "u3afe",
+    "id_side_indicator_o": "u3af5",
+}
+id_general_print_front = {
+    "id_spread": "uce",
+    "pid_frame_o": ['u3ca', 'u3d6', 'u3d8', 'u3d9', 'u3da', 'u3db', 'u3dc', 'u3dd', 'u3de'],
+}
+id_general_print_back = {
+    "id_spread": "u20b",
+    "pid_frame_o": ['u497', 'u496', 'u495', 'u494', 'u493', 'u492', 'u491', 'u490', 'u48e'],
 }
 
 # Values
 VALUE_MODAL_HEIGHT = 23.822047244094502 - 13.546456692913399
-VALUE_DISTANCE_VALUE = 4.960627698522806
-VALUE_TOP_PLANESWALKER = -46.204724409448914
-VALUE_BOT_PLANESWALKER = 38.83464566929126
-VALUE_SHIFT_HEADER_TOKEN_WITH_VALUE = 80.50393700787403 + abs(-1.559055118110237)
+VALUE_DISTANCE_VALUE = 4.960627698522806  # Distance how much the value panel extends over the bottom color line
+COORDINATE_TOP_ORACLE_TEXT = -47.905511811023686 \
+                             + 0  # Top coordinate of the oracle box, note not necessarily same for all boxes shifting
+COORDINATE_BOT_ORACLE_TEXT = 37.13385826771649
+VALUE_SHIFT_HEADER_TOKEN_WITH_VALUE = 80.50393700787403 + abs(
+    -1.559055118110237)  # How much to shift the header for a token that has a power toughness value
 VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE = abs(-200.6929133858268) - abs(-118.62992125984258)
-VALUE_SHIFT_TOKEN_NO_VALUE = abs(-210.6141732283465) - abs(-200.6929133858268)
+VALUE_SHIFT_TOKEN_NO_VALUE = abs(-210.6141732283465) - abs(
+    -200.6929133858268)  # How much to shift for a token without a value
 
 # API
 api_url = "https://api.scryfall.com"
 
 # Folders
 f_preset = "D:/Drive/Creative/Magic/Proxky/Types/General.idml"
-f_output = "D:/Games/Magic/Proxky/v1/Documents"
+f_preset_print = "D:/Drive/Creative/Magic/Proxky/Types/Printing.idml"
+f_documents = "D:/Games/Magic/Proxky/v1/Documents"
+f_pdf = "D:/Games/Magic/Proxky/v1/PDF"
+f_print = "D:/Games/Magic/Proxky/v1/Other/Print"
 f_artwork = "D:/Games/Magic/Proxky/v1/Artwork"
 f_artwork_downloaded = "D:/Games/Magic/Proxky/v1/ArtworkDownload"
 f_icon_types = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Card Types"
@@ -234,6 +255,16 @@ mana_mapping = {
     "{8}": "8",
     "{9}": "9",
     "{10}": "",
+    "{11}": "",
+    "{12}": "",
+    "{13}": "",
+    "{14}": "",
+    "{15}": "",
+    "{16}": "",
+    "{17}": "",
+    "{18}": "",
+    "{19}": "",
+    "{20}": "",
     "{X}": "X",
     "{E}": "E",
 }
@@ -255,9 +286,12 @@ regex_oracle = [
       "Magecraft", "Metalcraft", "Morbid", "Pack tactics", "Parley", "Radiance", "Raid", "Rally", "Revolt",
       "Spell mastery", "Strive", "Sweep", "Tempting offer", "Threshold", "Underdog", "Undergrowth",
       "Will of the council"], "font", ("Plantin MT Pro", "Italic")),
-    ([r" ?\(.+\)"], "type", "reminder")
+    ([r" ?\(.+\)"], "type", "reminder"),
 ]
-regex_planeswalker = [([r"[\+|−]?\d+: "], "type", "loyalty")]
+regex_planeswalker = [([r"[\+|−]?(?:\d+|X): "], "type", "loyalty")]
 regex_leveler = r"[\"LEVEL [\d]+(-[\d]+|\+)\\n([\d]+|\*)/([\d]+|\*)\"]"
 regex_decklist_id = r"^(?P<amount>\d+) (?P<name>.+?)(?: \[(ID: (?P<id>.+))\])$"
 regex_decklist = r"^(?P<amount>\d+) (?P<name>.+?)(?: \[(?P<set>.+)\])?$"
+regex_add_mana = r"Add ({[A-Z0-9]+})+"
+regex_mana = r"{([A-Z0-9]+)}"
+regex_newline = r"\n"

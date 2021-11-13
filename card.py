@@ -1,4 +1,7 @@
+import re
+
 from helper import helper_mana_cost_to_color_array
+from variables import regex_add_mana, regex_mana
 
 
 class Card:
@@ -72,7 +75,14 @@ class Card:
                 face.image_uris = self.image_uris
             if len(face.colors) == 0:
                 if "Land" in face.type_line:
-                    face.colors.extend(self.produced_mana)
+                    if len(face.produced_mana) > 1:
+                        face.colors.extend(face.produced_mana)
+                    else:
+                        matches = re.finditer(regex_add_mana, face.oracle_text)
+                        for match in matches:
+                            colors = re.findall(regex_mana, match.group())
+                            face.colors.extend(colors)
+                            face.colors = helper_mana_cost_to_color_array(face.colors)
                 if self.layout in ["split", "adventure"]:
                     face.colors.extend(helper_mana_cost_to_color_array(face.mana_cost))
             if face.artist == "":

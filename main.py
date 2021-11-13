@@ -3,12 +3,13 @@ import shutil
 import time
 import urllib.parse
 import zipfile
-from os import listdir
 from time import sleep
 
 from card import *
 from carddata import *
+from info import *
 from layout import *
+from helper import *
 
 
 def process_decklist(path):
@@ -19,47 +20,109 @@ def process_decklist(path):
         for line in lines:
             if re.match(regex_decklist_id, line) is not None:
                 result = re.match(regex_decklist_id, line)
+                name = result.group("name")
                 id = result.group("id")
-                cards.append(("ID Card", "id", id))
+                amount = result.group("amount")
+                cards.append((name, "id", id, "amount", amount))
             else:
                 result = re.match(regex_decklist, line)
                 name = result.group("name")
                 card_set = result.group("set")
+                amount = result.group("amount")
 
                 if card_set is not None:
-                    cards.append((name, "set", card_set))
+                    cards.append((name, "set", card_set, "amount", amount))
                 else:
-                    cards.append((name, "normal"))
-    process_cards(cards)
+                    cards.append((name, "type", "normal", "amount", amount))
+    return cards
 
 
 def process_cards(card_names: list[(str, str, str)]):
     for i, card_name in enumerate(card_names):
         start_time = time.time()
 
-        if card_name[1] == "set":
-            response = requests.get(
-                api_url + "/cards/named?exact=" + urllib.parse.quote(card_name[0]) + "&set=" + urllib.parse.quote(
-                    card_name[2]))
-        elif card_name[1] == "id":
-            response = requests.get(
-                api_url + "/cards/" + urllib.parse.quote(card_name[2]))
-        else:
-            response = requests.get(
-                api_url + "/cards/named?exact=" + urllib.parse.quote(card_name[0]))
-
-        # Check status code
-        if response.status_code != 200:
-            info_fail(card_name[0], "Could not fetch card")
+        card = get_card_object(card_name)
+        if card is None:
             continue
 
-        card = Card(json.loads(response.text))
         if process_card(card):
             info_success(card.name, "Successfully processed card")
 
         end_time = time.time()
         if (end_time - start_time) * 1000 < 100 and i < len(card_names) - 1:
             sleep(0.1)
+
+
+def process_print(card_names: list[(str, str, str)]):
+    list_of_cards = []
+
+    for i, card_name in enumerate(card_names):
+        card = get_card_object(card_name)
+        if card is None:
+            continue
+
+        for j in range(0, int(card_name[4])):
+            list_of_cards.append(card)
+
+    # Folders
+    target_folder_path = f_print
+
+    for i, page in enumerate(list(helper_divide_chunks(list_of_cards, 9))):
+        target_file_path = target_folder_path + "/" + str(i)
+        target_file_full_path = target_file_path + ".idml"
+
+        os.makedirs(target_folder_path, exist_ok=True)
+        with zipfile.ZipFile(f_preset_print, "r") as archive:
+            archive.extractall("data/memory_print")
+
+        app = None
+
+        for j, card in enumerate(page):
+            cleansed_name = card.name.replace("//", "--")
+
+            # Convert to PDF
+            app = helper_cardfile_to_pdf(card)
+
+            # Frontside
+            insert_pdf(card, id_general_print_front[ids.SPREAD], id_general_print_front[ids.PRINTING_FRAME_O][j],
+                       f_pdf + "/" + card.set.upper(), cleansed_name)
+
+            # Backside
+            if card.layout in ["modal_dfc", "transform"]:
+                modulo = j % 3
+                carry = int(j / 3)
+                result = carry * 3 + (2 - modulo)
+                insert_pdf(card, id_general_print_back[ids.SPREAD],
+                           id_general_print_back[ids.PRINTING_FRAME_O][result],
+                           f_pdf + "/" + card.set.upper(), cleansed_name, page_number=2)
+
+        if app is not None:
+            app.Quit()
+
+        shutil.make_archive(target_file_path, "zip", "data/memory_print")
+        if helper_file_exists(target_file_full_path):
+            os.remove(target_file_full_path)
+        os.rename(target_file_path + ".zip", target_file_path + ".idml")
+
+
+def get_card_object(card_name):
+    if card_name[1] == "set":
+        response = requests.get(
+            api_url + "/cards/named?exact=" + urllib.parse.quote(card_name[0]) + "&set=" + urllib.parse.quote(
+                card_name[2]))
+    elif card_name[1] == "id":
+        response = requests.get(
+            api_url + "/cards/" + urllib.parse.quote(card_name[2]))
+    else:
+        response = requests.get(
+            api_url + "/cards/named?exact=" + urllib.parse.quote(card_name[0]))
+
+    # Check status code
+    if response.status_code != 200:
+        info_fail(card_name[0], "Could not fetch card")
+        return None
+
+    return Card(json.loads(response.text))
 
 
 def process_card(card: Card):
@@ -72,7 +135,7 @@ def process_card(card: Card):
     cleansed_name = card.name.replace("//", "--")
 
     # Folders
-    target_folder_path = f_output + "/" + card.set.upper()
+    target_folder_path = f_documents + "/" + card.set.upper()
     target_file_path = target_folder_path + "/" + cleansed_name
     target_file_full_path = target_file_path + ".idml"
 
@@ -183,6 +246,8 @@ def card_fill(card: Card, id_set, layout):
 
 
 if __name__ == '__main__':
-    process_decklist("data/decks/decklist.txt")
+    cards = process_decklist("data/decks/decklist.txt")
+    # process_cards(cards)
+    process_print(cards)
 
     # helper_generate_all_ids()

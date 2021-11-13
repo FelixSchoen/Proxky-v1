@@ -1,6 +1,11 @@
+import xml
+
 from PIL import Image
 
-from info import *
+from helper import helper_split_string_along_regex, helper_file_exists, helper_indesign_get_coordinates, \
+    helper_vector_bounding_box
+from info import info_fail
+from variables import image_types
 
 
 def insert_value_content(identifier, value):
@@ -112,3 +117,25 @@ def insert_graphic(card, identifier_spread, identifier_field, path_file, name_fi
     element.append(xml_element)
 
     tree.write("data/memory/Spreads/Spread_" + identifier_spread + ".xml")
+
+
+def insert_pdf(card, identifier_spread, identifier_field, path_file, name_file, page_number=1):
+    if not helper_file_exists(path_file + "/" + name_file + ".pdf"):
+        info_fail(card.name, "Specified pdf does not exist")
+        return
+
+    tree = xml.etree.ElementTree.parse("data/memory_print/Spreads/Spread_" + identifier_spread + ".xml")
+    rectangle = tree.find(".//Rectangle[@Self='" + identifier_field + "']")
+    pdf = xml.etree.ElementTree.Element("PDF")
+    pdf.set("ItemTransform", "1 0 0 1 -77.95261341004854 -651.6848968746158")
+
+    pdf_attribute = xml.etree.ElementTree.Element("PDFAttribute")
+    pdf_attribute.set("PageNumber", str(page_number))
+
+    link = xml.etree.ElementTree.Element("Link")
+    link.set("LinkResourceURI", "file:" + path_file + "/" + name_file + ".pdf")
+
+    rectangle.append(pdf)
+    pdf.append(pdf_attribute)
+    pdf.append(link)
+    tree.write("data/memory_print/Spreads/Spread_" + identifier_spread + ".xml")
