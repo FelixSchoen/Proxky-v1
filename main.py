@@ -247,7 +247,7 @@ def card_fill(card: Card, id_set, layout):
 
 if __name__ == '__main__':
     cards = process_decklist("data/decks/decklist.txt")
-    # process_cards(cards)
+    process_cards(cards)
     process_print(cards)
 
     # helper_generate_all_ids()

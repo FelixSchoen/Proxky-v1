@@ -1,4 +1,10 @@
-from insert_xml import *
+import os
+import xml
+
+from helper import helper_indesign_shift_y_coordinates, helper_split_string_along_regex
+from insert_xml import insert_value_content
+from variables import ids, VALUE_MODAL_HEIGHT, regex_oracle, VALUE_SHIFT_TOKEN_NO_VALUE, \
+    VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE, VALUE_SHIFT_HEADER_TOKEN_WITH_VALUE
 
 
 def card_layout_double_faced(id_sets):

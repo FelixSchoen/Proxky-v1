@@ -1,8 +1,16 @@
+import os
+import re
 from os import listdir
 
 import requests
 
+from helper import helper_sort_mana_array, helper_indesign_set_y_coordinates, helper_indesign_shift_y_coordinates, \
+    helper_get_card_types
+from info import info_warn, info_normal
 from insert_xml import *
+from variables import ids, f_artwork, f_artwork_downloaded, f_icon_types, COORDINATE_TOP_ORACLE_TEXT, \
+    VALUE_MODAL_HEIGHT, COORDINATE_BOT_ORACLE_TEXT, VALUE_DISTANCE_VALUE, regex_oracle, mana_mapping, f_icon_set, \
+    regex_planeswalker, color_mapping
 
 
 def set_artwork(card, id_set):
