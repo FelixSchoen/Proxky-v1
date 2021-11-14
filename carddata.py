@@ -273,14 +273,23 @@ def set_oracle_text(oracle_text, object_id, left_align=False):
     child = tree.find(".//CharacterStyleRange[1]")
     parent.remove(child)
 
+    # If text too long, align to the left
     if len(oracle_text) > 100 or left_align:
         parent.set("Justification", "LeftAlign")
 
+    # Split into different cases to treat
     oracle_text_array = helper_split_string_along_regex(oracle_text, *regex_oracle)
 
+    # Remove reminder text
     oracle_text_array = list(filter(lambda x: (x[2] != "reminder"), oracle_text_array))
-    if len(oracle_text_array) > 0 and oracle_text_array[0][0].find("\n") == 0:
+
+    # Remove initial newline
+    if len(oracle_text_array) > 0 and oracle_text_array[0][0].startswith("\n"):
         oracle_text_array[0] = (oracle_text_array[0][0][1:], oracle_text_array[0][1], oracle_text_array[0][2])
+
+    # Remove trailing newline
+    if len(oracle_text_array) > 0 and oracle_text_array[-1][0].endswith("\n"):
+        oracle_text_array[-1] = (oracle_text_array[-1][0][:-2 or None], oracle_text_array[-1][1], oracle_text_array[-1][2])
 
     for part in oracle_text_array:
         if part[1] == "type":

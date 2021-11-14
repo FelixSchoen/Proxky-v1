@@ -5,7 +5,7 @@ import xml.etree.ElementTree
 
 import win32com.client
 
-from info import info_normal
+from info import info_normal, info_fail
 from variables import *
 
 
@@ -76,7 +76,6 @@ def helper_vector_bounding_box(path, filename):
     tree = xml.etree.ElementTree.parse(path + "/" + filename + ".svg")
     values = tree.getroot().attrib["viewBox"].split(" ")
     return float(values[2]), float(values[3])
-
 
 
 def helper_indesign_get_coordinates(element):
@@ -166,8 +165,14 @@ def helper_cardfile_to_pdf(card):
 
     myDocument = app.Open(input_file_path)
 
-    # myProfile = app.PreflightProfiles.Item(1)
-    # myPreflight = app.PreflightProcesses.add(myDocument, myProfile)
+    profile = app.PreflightProfiles.Item(1)
+    process = app.PreflightProcesses.Add(myDocument, profile)
+    process.WaitForProcess()
+    results = process.processResults
+
+    if "None" not in results:
+        info_fail(card.name, "Error while running preflight")
+        # TODO Find which textboxes fail
 
     myPDFPreset = app.PDFExportPresets.Item(7)
     idPDFType = 1952403524

@@ -67,6 +67,8 @@ def process_print(card_names: list[(str, str, str)]):
     # Folders
     target_folder_path = f_print
 
+    app = None
+
     for i, page in enumerate(list(helper_divide_chunks(list_of_cards, 9))):
         target_file_path = target_folder_path + "/" + str(i)
         target_file_full_path = target_file_path + ".idml"
@@ -74,8 +76,6 @@ def process_print(card_names: list[(str, str, str)]):
         os.makedirs(target_folder_path, exist_ok=True)
         with zipfile.ZipFile(f_preset_print, "r") as archive:
             archive.extractall("data/memory_print")
-
-        app = None
 
         for j, card in enumerate(page):
             cleansed_name = card.name.replace("//", "--")
@@ -96,13 +96,13 @@ def process_print(card_names: list[(str, str, str)]):
                            id_general_print_back[ids.PRINTING_FRAME_O][result],
                            f_pdf + "/" + card.set.upper(), cleansed_name, page_number=2)
 
-        if app is not None:
-            app.Quit()
-
         shutil.make_archive(target_file_path, "zip", "data/memory_print")
         if helper_file_exists(target_file_full_path):
             os.remove(target_file_full_path)
         os.rename(target_file_path + ".zip", target_file_path + ".idml")
+
+    if app is not None:
+        app.Quit()
 
 
 def get_card_object(card_name):
