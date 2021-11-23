@@ -5,6 +5,8 @@ import urllib.parse
 import zipfile
 from time import sleep
 
+import win32com.client
+
 from card import *
 from carddata import *
 from info import *
@@ -62,12 +64,15 @@ def process_print(card_names: list[(str, str, str)]):
             continue
 
         for j in range(0, int(card_name[4])):
-            list_of_cards.append(card)
+            if card.layout in ["modal_dfc", "transform"]:
+                list_of_cards.insert(0, card)
+            else:
+                list_of_cards.append(card)
 
     # Folders
     target_folder_path = f_print
 
-    app = None
+    app = win32com.client.Dispatch("InDesign.Application.2021")
 
     for i, page in enumerate(list(helper_divide_chunks(list_of_cards, 9))):
         target_file_path = target_folder_path + "/" + str(i)
@@ -81,7 +86,7 @@ def process_print(card_names: list[(str, str, str)]):
             cleansed_name = card.name.replace("//", "--")
 
             # Convert to PDF
-            app = helper_cardfile_to_pdf(card)
+            result_value = helper_cardfile_to_pdf(app, card)
 
             # Frontside
             insert_pdf(card, id_general_print_front[ids.SPREAD], id_general_print_front[ids.PRINTING_FRAME_O][j],

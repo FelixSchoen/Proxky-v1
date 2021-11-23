@@ -201,6 +201,12 @@ id_general_print_back = {
     "pid_frame_o": ['u497', 'u496', 'u495', 'u494', 'u493', 'u492', 'u491', 'u490', 'u48e'],
 }
 
+# Flags
+FLAG_OK = 0
+FLAG_FILE_NOT_FOUND = 11000
+FLAG_FILE_EXISTS = 11001
+FLAG_PREFLIGHT_FAIL = 12000
+
 # Values
 VALUE_MODAL_HEIGHT = 23.822047244094502 - 13.546456692913399
 VALUE_DISTANCE_VALUE = 4.960627698522806  # Distance how much the value panel extends over the bottom color line
@@ -217,16 +223,20 @@ VALUE_SHIFT_TOKEN_NO_VALUE = abs(-210.6141732283465) - abs(
 api_url = "https://api.scryfall.com"
 
 # Folders
-f_preset = "D:/Drive/Creative/Magic/Proxky/Types/General.idml"
-f_preset_print = "D:/Drive/Creative/Magic/Proxky/Types/Printing.idml"
-f_documents = "D:/Games/Magic/Proxky/v1/Documents"
-f_pdf = "D:/Games/Magic/Proxky/v1/PDF"
-f_print = "D:/Games/Magic/Proxky/v1/Other/Print"
-f_artwork = "D:/Games/Magic/Proxky/v1/Artwork"
-f_artwork_downloaded = "D:/Games/Magic/Proxky/v1/ArtworkDownload"
-f_icon_types = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Card Types"
-f_icon_mana = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Mana"
-f_icon_set = "D:/Drive/Creative/Magic/Proxky/Resource/Icons/Set"
+f_preset_folder = "D:/Drive/Creative/Magic/Proxky"
+f_output_folder = "D:/Games/Magic/Proxky/v1/"
+
+f_preset = f_preset_folder + "/Types/General.idml"
+f_preset_print = f_preset_folder + "/Types/Printing.idml"
+f_icon_types = f_preset_folder + "/Resource/Icons/Card Types"
+f_icon_mana = f_preset_folder + "/Resource/Icons/Mana"
+f_icon_set = f_preset_folder + "/Resource/Icons/Set"
+
+f_documents = f_output_folder + "/Documents"
+f_pdf = f_output_folder + "/PDF"
+f_print = f_output_folder + "/Other/Print"
+f_artwork = f_output_folder + "/Artwork"
+f_artwork_downloaded = f_output_folder + "/ArtworkDownload"
 
 # Enumerations
 supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga", "token"]
@@ -244,6 +254,16 @@ mana_mapping = {
     "{R}": "R",
     "{G}": "G",
     "{C}": "C",
+    "{W/U}": "",
+    "{W/B}": "",
+    "{U/B}": "",
+    "{U/R}": "",
+    "{B/R}": "",
+    "{B/G}": "",
+    "{R/G}": "",
+    "{R/W}": "",
+    "{G/W}": "",
+    "{G/U}": "",
     "{0}": "0",
     "{1}": "1",
     "{2}": "2",
@@ -265,6 +285,7 @@ mana_mapping = {
     "{18}": "",
     "{19}": "",
     "{20}": "",
+    "{S}": "S",
     "{X}": "X",
     "{E}": "E",
 }

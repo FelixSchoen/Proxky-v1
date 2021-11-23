@@ -73,6 +73,8 @@ def set_type_icon(card, id_set):
         types.remove("Basic")
     if "Token" in types:
         types.remove("Token")
+    if "Snow" in types:
+        types.remove("Snow")
 
     if len(types) != 1:
         card_type = "Multiple"
@@ -289,7 +291,8 @@ def set_oracle_text(oracle_text, object_id, left_align=False):
 
     # Remove trailing newline
     if len(oracle_text_array) > 0 and oracle_text_array[-1][0].endswith("\n"):
-        oracle_text_array[-1] = (oracle_text_array[-1][0][:-2 or None], oracle_text_array[-1][1], oracle_text_array[-1][2])
+        oracle_text_array[-1] = (
+            oracle_text_array[-1][0][:-2 or None], oracle_text_array[-1][1], oracle_text_array[-1][2])
 
     for part in oracle_text_array:
         if part[1] == "type":

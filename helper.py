@@ -3,9 +3,7 @@ import os
 import re
 import xml.etree.ElementTree
 
-import win32com.client
-
-from info import info_normal, info_fail
+from info import info_fail
 from variables import *
 
 
@@ -147,7 +145,7 @@ def helper_mana_cost_to_color_array(mana_cost):
     return color_array
 
 
-def helper_cardfile_to_pdf(card):
+def helper_cardfile_to_pdf(app, card):
     cleansed_name = card.name.replace("//", "--")
     input_folder_path = f_documents + "/" + card.set.upper()
     input_file_path = input_folder_path + "/" + cleansed_name + ".idml"
@@ -155,13 +153,11 @@ def helper_cardfile_to_pdf(card):
     output_file_path = output_folder_path + "/" + cleansed_name + ".pdf"
 
     if helper_file_exists(output_file_path):
-        info_normal(card.name, "PDF already exists, skipping creation...")
-        return
+        # info_normal(card.name, "PDF already exists, skipping creation...")
+        return FLAG_FILE_EXISTS
 
     if not os.path.exists(output_folder_path):
         os.makedirs(output_folder_path)
-
-    app = win32com.client.Dispatch("InDesign.Application.2021")
 
     myDocument = app.Open(input_file_path)
 
@@ -172,6 +168,8 @@ def helper_cardfile_to_pdf(card):
 
     if "None" not in results:
         info_fail(card.name, "Error while running preflight")
+        myDocument.Close(1852776480)
+        return FLAG_PREFLIGHT_FAIL
         # TODO Find which textboxes fail
 
     myPDFPreset = app.PDFExportPresets.Item(7)
