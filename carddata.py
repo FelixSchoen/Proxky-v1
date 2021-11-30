@@ -3,14 +3,14 @@ from os import listdir
 
 import requests
 
-from helper import helper_sort_mana_array, helper_indesign_set_y_coordinates, helper_indesign_shift_y_coordinates, \
-    helper_get_card_types
+from utility import utility_sort_mana_array, utility_indesign_set_y_coordinates, utility_indesign_shift_y_coordinates, \
+    utility_get_card_types
 from info import info_warn, info_normal
 from insert_xml import *
 from insert_xml import insert_multi_font_text
 from variables import ids, f_artwork, f_artwork_downloaded, f_icon_types, COORDINATE_TOP_ORACLE_TEXT, \
     VALUE_MODAL_HEIGHT, COORDINATE_BOT_ORACLE_TEXT, VALUE_DISTANCE_VALUE, mana_mapping, f_icon_set, \
-    regex_planeswalker, color_mapping, font_sans, font_sans_style
+    regex_planeswalker, color_mapping, font_sans, font_sans_style, regex_regular
 
 
 def set_artwork(card, id_set):
@@ -27,12 +27,12 @@ def set_artwork(card, id_set):
     filename = ""
 
     for possible_image_type in image_types:
-        if helper_file_exists(path_cn + "." + possible_image_type):
+        if utility_file_exists(path_cn + "." + possible_image_type):
             filename = str(card.collector_number) + " - " + card.name
             image_type = possible_image_type
             break
-        elif not helper_file_exists(path_name + "." + possible_image_type):
-            if any(helper_file_exists(f_artwork + "/" + possible_set + "/" + card.name + "." + possible_image_type) for
+        elif not utility_file_exists(path_name + "." + possible_image_type):
+            if any(utility_file_exists(f_artwork + "/" + possible_set + "/" + card.name + "." + possible_image_type) for
                    possible_set in listdir(f_artwork)):
                 image_type = "other"
             continue
@@ -74,7 +74,7 @@ def set_type_icon(card, id_set):
     id_type = id_set[ids.TYPE_O]
 
     # Get types of card
-    types = helper_get_card_types(card)
+    types = utility_get_card_types(card)
     if "Legendary" in types:
         types.remove("Legendary")
     if "Basic" in types:
@@ -89,7 +89,7 @@ def set_type_icon(card, id_set):
     else:
         card_type = types[0]
 
-    if not helper_file_exists(f_icon_types + "/" + card_type.lower() + ".svg"):
+    if not utility_file_exists(f_icon_types + "/" + card_type.lower() + ".svg"):
         info_warn(card.name, "No icon for card type")
     else:
         insert_graphic(card, id_spread, id_type, f_icon_types, card_type.lower())
@@ -122,7 +122,6 @@ def set_modal(card, id_sets, modal_type="modal"):
         face = card.card_faces[(i + 1) % 2]
 
         caps_type = ""
-        line_to_insert = ""
 
         if modal_type == "modal_dfc":
             caps_type = "MODAL"
@@ -131,10 +130,13 @@ def set_modal(card, id_sets, modal_type="modal"):
 
         line_to_insert = caps_type + " — " + face.type_line.replace("—", "•")
 
+        if len(face.power) > 0 and len(face.toughness) > 0:
+            line_to_insert += " • " + face.power + "/" + face.toughness
+
         if len(face.mana_cost) > 0:
             line_to_insert += " • " + face.mana_cost
 
-        insert_multi_font_text(line_to_insert, id_set[ids.MODAL_T], align="center", font=font_sans, style=font_sans_style, size="5")
+        insert_multi_font_text(line_to_insert, id_set[ids.MODAL_T], align="center", font=font_sans, style=font_sans_style, size="5", regex=regex_regular)
 
 
 def set_color_bar(card, id_set):
@@ -148,7 +150,7 @@ def set_color_bar(card, id_set):
     if len(colors_to_apply) == 1:
         colors_to_apply.append(colors_to_apply[0])
 
-    helper_sort_mana_array(colors_to_apply)
+    utility_sort_mana_array(colors_to_apply)
 
     for id_gradient in id_gradients:
         tree = xml.etree.ElementTree.parse("data/memory/Resources/Graphic.xml")
@@ -183,7 +185,7 @@ def set_color_bar(card, id_set):
 
 
 def set_planeswalker_text(card, id_set):
-    planeswalker_text = helper_split_string_along_regex(card.oracle_text, *regex_planeswalker)
+    planeswalker_text = utility_split_string_along_regex(card.oracle_text, *regex_planeswalker)
     amount_abilities = sum(x[2] == "loyalty" for x in planeswalker_text)
 
     if amount_abilities > 4:
@@ -226,7 +228,7 @@ def set_planeswalker_text(card, id_set):
         insert_multi_font_text(planeswalker_text[0][0], id_set[ids.ORACLE_TEXT_T], align="left")
         planeswalker_text = planeswalker_text[1:]
 
-    potential_additional_box = helper_split_string_along_regex(planeswalker_text[-1][0], ("\n", "type", "break"))
+    potential_additional_box = utility_split_string_along_regex(planeswalker_text[-1][0], ("\n", "type", "break"))
     if len(potential_additional_box) > 1:
         tf = tree.find(".//TextFrame[@Self='" + id_set[ids.PLANESWALKER_ORACLE_O] + "']")
         tfp = tf.find(".//TextFramePreference[1]")
@@ -266,11 +268,11 @@ def set_planeswalker_text(card, id_set):
                 x_coordinate, y_coordinate = top_left.attrib["Anchor"].split(" ")
                 y_coordinate = float(y_coordinate)
 
-                helper_indesign_set_y_coordinates(object_box,
-                                                  [y_coordinate, y_coordinate,
+                utility_indesign_set_y_coordinates(object_box,
+                                                   [y_coordinate, y_coordinate,
                                                    y_coordinate + step_size, y_coordinate + step_size])
                 shift_coordinates = [step_size * i, step_size * i, step_size * i, step_size * i]
-                helper_indesign_shift_y_coordinates(object_box, shift_coordinates)
+                utility_indesign_shift_y_coordinates(object_box, shift_coordinates)
             else:
                 object_box.set("Visible", "false")
 
@@ -281,7 +283,7 @@ def set_planeswalker_text(card, id_set):
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
 
-def set_default_oracle_text(card, id_set, align="center"):
+def set_oracle_text(card, id_set, align="center"):
     if ids.ORACLE_TEXT_T not in id_set:
         return
     insert_multi_font_text(card.oracle_text, id_set[ids.ORACLE_TEXT_T], align)
@@ -330,8 +332,8 @@ def set_set(card, id_set):
     id_spread = id_set[ids.SPREAD]
     id_set_icon = id_set[ids.SET_O]
 
-    if not helper_file_exists(f_icon_set + "/" + card.set.lower() + ".svg"):
-        if card.set.lower()[0] == "t" and helper_file_exists(f_icon_set + "/" + card.set.lower()[1:] + ".svg"):
+    if not utility_file_exists(f_icon_set + "/" + card.set.lower() + ".svg"):
+        if card.set.lower()[0] == "t" and utility_file_exists(f_icon_set + "/" + card.set.lower()[1:] + ".svg"):
             info_warn(card.name, "Assuming that card is token")
             insert_graphic(card, id_spread, id_set_icon, f_icon_set, card.set.lower()[1:])
         else:

@@ -13,7 +13,7 @@ from card import *
 from carddata import *
 from info import *
 from layout import *
-from helper import *
+from utility import *
 
 
 def process_decklist(path):
@@ -90,7 +90,9 @@ def process_print(card_names: list[(str, str, str)]):
 
     app = win32com.client.Dispatch("InDesign.Application.2022")
 
-    for i, page in enumerate(list(helper_divide_chunks(list_of_cards, 9))):
+    handled_cards = []
+
+    for i, page in enumerate(list(utility_divide_chunks(list_of_cards, 9))):
         target_file_path = target_folder_path + "/" + str(i)
         target_file_full_path = target_file_path + ".idml"
 
@@ -102,7 +104,10 @@ def process_print(card_names: list[(str, str, str)]):
             cleansed_name = card.name.replace("//", "--")
 
             # Convert to PDF
-            result_value = helper_cardfile_to_pdf(app, card)
+            if card.name not in handled_cards:
+                utility_cardfile_to_pdf(app, card)
+                handled_cards.append(card.name)
+
 
             # Frontside
             insert_pdf(card, id_general_print_front[ids.SPREAD], id_general_print_front[ids.PRINTING_FRAME_O][j],
@@ -118,7 +123,7 @@ def process_print(card_names: list[(str, str, str)]):
                            f_pdf + "/" + card.set.upper(), cleansed_name, page_number=2)
 
         shutil.make_archive(target_file_path, "zip", "data/memory_print")
-        if helper_file_exists(target_file_full_path):
+        if utility_file_exists(target_file_full_path):
             os.remove(target_file_full_path)
         os.rename(target_file_path + ".zip", target_file_path + ".idml")
 
@@ -203,7 +208,7 @@ def process_card(card: Card):
 
     # Repackage preset, remove old files and rename to correct extension
     shutil.make_archive(target_file_path, "zip", "data/memory")
-    if helper_file_exists(target_file_full_path):
+    if utility_file_exists(target_file_full_path):
         os.remove(target_file_full_path)
     os.rename(target_file_path + ".zip", target_file_path + ".idml")
 
@@ -213,7 +218,7 @@ def process_card(card: Card):
 
 
 def card_fill(card: Card, id_set, layout):
-    types = helper_get_card_types(card)
+    types = utility_get_card_types(card)
 
     # Check if basic
     if "Basic" in types and "Land" in types:
@@ -249,9 +254,9 @@ def card_fill(card: Card, id_set, layout):
     if "Planeswalker" in types:
         set_planeswalker_text(card, id_set)
     elif layout in ["adventure"]:
-        set_default_oracle_text(card, id_set, align="left")
+        set_oracle_text(card, id_set, align="left")
     else:
-        set_default_oracle_text(card, id_set)
+        set_oracle_text(card, id_set)
 
     # Value
     set_value(card, id_set)
@@ -286,7 +291,7 @@ def main(argv):
         process_cards(cards)
         process_print(cards)
     elif mode == "generate_id":
-        helper_generate_all_ids()
+        utility_generate_all_ids()
 
 
 if __name__ == '__main__':

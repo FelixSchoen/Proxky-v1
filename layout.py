@@ -1,7 +1,7 @@
 import os
 import xml
 
-from helper import helper_indesign_shift_y_coordinates, helper_split_string_along_regex
+from utility import utility_indesign_shift_y_coordinates, utility_split_string_along_regex
 from insert_xml import insert_value_content
 from variables import ids, VALUE_MODAL_HEIGHT, regex_oracle, VALUE_SHIFT_TOKEN_NO_VALUE, \
     VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE, VALUE_SHIFT_HEADER_TOKEN_WITH_VALUE
@@ -26,7 +26,7 @@ def card_layout_double_faced(id_sets):
 
         oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
 
-        helper_indesign_shift_y_coordinates(oracle_text, [shift_by, shift_by, 0, 0])
+        utility_indesign_shift_y_coordinates(oracle_text, [shift_by, shift_by, 0, 0])
 
         side_indicator_o = tree.find(".//Group[@Self='" + id_set[ids.SIDE_INDICATOR_O] + "']")
         side_indicator_o.set("Visible", "true")
@@ -151,7 +151,7 @@ def card_layout_adventure(id_set):
 def card_layout_token(id_set, card):
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
-    oracle_entries = helper_split_string_along_regex(card.oracle_text, *regex_oracle)
+    oracle_entries = utility_split_string_along_regex(card.oracle_text, *regex_oracle)
     if all(oracle_type == "reminder" for (_, _, oracle_type) in oracle_entries):
         card_layout_no_oracle_text(id_set, card)
 
@@ -170,8 +170,8 @@ def card_layout_no_oracle_text(id_set, card):
     if card.power == "" and card.toughness == "":
         additional_shift = VALUE_SHIFT_TOKEN_NO_VALUE
 
-    helper_indesign_shift_y_coordinates(artwork, [0, 0, VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE + additional_shift,
-                                                  VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE + additional_shift])
+    utility_indesign_shift_y_coordinates(artwork, [0, 0, VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE + additional_shift,
+                                                   VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE + additional_shift])
 
     coordinates = header.attrib["ItemTransform"].split(" ")
     header.set("ItemTransform",

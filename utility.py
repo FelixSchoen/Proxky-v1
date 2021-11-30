@@ -8,13 +8,13 @@ from info import info_fail
 from variables import *
 
 
-def helper_get_card_types(card):
+def utility_get_card_types(card):
     types = card.type_line.split("—")
     types = list(filter(None, types[0].split(" ")))
     return types
 
 
-def helper_split_string_along_regex(string, *matchers: ([str], str, str)):
+def utility_split_string_along_regex(string, *matchers: ([str], str, str)):
     # Build list of all available regex
     all_regex = []
     for triple in matchers:
@@ -67,17 +67,17 @@ def helper_split_string_along_regex(string, *matchers: ([str], str, str)):
     return result
 
 
-def helper_file_exists(path):
+def utility_file_exists(path):
     return os.path.exists(path)
 
 
-def helper_vector_bounding_box(path, filename):
+def utility_vector_bounding_box(path, filename):
     tree = xml.etree.ElementTree.parse(path + "/" + filename + ".svg")
     values = tree.getroot().attrib["viewBox"].split(" ")
     return float(values[2]), float(values[3])
 
 
-def helper_indesign_get_coordinates(element):
+def utility_indesign_get_coordinates(element):
     point_top_left = element.find(".//PathPointType[1]")
     point_bottom_left = element.find(".//PathPointType[2]")
     point_top_right = element.find(".//PathPointType[4]")
@@ -98,7 +98,7 @@ def helper_indesign_get_coordinates(element):
     return coordinates_top_left, coordinates_top_right, coordinates_bottom_left, coordinates_bottom_right
 
 
-def helper_indesign_set_y_coordinates(indesign_object, set_to):
+def utility_indesign_set_y_coordinates(indesign_object, set_to):
     top_left = indesign_object.find(".//PathPointType[1]")
     top_right = indesign_object.find(".//PathPointType[4]")
     bottom_left = indesign_object.find(".//PathPointType[2]")
@@ -118,7 +118,7 @@ def helper_indesign_set_y_coordinates(indesign_object, set_to):
     return indesign_object
 
 
-def helper_indesign_shift_y_coordinates(indesign_object, shift_by):
+def utility_indesign_shift_y_coordinates(indesign_object, shift_by):
     top_left = indesign_object.find(".//PathPointType[1]")
     top_right = indesign_object.find(".//PathPointType[4]")
     bottom_left = indesign_object.find(".//PathPointType[2]")
@@ -130,32 +130,33 @@ def helper_indesign_shift_y_coordinates(indesign_object, shift_by):
         x_coordinate, y_coordinate = point.attrib["Anchor"].split(" ")
         set_to.append(float(y_coordinate) + shift_by[i])
 
-    return helper_indesign_set_y_coordinates(indesign_object, set_to)
+    return utility_indesign_set_y_coordinates(indesign_object, set_to)
 
 
-def helper_sort_mana_array(mana_array):
+def utility_sort_mana_array(mana_array):
     mana_array.sort(key=lambda x: mana_types.index(x))
 
 
-def helper_mana_cost_to_color_array(mana_cost):
+def utility_mana_cost_to_color_array(mana_cost):
     color_array = []
     for entry in mana_cost:
         if entry in mana_types and entry not in color_array:
             color_array.append(entry)
-    helper_sort_mana_array(color_array)
+    utility_sort_mana_array(color_array)
     return color_array
 
 
-def helper_cardfile_to_pdf(app, card):
+def utility_cardfile_to_pdf(app, card):
     cleansed_name = card.name.replace("//", "--")
     input_folder_path = f_documents + "/" + card.set.upper()
     input_file_path = input_folder_path + "/" + cleansed_name + ".idml"
     output_folder_path = f_pdf + "/" + card.set.upper()
     output_file_path = output_folder_path + "/" + cleansed_name + ".pdf"
 
-    if helper_file_exists(output_file_path):
-        # info_normal(card.name, "PDF already exists, skipping creation...")
-        return FLAG_FILE_EXISTS
+    return_code = ""
+
+    if utility_file_exists(output_file_path):
+        return_code = FLAG_FILE_EXISTS
 
     if not os.path.exists(output_folder_path):
         os.makedirs(output_folder_path)
@@ -185,16 +186,20 @@ def helper_cardfile_to_pdf(app, card):
     idPDFType = 1952403524
     myDoc.Export(idPDFType, output_file_path, False, myPDFPreset)
     myDoc.Close(1852776480)
-    return app
+
+    if return_code == "":
+        return_code = FLAG_OK
+
+    return return_code
 
 
-def helper_divide_chunks(l, n):
+def utility_divide_chunks(l, n):
     # looping till length l
     for i in range(0, len(l), n):
         yield l[i:i + n]
 
 
-def helper_generate_ids(name, spread, mode="standard", prefix=""):
+def utility_generate_ids(name, spread, mode="standard", prefix=""):
     if mode != "printing":
         tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + spread + ".xml")
 
@@ -347,16 +352,16 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
         print("}", file=f)
 
 
-def helper_generate_all_ids():
+def utility_generate_all_ids():
     front_id = "uff"
-    back_id = "u3da6"
+    back_id = "u4ba2"
     print_front_id = "uce"
     print_back_id = "u20b"
 
-    helper_generate_ids("front", front_id)
-    helper_generate_ids("front", front_id, mode="split", prefix="ST")
-    helper_generate_ids("front", front_id, mode="split", prefix="SB")
-    helper_generate_ids("front_adventure", front_id, mode="adventure")
-    helper_generate_ids("back", back_id)
-    helper_generate_ids("print_front", print_front_id, mode="printing")
-    helper_generate_ids("print_back", print_back_id, mode="printing")
+    utility_generate_ids("front", front_id)
+    utility_generate_ids("front", front_id, mode="split", prefix="ST")
+    utility_generate_ids("front", front_id, mode="split", prefix="SB")
+    utility_generate_ids("front_adventure", front_id, mode="adventure")
+    utility_generate_ids("back", back_id)
+    utility_generate_ids("print_front", print_front_id, mode="printing")
+    utility_generate_ids("print_back", print_back_id, mode="printing")

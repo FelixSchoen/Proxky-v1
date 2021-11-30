@@ -1,6 +1,6 @@
 import re
 
-from helper import helper_mana_cost_to_color_array
+from utility import utility_mana_cost_to_color_array
 from variables import regex_add_mana, regex_mana
 
 
@@ -82,9 +82,9 @@ class Card:
                         for match in matches:
                             colors = re.findall(regex_mana, match.group())
                             face.colors.extend(colors)
-                            face.colors = helper_mana_cost_to_color_array(face.colors)
+                            face.colors = utility_mana_cost_to_color_array(face.colors)
                 if self.layout in ["split", "adventure"]:
-                    face.colors.extend(helper_mana_cost_to_color_array(face.mana_cost))
+                    face.colors.extend(utility_mana_cost_to_color_array(face.mana_cost))
             if face.artist == "":
                 face.artist = self.artist
             if face.collector_number == "":
