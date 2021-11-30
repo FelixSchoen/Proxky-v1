@@ -3,6 +3,7 @@ import os
 import re
 import xml.etree.ElementTree
 
+import variables
 from info import info_fail
 from variables import *
 
@@ -159,23 +160,31 @@ def helper_cardfile_to_pdf(app, card):
     if not os.path.exists(output_folder_path):
         os.makedirs(output_folder_path)
 
-    myDocument = app.Open(input_file_path)
+    myDoc = app.Open(input_file_path)
 
     profile = app.PreflightProfiles.Item(1)
-    process = app.PreflightProcesses.Add(myDocument, profile)
+    process = app.PreflightProcesses.Add(myDoc, profile)
     process.WaitForProcess()
     results = process.processResults
 
     if "None" not in results:
-        info_fail(card.name, "Error while running preflight")
-        myDocument.Close(1852776480)
-        return FLAG_PREFLIGHT_FAIL
-        # TODO Find which textboxes fail
+        # Fix errors
+        script = open("script.jsx")
+        app.DoScript(script.read(), 1246973031, variables.resize_array)
+
+        process.WaitForProcess()
+        results = process.processResults
+
+        # Check if problems were resolved
+        if "None" not in results:
+            info_fail(card.name, "Error while running preflight")
+            myDoc.Close(1852776480)
+            return FLAG_PREFLIGHT_FAIL
 
     myPDFPreset = app.PDFExportPresets.Item(7)
     idPDFType = 1952403524
-    myDocument.Export(idPDFType, output_file_path, False, myPDFPreset)
-    myDocument.Close(1852776480)
+    myDoc.Export(idPDFType, output_file_path, False, myPDFPreset)
+    myDoc.Close(1852776480)
     return app
 
 
@@ -204,7 +213,7 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
                   ("Upper Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
                   ("Lower Color Bar", ids.GRADIENTS_O, "FillColor"),
                   ("Lower Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
-                  ("Oracle Text", ids.ORACLE_TEXT_T, True),
+                  (tf_names.ORACLE_TEXT, ids.ORACLE_TEXT_T, True),
                   ("Oracle Text", ids.ORACLE_TEXT_O),
                   ("Mask", ids.MASK_O),
                   ("Value", ids.VALUE_T, True),
@@ -214,8 +223,8 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
                   ("Mask Short", ids.MASK_SHORT_O),
                   ("Mask Long", ids.MASK_LONG_O),
                   ("Bottom", ids.GROUP_BOTTOM_O),
-                  ("Artist", ids.ARTIST_T, True),
-                  ("Collector Information", ids.COLLECTOR_INFORMATION_T, True),
+                  (tf_names.ARTIST, ids.ARTIST_T, True),
+                  (tf_names.COLLECTOR_INFORMATION, ids.COLLECTOR_INFORMATION_T, True),
                   ("Set Icon", ids.SET_O)]
 
     # IDs to add for standard cards
@@ -232,16 +241,16 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
                       ("Planeswalker Value 2", ids.PLANESWALKER_VALUE_O),
                       ("Planeswalker Value 3", ids.PLANESWALKER_VALUE_O),
                       ("Planeswalker Value 4", ids.PLANESWALKER_VALUE_O),
-                      ("Planeswalker Text 1", ids.PLANESWALKER_TEXT_T, True),
-                      ("Planeswalker Text 2", ids.PLANESWALKER_TEXT_T, True),
-                      ("Planeswalker Text 3", ids.PLANESWALKER_TEXT_T, True),
-                      ("Planeswalker Text 4", ids.PLANESWALKER_TEXT_T, True),
-                      ("Planeswalker Text 1", ids.PLANESWALKER_TEXT_O),
-                      ("Planeswalker Text 2", ids.PLANESWALKER_TEXT_O),
-                      ("Planeswalker Text 3", ids.PLANESWALKER_TEXT_O),
-                      ("Planeswalker Text 4", ids.PLANESWALKER_TEXT_O),
-                      ("Planeswalker Oracle Text", ids.PLANESWALKER_ORACLE_T, True),
-                      ("Planeswalker Oracle Text", ids.PLANESWALKER_ORACLE_O),
+                      (tf_names.PLANESWALKER_TEXT_1, ids.PLANESWALKER_TEXT_T, True),
+                      (tf_names.PLANESWALKER_TEXT_2, ids.PLANESWALKER_TEXT_T, True),
+                      (tf_names.PLANESWALKER_TEXT_3, ids.PLANESWALKER_TEXT_T, True),
+                      (tf_names.PLANESWALKER_TEXT_4, ids.PLANESWALKER_TEXT_T, True),
+                      (tf_names.PLANESWALKER_TEXT_1, ids.PLANESWALKER_TEXT_O),
+                      (tf_names.PLANESWALKER_TEXT_2, ids.PLANESWALKER_TEXT_O),
+                      (tf_names.PLANESWALKER_TEXT_3, ids.PLANESWALKER_TEXT_O),
+                      (tf_names.PLANESWALKER_TEXT_4, ids.PLANESWALKER_TEXT_O),
+                      (tf_names.PLANESWALKER_ORACLE_TEXT, ids.PLANESWALKER_ORACLE_T, True),
+                      (tf_names.PLANESWALKER_ORACLE_TEXT, ids.PLANESWALKER_ORACLE_O),
                       ("Layout Adventure", ids.GROUP_ORACLE_ADVENTURE_O),
                       ("Side Indicator Text", ids.SIDE_INDICATOR_T, True),
                       ("Side Indicator", ids.SIDE_INDICATOR_O)]
@@ -255,10 +264,10 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
                        ("Adventure Color Bar Bleed", ids.COLOR_BARS_O),
                        ("Adventure Color Bar", ids.GRADIENTS_O, "FillColor"),
                        ("Adventure Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
-                       ("Adventure Oracle Text Left", ids.ADVENTURE_ORACLE_TEXT_L_T, True),
-                       ("Adventure Oracle Text Left", ids.ADVENTURE_ORACLE_TEXT_L_O),
-                       ("Adventure Oracle Text Right", ids.ADVENTURE_ORACLE_TEXT_R_T, True),
-                       ("Adventure Oracle Text Right", ids.ADVENTURE_ORACLE_TEXT_R_O)]
+                       (tf_names.ADVENTURE_ORACLE_TEXT_LEFT, ids.ADVENTURE_ORACLE_TEXT_L_T, True),
+                       (tf_names.ADVENTURE_ORACLE_TEXT_LEFT, ids.ADVENTURE_ORACLE_TEXT_L_O),
+                       (tf_names.ADVENTURE_ORACLE_TEXT_RIGHT, ids.ADVENTURE_ORACLE_TEXT_R_T, True),
+                       (tf_names.ADVENTURE_ORACLE_TEXT_RIGHT, ids.ADVENTURE_ORACLE_TEXT_R_O)]
 
     names_printing = [
         ("Frame 1", ids.PRINTING_FRAME_O),
@@ -340,7 +349,7 @@ def helper_generate_ids(name, spread, mode="standard", prefix=""):
 
 def helper_generate_all_ids():
     front_id = "uff"
-    back_id = "u38f2"
+    back_id = "u3da6"
     print_front_id = "uce"
     print_back_id = "u20b"
 

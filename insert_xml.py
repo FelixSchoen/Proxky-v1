@@ -1,3 +1,4 @@
+import re
 import xml
 
 from PIL import Image
@@ -5,7 +6,7 @@ from PIL import Image
 from helper import helper_split_string_along_regex, helper_file_exists, helper_indesign_get_coordinates, \
     helper_vector_bounding_box
 from info import info_fail
-from variables import image_types
+from variables import image_types, regex_oracle, mana_mapping
 
 
 def insert_value_content(identifier, value):
@@ -16,18 +17,19 @@ def insert_value_content(identifier, value):
     tree.write("data/memory/Stories/Story_" + identifier + ".xml")
 
 
-def insert_text_element(content, font=("", ""), point_size_correction=0):
+def insert_text_element(content, font="", style="", size="8"):
     parent = xml.etree.ElementTree.Element("CharacterStyleRange")
-    parent.set("PointSize", str(8 + point_size_correction))
+    parent.set("PointSize", size)
+    parent.set("AppliedCharacterStyle", "CharacterStyle/$ID/[No character style]")
 
-    if font != ("", ""):
-        if font[1] != "":
-            parent.set("FontStyle", font[1])
+    if font != "":
+        if style != "":
+            parent.set("FontStyle", style)
 
         properties = xml.etree.ElementTree.Element("Properties")
         applied_font = xml.etree.ElementTree.Element("AppliedFont")
         applied_font.set("type", "string")
-        applied_font.text = font[0]
+        applied_font.text = font
 
         properties.append(applied_font)
         parent.append(properties)
@@ -127,7 +129,10 @@ def insert_pdf(card, identifier_spread, identifier_field, path_file, name_file, 
     tree = xml.etree.ElementTree.parse("data/memory_print/Spreads/Spread_" + identifier_spread + ".xml")
     rectangle = tree.find(".//Rectangle[@Self='" + identifier_field + "']")
     pdf = xml.etree.ElementTree.Element("PDF")
-    pdf.set("ItemTransform", "1 0 0 1 -77.95261341004854 -651.6848968746158")
+    if "split" in card.layout:
+        pdf.set("ItemTransform", "1.000001106034948 0 0 1.000001106034948 -77.95271608825342 -651.6850393700788")
+    else:
+        pdf.set("ItemTransform", "1 0 0 1 -77.95261341004854 -651.6848968746158")
 
     pdf_attribute = xml.etree.ElementTree.Element("PDFAttribute")
     pdf_attribute.set("PageNumber", str(page_number))
@@ -139,3 +144,50 @@ def insert_pdf(card, identifier_spread, identifier_field, path_file, name_file, 
     pdf.append(pdf_attribute)
     pdf.append(link)
     tree.write("data/memory_print/Spreads/Spread_" + identifier_spread + ".xml")
+
+
+def insert_multi_font_text(oracle_text, object_id, align="variable", regex=None, font="", style="", size="8"):
+    id_text_box = object_id
+
+    tree = xml.etree.ElementTree.parse("data/memory/Stories/Story_" + id_text_box + ".xml")
+    parent = tree.find(".//ParagraphStyleRange[1]")
+    child = tree.find(".//CharacterStyleRange[1]")
+    parent.remove(child)
+
+    # Check alignment
+    if (len(oracle_text) > 100 and align == "variable") or align == "left":
+        parent.set("Justification", "LeftAlign")
+
+    if regex is None:
+        regex = regex_oracle
+
+    # Split into different cases to treat
+    text_array = helper_split_string_along_regex(oracle_text, *regex)
+
+    # Remove reminder text
+    text_array = list(filter(lambda x: (x[2] != "reminder"), text_array))
+
+    # Remove initial newline
+    if len(text_array) > 0 and text_array[0][0].startswith("\n"):
+        text_array[0] = (text_array[0][0][1:], text_array[0][1], text_array[0][2])
+
+    # Remove trailing newline
+    if len(text_array) > 0 and text_array[-1][0].endswith("\n"):
+        text_array[-1] = (
+            text_array[-1][0][:-2 or None], text_array[-1][1], text_array[-1][2])
+
+    for part in text_array:
+        if part[1] == "type":
+            if part[2] == "normal":
+                parent.append(insert_text_element(part[0], font=font, style=style, size=size))
+        elif part[1] == "font":
+            if part[2][0] == "KyMana":
+                mana = []
+                for item in re.findall("({[A-Z0-9]+})", part[0]):
+                    mana.append(mana_mapping[item])
+                mana = "".join(mana)
+                parent.append(insert_text_element(mana, font=part[2][0], style=part[2][1], size="5"))
+            else:
+                parent.append(insert_text_element(part[0], font=part[2][0], style=part[2][1], size=size))
+
+    tree.write("data/memory/Stories/Story_" + id_text_box + ".xml")

@@ -54,6 +54,27 @@ class ids:
     PRINTING_FRAME_O = "pid_frame_o"
 
 
+class tf_names:
+    ORACLE_TEXT = "Oracle Text"
+    PLANESWALKER_TEXT_1 = "Planeswalker Text 1"
+    PLANESWALKER_TEXT_2 = "Planeswalker Text 2"
+    PLANESWALKER_TEXT_3 = "Planeswalker Text 3"
+    PLANESWALKER_TEXT_4 = "Planeswalker Text 4"
+    PLANESWALKER_ORACLE_TEXT = "Planeswalker Oracle Text"
+    ADVENTURE_ORACLE_TEXT_LEFT = "Adventure Oracle Text Left"
+    ADVENTURE_ORACLE_TEXT_RIGHT = "Adventure Oracle Text Right"
+    ARTIST = "Artist"
+    COLLECTOR_INFORMATION = "Collector Information"
+
+    ST_ORACLE_TEXT = "ST Oracle Text"
+    ST_ARTIST = "ST Artist"
+    ST_COLLECTOR_INFORMATION = "ST Collector Information"
+
+    SB_ORACLE_TEXT = "SB Oracle Text"
+    SB_ARTIST = "SB Artist"
+    SB_COLLECTOR_INFORMATION = "SB Collector Information"
+
+
 # IDs
 id_general_front = {
     "id_spread": "uff",
@@ -155,42 +176,42 @@ id_general_front_adventure = {
     "id_adventure_oracle_text_r_o": "ube6",
 }
 id_general_back = {
-    "id_spread": "u38f2",
-    "id_artwork_o": "u3d16",
-    "id_group_header_o": "u3ca9",
-    "id_type_o": "u3d15",
-    "id_name_t": "u3d01",
-    "id_type_line_t": "u3ce9",
-    "id_mana_cost_t": "u3cd2",
-    "id_color_bars_o": ['u3ccc', 'u3ccb', 'u3ad0', 'u3acf'],
+    "id_spread": "u3da6",
+    "id_artwork_o": "u41c7",
+    "id_group_header_o": "u415a",
+    "id_type_o": "u41c6",
+    "id_name_t": "u41b2",
+    "id_type_line_t": "u419b",
+    "id_mana_cost_t": "u4183",
+    "id_color_bars_o": ['u417d', 'u417c', 'u3f82', 'u3f81'],
     "id_gradients_o": ['udf', 'udf', 'udf', 'udf'],
-    "id_oracle_text_t": "u3c95",
-    "id_oracle_text_o": "u3c92",
-    "id_mask_o": "u3ab3",
-    "id_value_t": "u3b31",
-    "id_value_o": "u3b2e",
-    "id_value_short_frame_o": "u3ad7",
-    "id_value_long_frame_o": "u3ad1",
-    "id_mask_short_o": "u3ad6",
-    "id_mask_long_o": "u3ab5",
-    "id_bottom_o": "u3ab6",
-    "id_artist_t": "u3b15",
-    "id_collector_information_t": "u3ae1",
-    "id_set_o": "u3add",
-    "id_group_normal_o": "u3ab1",
-    "id_group_split_o": "u38f8",
-    "id_modal_t": "u3cb3",
-    "id_group_modal_o": "u3caa",
-    "id_group_oracle_planeswalker_o": "u3bc0",
-    "id_planeswalker_value_t": ['u3c7e', 'u3c4f', 'u3c21', 'u3bf3'],
-    "id_planeswalker_value_o": ['u3c7b', 'u3c4c', 'u3c1e', 'u3bef'],
-    "id_planeswalker_text_t": ['u3c67', 'u3c38', 'u3c0a', 'u3bdb'],
-    "id_planeswalker_text_o": ['u3c63', 'u3c35', 'u3c07', 'u3bd8'],
-    "id_planeswalker_oracle_t": "u3bc4",
-    "id_planeswalker_oracle_o": "u3bc1",
-    "id_group_oracle_adventure_o": "u3b46",
-    "id_side_indicator_t": "u3afe",
-    "id_side_indicator_o": "u3af5",
+    "id_oracle_text_t": "u4146",
+    "id_oracle_text_o": "u4143",
+    "id_mask_o": "u3f65",
+    "id_value_t": "u3fe3",
+    "id_value_o": "u3fe0",
+    "id_value_short_frame_o": "u3f89",
+    "id_value_long_frame_o": "u3f83",
+    "id_mask_short_o": "u3f88",
+    "id_mask_long_o": "u3f67",
+    "id_bottom_o": "u3f68",
+    "id_artist_t": "u3fc7",
+    "id_collector_information_t": "u3f94",
+    "id_set_o": "u3f8f",
+    "id_group_normal_o": "u3f63",
+    "id_group_split_o": "u3dac",
+    "id_modal_t": "u4164",
+    "id_group_modal_o": "u415b",
+    "id_group_oracle_planeswalker_o": "u4072",
+    "id_planeswalker_value_t": ['u412f', 'u4101', 'u40d3', 'u40a5'],
+    "id_planeswalker_value_o": ['u412c', 'u40fe', 'u40d0', 'u40a2'],
+    "id_planeswalker_text_t": ['u4118', 'u40ea', 'u40bc', 'u408e'],
+    "id_planeswalker_text_o": ['u4115', 'u40e7', 'u40b9', 'u408a'],
+    "id_planeswalker_oracle_t": "u4076",
+    "id_planeswalker_oracle_o": "u4073",
+    "id_group_oracle_adventure_o": "u3ff8",
+    "id_side_indicator_t": "u3fb0",
+    "id_side_indicator_o": "u3fa8",
 }
 id_general_print_front = {
     "id_spread": "uce",
@@ -237,6 +258,9 @@ f_pdf = f_output_folder + "/PDF"
 f_print = f_output_folder + "/Other/Print"
 f_artwork = f_output_folder + "/Artwork"
 f_artwork_downloaded = f_output_folder + "/ArtworkDownload"
+
+font_sans = "Helvetica Now Var"
+font_sans_style = "Display"
 
 # Enumerations
 supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga", "token"]
@@ -316,3 +340,27 @@ regex_decklist = r"^(?P<amount>\d+) (?P<name>.+?)(?: \[(?P<set>.+)\])?$"
 regex_add_mana = r"Add ({[A-Z0-9]+})+"
 regex_mana = r"{([A-Z0-9]+)}"
 regex_newline = r"\n"
+
+# Text Frame Resizing Array, AT LEAST ONE OF EACH ARRAYS MUST CONTAIN MORE THAN ONE ELEMENT
+resize_array = [
+    # Text Frames to Resize
+    [
+        [tf_names.ORACLE_TEXT],
+        [tf_names.PLANESWALKER_TEXT_1, tf_names.PLANESWALKER_TEXT_2,
+         tf_names.PLANESWALKER_TEXT_3, tf_names.PLANESWALKER_TEXT_4],
+        [tf_names.PLANESWALKER_ORACLE_TEXT],
+        [tf_names.ST_ORACLE_TEXT],
+        [tf_names.SB_ORACLE_TEXT],
+        ["Placeholder", "Placeholder"]
+    ],
+    # Text Frames to Condense
+    [
+        [tf_names.ARTIST, tf_names.ARTIST],
+        [tf_names.COLLECTOR_INFORMATION],
+        [tf_names.ST_ARTIST],
+        [tf_names.ST_COLLECTOR_INFORMATION],
+        [tf_names.SB_ARTIST],
+        [tf_names.SB_COLLECTOR_INFORMATION],
+        ["Placeholder", "Placeholder"]
+    ]
+]

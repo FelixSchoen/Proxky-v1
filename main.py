@@ -1,8 +1,10 @@
+import getopt
 import json
 import shutil
 import time
 import urllib.parse
 import zipfile
+import sys
 from time import sleep
 
 import win32com.client
@@ -57,6 +59,7 @@ def process_cards(card_names: list[(str, str, str)]):
 
 def process_print(card_names: list[(str, str, str)]):
     list_of_cards = []
+    list_of_lands = []
 
     for i, card_name in enumerate(card_names):
         card = get_card_object(card_name)
@@ -66,13 +69,26 @@ def process_print(card_names: list[(str, str, str)]):
         for j in range(0, int(card_name[4])):
             if card.layout in ["modal_dfc", "transform"]:
                 list_of_cards.insert(0, card)
+            # elif "Land" in helper_get_card_types(card):
+            #     list_of_lands.append(card)
             else:
                 list_of_cards.append(card)
 
+    list_of_cards.extend(list_of_lands)
+
     # Folders
     target_folder_path = f_print
+    for filename in os.listdir(target_folder_path):
+        file_path = os.path.join(target_folder_path, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    app = win32com.client.Dispatch("InDesign.Application.2021")
+    app = win32com.client.Dispatch("InDesign.Application.2022")
 
     for i, page in enumerate(list(helper_divide_chunks(list_of_cards, 9))):
         target_file_path = target_folder_path + "/" + str(i)
@@ -106,8 +122,8 @@ def process_print(card_names: list[(str, str, str)]):
             os.remove(target_file_full_path)
         os.rename(target_file_path + ".zip", target_file_path + ".idml")
 
-    if app is not None:
-        app.Quit()
+    # if app is not None:
+    #     app.Quit()
 
 
 def get_card_object(card_name):
@@ -200,7 +216,7 @@ def card_fill(card: Card, id_set, layout):
     types = helper_get_card_types(card)
 
     # Check if basic
-    if "Basic Land" in card.type_line:
+    if "Basic" in types and "Land" in types:
         card_layout_no_oracle_text(id_set, card)
 
     # Value
@@ -233,7 +249,7 @@ def card_fill(card: Card, id_set, layout):
     if "Planeswalker" in types:
         set_planeswalker_text(card, id_set)
     elif layout in ["adventure"]:
-        set_default_oracle_text(card, id_set, left_align=True)
+        set_default_oracle_text(card, id_set, align="left")
     else:
         set_default_oracle_text(card, id_set)
 
@@ -250,9 +266,28 @@ def card_fill(card: Card, id_set, layout):
     set_set(card, id_set)
 
 
-if __name__ == '__main__':
-    cards = process_decklist("data/decks/decklist.txt")
-    process_cards(cards)
-    process_print(cards)
+def main(argv):
+    mode = ""
+    deck = ""
 
-    # helper_generate_all_ids()
+    try:
+        opts, args = getopt.getopt(argv, "m:d:", ["mode=", "deck="])
+    except getopt.GetoptError:
+        info_fail("[ProxKy] Invalid command line options")
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt in ("-m", "--mode"):
+            mode = arg
+        elif opt in ("-d", "--deck"):
+            deck = arg
+
+    if mode == "standard":
+        cards = process_decklist("data/decks/" + deck + ".txt")
+        process_cards(cards)
+        process_print(cards)
+    elif mode == "generate_id":
+        helper_generate_all_ids()
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])

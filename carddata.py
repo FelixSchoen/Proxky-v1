@@ -1,5 +1,4 @@
 import os
-import re
 from os import listdir
 
 import requests
@@ -8,9 +7,10 @@ from helper import helper_sort_mana_array, helper_indesign_set_y_coordinates, he
     helper_get_card_types
 from info import info_warn, info_normal
 from insert_xml import *
+from insert_xml import insert_multi_font_text
 from variables import ids, f_artwork, f_artwork_downloaded, f_icon_types, COORDINATE_TOP_ORACLE_TEXT, \
-    VALUE_MODAL_HEIGHT, COORDINATE_BOT_ORACLE_TEXT, VALUE_DISTANCE_VALUE, regex_oracle, mana_mapping, f_icon_set, \
-    regex_planeswalker, color_mapping
+    VALUE_MODAL_HEIGHT, COORDINATE_BOT_ORACLE_TEXT, VALUE_DISTANCE_VALUE, mana_mapping, f_icon_set, \
+    regex_planeswalker, color_mapping, font_sans, font_sans_style
 
 
 def set_artwork(card, id_set):
@@ -20,18 +20,26 @@ def set_artwork(card, id_set):
     id_spread = id_set[ids.SPREAD]
     id_artwork = id_set[ids.ARTWORK_O]
 
-    path = f_artwork + "/" + card.set.upper() + "/" + card.name
+    path_cn = f_artwork + "/" + card.set.upper() + "/" + str(card.collector_number) + " - " + card.name
+    path_name = f_artwork + "/" + card.set.upper() + "/" + card.name
     path_auto = f_artwork_downloaded + "/" + card.set.upper() + "/" + card.name + ".jpg"
     image_type = "na"
+    filename = ""
 
     for possible_image_type in image_types:
-        if not helper_file_exists(path + "." + possible_image_type):
+        if helper_file_exists(path_cn + "." + possible_image_type):
+            filename = str(card.collector_number) + " - " + card.name
+            image_type = possible_image_type
+            break
+        elif not helper_file_exists(path_name + "." + possible_image_type):
             if any(helper_file_exists(f_artwork + "/" + possible_set + "/" + card.name + "." + possible_image_type) for
                    possible_set in listdir(f_artwork)):
                 image_type = "other"
             continue
         else:
+            filename = card.name
             image_type = possible_image_type
+            break
 
     if image_type == "other":
         info_warn(card.name, "Artwork from different set exists")
@@ -57,7 +65,7 @@ def set_artwork(card, id_set):
                        type_file="jpg",
                        mode_scale_image="fit_priority_x", mode_align_vertical="top")
     else:
-        insert_graphic(card, id_spread, id_artwork, f_artwork + "/" + card.set.upper(), card.name, type_file=image_type,
+        insert_graphic(card, id_spread, id_artwork, f_artwork + "/" + card.set.upper(), filename, type_file=image_type,
                        mode_scale_image="fit_priority_x", mode_align_vertical="top")
 
 
@@ -114,13 +122,19 @@ def set_modal(card, id_sets, modal_type="modal"):
         face = card.card_faces[(i + 1) % 2]
 
         caps_type = ""
+        line_to_insert = ""
 
         if modal_type == "modal_dfc":
             caps_type = "MODAL"
         elif modal_type == "transform":
             caps_type = "TRANSFORM"
 
-        insert_value_content(id_set[ids.MODAL_T], caps_type + " — " + face.type_line.replace("—", "•"))
+        line_to_insert = caps_type + " — " + face.type_line.replace("—", "•")
+
+        if len(face.mana_cost) > 0:
+            line_to_insert += " • " + face.mana_cost
+
+        insert_multi_font_text(line_to_insert, id_set[ids.MODAL_T], align="center", font=font_sans, style=font_sans_style, size="5")
 
 
 def set_color_bar(card, id_set):
@@ -209,7 +223,7 @@ def set_planeswalker_text(card, id_set):
 
         text_boxes.insert(0, [(id_set[ids.ORACLE_TEXT_T], id_set[ids.ORACLE_TEXT_O])])
         amount_textboxes += 1
-        set_oracle_text(planeswalker_text[0][0], id_set[ids.ORACLE_TEXT_T], left_align=True)
+        insert_multi_font_text(planeswalker_text[0][0], id_set[ids.ORACLE_TEXT_T], align="left")
         planeswalker_text = planeswalker_text[1:]
 
     potential_additional_box = helper_split_string_along_regex(planeswalker_text[-1][0], ("\n", "type", "break"))
@@ -227,7 +241,7 @@ def set_planeswalker_text(card, id_set):
         for i in range(2, len(potential_additional_box)):
             insert_string += potential_additional_box[i][0]
 
-        set_oracle_text(insert_string, id_set[ids.PLANESWALKER_ORACLE_T], left_align=True)
+        insert_multi_font_text(insert_string, id_set[ids.PLANESWALKER_ORACLE_T], align="Left")
 
         planeswalker_text.pop()
         planeswalker_text.append(potential_additional_box[0])
@@ -261,60 +275,16 @@ def set_planeswalker_text(card, id_set):
                 object_box.set("Visible", "false")
 
         if 0 <= j < amount_abilities:
-            set_oracle_text(planeswalker_text[2 * j][0][:-1].replace("−", "-"), level[0][0])
-            set_oracle_text(planeswalker_text[2 * j + 1][0].rstrip(), level[1][0])
+            insert_multi_font_text(planeswalker_text[2 * j][0][:-1].replace("−", "-"), level[0][0])
+            insert_multi_font_text(planeswalker_text[2 * j + 1][0].rstrip(), level[1][0])
 
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
 
-def set_oracle_text(oracle_text, object_id, left_align=False):
-    id_oracle_text = object_id
-
-    tree = xml.etree.ElementTree.parse("data/memory/Stories/Story_" + id_oracle_text + ".xml")
-    parent = tree.find(".//ParagraphStyleRange[1]")
-    child = tree.find(".//CharacterStyleRange[1]")
-    parent.remove(child)
-
-    # If text too long, align to the left
-    if len(oracle_text) > 100 or left_align:
-        parent.set("Justification", "LeftAlign")
-
-    # Split into different cases to treat
-    oracle_text_array = helper_split_string_along_regex(oracle_text, *regex_oracle)
-
-    # Remove reminder text
-    oracle_text_array = list(filter(lambda x: (x[2] != "reminder"), oracle_text_array))
-
-    # Remove initial newline
-    if len(oracle_text_array) > 0 and oracle_text_array[0][0].startswith("\n"):
-        oracle_text_array[0] = (oracle_text_array[0][0][1:], oracle_text_array[0][1], oracle_text_array[0][2])
-
-    # Remove trailing newline
-    if len(oracle_text_array) > 0 and oracle_text_array[-1][0].endswith("\n"):
-        oracle_text_array[-1] = (
-            oracle_text_array[-1][0][:-2 or None], oracle_text_array[-1][1], oracle_text_array[-1][2])
-
-    for part in oracle_text_array:
-        if part[1] == "type":
-            if part[2] == "normal":
-                parent.append(insert_text_element(part[0]))
-        elif part[1] == "font":
-            if part[2][0] == "KyMana":
-                mana = []
-                for item in re.findall("({[A-Z0-9]+})", part[0]):
-                    mana.append(mana_mapping[item])
-                mana = "".join(mana)
-                parent.append(insert_text_element(mana, part[2]))
-            else:
-                parent.append(insert_text_element(part[0], part[2]))
-
-    tree.write("data/memory/Stories/Story_" + id_oracle_text + ".xml")
-
-
-def set_default_oracle_text(card, id_set, left_align=False):
+def set_default_oracle_text(card, id_set, align="center"):
     if ids.ORACLE_TEXT_T not in id_set:
         return
-    set_oracle_text(card.oracle_text, id_set[ids.ORACLE_TEXT_T], left_align)
+    insert_multi_font_text(card.oracle_text, id_set[ids.ORACLE_TEXT_T], align)
 
 
 def set_value(card, id_set):
