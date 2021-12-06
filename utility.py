@@ -14,7 +14,8 @@ def utility_get_card_types(card):
     return types
 
 
-def utility_split_string_along_regex(string, *matchers: ([str], str, str)):
+def utility_split_string_along_regex(string, *matchers: ([str], str, str), standard_category="type",
+                                     standard_identifier="normal"):
     # Build list of all available regex
     all_regex = []
     for triple in matchers:
@@ -41,7 +42,7 @@ def utility_split_string_along_regex(string, *matchers: ([str], str, str)):
 
         # If no regex matched we are dealing with a normal string
         if current_span[0] == math.inf:
-            result.append((working_string, "type", "normal"))
+            result.append((working_string, standard_category, standard_identifier))
             working_string = ""
         else:
             # Split into two parts
@@ -51,7 +52,7 @@ def utility_split_string_along_regex(string, *matchers: ([str], str, str)):
             # Everything before match is normal, remove it first
             rectifier = 0
             if current_span[0] > 0:
-                result.append((part_one, "type", "normal"))
+                result.append((part_one, standard_category, standard_identifier))
                 rectifier = len(part_one)
 
             part_one = part_two[:current_span[1] - rectifier]
@@ -67,20 +68,19 @@ def utility_split_string_along_regex(string, *matchers: ([str], str, str)):
     return result
 
 
-# TODO
-def utility_nested_text_types(text_array, type_to_check_for, regex):
-    modified_regex = []
+def utility_nested_reminder_text(text_array):
+    array_to_return = []
 
-    for i, element in enumerate(text_array):
-        if element[2] == type_to_check_for:
-            regex_without_reminder = regex.copy()
-            regex_without_reminder = list(filter(lambda x: (x[2] != type_to_check_for), regex_without_reminder))
-            reminder_array = utility_split_string_along_regex(element[0], *regex_without_reminder)
-            modified_regex.extend(reminder_array)
+    for element in text_array:
+        if element[2] != "reminder":
+            array_to_return.append(element)
         else:
-            modified_regex.append(element)
+            returned_array = utility_split_string_along_regex(element[0], *regex_template_mana,
+                                                              standard_identifier="reminder")
+            print(returned_array)
+            array_to_return.extend(returned_array)
 
-    return modified_regex
+    return array_to_return
 
 
 def utility_file_exists(path):

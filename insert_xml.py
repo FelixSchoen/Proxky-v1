@@ -5,7 +5,7 @@ from PIL import Image
 
 from settings import PRINT_FLAVOR_TEXT
 from utility import utility_split_string_along_regex, utility_file_exists, utility_indesign_get_coordinates, \
-    utility_vector_bounding_box
+    utility_vector_bounding_box, utility_nested_reminder_text
 from info import info_fail
 from variables import image_types, regex_template_oracle, mana_mapping, regex_template_regular, FONT_STANDARD, \
     FONT_STANDARD_STYLE_ITALIC, regex_mana
@@ -163,6 +163,9 @@ def insert_multi_font_text(oracle_text, object_id, align="variable", regex=None,
 
     # Split into different cases to treat
     text_array = utility_split_string_along_regex(oracle_text, *regex)
+
+    # Deal with nested reminder text
+    text_array = utility_nested_reminder_text(text_array)
 
     # Remove reminder text
     # text_array = list(filter(lambda x: (x[2] != "reminder"), text_array))
