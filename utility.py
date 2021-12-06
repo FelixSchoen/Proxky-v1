@@ -75,9 +75,8 @@ def utility_nested_reminder_text(text_array):
         if element[2] != "reminder":
             array_to_return.append(element)
         else:
-            returned_array = utility_split_string_along_regex(element[0], *regex_template_mana,
+            returned_array = utility_split_string_along_regex(element[0], *regex_mana,
                                                               standard_identifier="reminder")
-            print(returned_array)
             array_to_return.extend(returned_array)
 
     return array_to_return

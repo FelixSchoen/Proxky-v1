@@ -8,7 +8,7 @@ from utility import utility_split_string_along_regex, utility_file_exists, utili
     utility_vector_bounding_box, utility_nested_reminder_text
 from info import info_fail
 from variables import image_types, regex_template_oracle, mana_mapping, regex_template_regular, FONT_STANDARD, \
-    FONT_STANDARD_STYLE_ITALIC, regex_mana
+    FONT_STANDARD_STYLE_ITALIC, regex_mana, regex_template_flavor
 
 
 def insert_value_content(identifier, value):
@@ -181,7 +181,15 @@ def insert_multi_font_text(oracle_text, object_id, align="variable", regex=None,
 
     # Insert flavor text
     if PRINT_FLAVOR_TEXT and len(flavor_text) > 0:
-        text_array.append(("\n" + flavor_text, "type", "flavor"))
+        flavor_array = utility_split_string_along_regex(flavor_text, *regex_template_flavor,
+                                                        standard_identifier="flavor")
+        if len(text_array) > 0:
+            text_array.append(("\n", "type", "flavor"))
+        for entry in flavor_array:
+            if entry[2] == "flavor":
+                text_array.append(entry)
+            else:
+                text_array.append((entry[0].replace("*", ""), entry[1], entry[2]))
 
     for part in text_array:
         if part[1] == "type":

@@ -349,6 +349,7 @@ regex_template_oracle = regex_template_regular.copy()
 regex_template_oracle.append(
     (keywords, "font", ("Plantin MT Pro", "Italic")))
 regex_template_planeswalker = [([r"[\+|−]?(?:\d+|X): "], "type", "loyalty")]
+regex_template_flavor = [([r"\*(?:.)+\*"], "type", "normal")]
 
 regex_leveler = r"[\"LEVEL [\d]+(-[\d]+|\+)\\n([\d]+|\*)/([\d]+|\*)\"]"
 regex_newline = r"\n"
