@@ -10,7 +10,7 @@ from insert_xml import *
 from insert_xml import insert_multi_font_text
 from variables import ids, f_artwork, f_artwork_downloaded, f_icon_types, COORDINATE_TOP_ORACLE_TEXT, \
     VALUE_MODAL_HEIGHT, COORDINATE_BOT_ORACLE_TEXT, VALUE_DISTANCE_VALUE, mana_mapping, f_icon_set, \
-    regex_planeswalker, color_mapping, font_sans, font_sans_style, regex_regular
+    regex_template_planeswalker, color_mapping, FONT_SANS, FONT_SANS_STYLE, regex_template_regular, regex_add_mana
 
 
 def set_artwork(card, id_set):
@@ -46,7 +46,6 @@ def set_artwork(card, id_set):
         image_type = "na"
 
     if image_type == "na":
-        info_normal(card.name, "No artwork exists, using Scryfall source")
 
         if "art_crop" not in card.image_uris:
             info_fail(card.name, "No artwork on Scryfall")
@@ -127,16 +126,21 @@ def set_modal(card, id_sets, modal_type="modal"):
             caps_type = "MODAL"
         elif modal_type == "transform":
             caps_type = "TRANSFORM"
+        elif modal_type == "double_faced_token":
+            caps_type = "FLIP"
 
-        line_to_insert = caps_type + " — " + face.type_line.replace("—", "•")
-
-        if len(face.power) > 0 and len(face.toughness) > 0:
-            line_to_insert += " • " + face.power + "/" + face.toughness
+        line_to_insert = caps_type + " — " + face.type_line.replace("Creature — ", "").replace("—", "•")
 
         if len(face.mana_cost) > 0:
             line_to_insert += " • " + face.mana_cost
 
-        insert_multi_font_text(line_to_insert, id_set[ids.MODAL_T], align="center", font=font_sans, style=font_sans_style, size="5", regex=regex_regular)
+        if "Land" in face.type_line:
+            match = re.search(regex_add_mana, face.oracle_text)
+            if match:
+                line_to_insert += " • " + match.group("match")
+
+        insert_multi_font_text(line_to_insert, id_set[ids.MODAL_T], align="center", font=FONT_SANS,
+                               style=FONT_SANS_STYLE, size="5", regex=regex_template_regular)
 
 
 def set_color_bar(card, id_set):
@@ -185,7 +189,7 @@ def set_color_bar(card, id_set):
 
 
 def set_planeswalker_text(card, id_set):
-    planeswalker_text = utility_split_string_along_regex(card.oracle_text, *regex_planeswalker)
+    planeswalker_text = utility_split_string_along_regex(card.oracle_text, *regex_template_planeswalker)
     amount_abilities = sum(x[2] == "loyalty" for x in planeswalker_text)
 
     if amount_abilities > 4:
@@ -270,7 +274,7 @@ def set_planeswalker_text(card, id_set):
 
                 utility_indesign_set_y_coordinates(object_box,
                                                    [y_coordinate, y_coordinate,
-                                                   y_coordinate + step_size, y_coordinate + step_size])
+                                                    y_coordinate + step_size, y_coordinate + step_size])
                 shift_coordinates = [step_size * i, step_size * i, step_size * i, step_size * i]
                 utility_indesign_shift_y_coordinates(object_box, shift_coordinates)
             else:
@@ -283,10 +287,10 @@ def set_planeswalker_text(card, id_set):
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
 
-def set_oracle_text(card, id_set, align="center"):
+def set_oracle_text(card, id_set):
     if ids.ORACLE_TEXT_T not in id_set:
         return
-    insert_multi_font_text(card.oracle_text, id_set[ids.ORACLE_TEXT_T], align)
+    insert_multi_font_text(card.oracle_text, id_set[ids.ORACLE_TEXT_T], flavor_text=card.flavor_text)
 
 
 def set_value(card, id_set):
@@ -334,7 +338,6 @@ def set_set(card, id_set):
 
     if not utility_file_exists(f_icon_set + "/" + card.set.lower() + ".svg"):
         if card.set.lower()[0] == "t" and utility_file_exists(f_icon_set + "/" + card.set.lower()[1:] + ".svg"):
-            info_warn(card.name, "Assuming that card is token")
             insert_graphic(card, id_spread, id_set_icon, f_icon_set, card.set.lower()[1:])
         else:
             info_warn(card.name, "No icon for set: " + card.set.lower())

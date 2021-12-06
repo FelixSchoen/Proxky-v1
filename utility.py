@@ -67,6 +67,22 @@ def utility_split_string_along_regex(string, *matchers: ([str], str, str)):
     return result
 
 
+# TODO
+def utility_nested_text_types(text_array, type_to_check_for, regex):
+    modified_regex = []
+
+    for i, element in enumerate(text_array):
+        if element[2] == type_to_check_for:
+            regex_without_reminder = regex.copy()
+            regex_without_reminder = list(filter(lambda x: (x[2] != type_to_check_for), regex_without_reminder))
+            reminder_array = utility_split_string_along_regex(element[0], *regex_without_reminder)
+            modified_regex.extend(reminder_array)
+        else:
+            modified_regex.append(element)
+
+    return modified_regex
+
+
 def utility_file_exists(path):
     return os.path.exists(path)
 
@@ -149,9 +165,9 @@ def utility_mana_cost_to_color_array(mana_cost):
 def utility_cardfile_to_pdf(app, card):
     cleansed_name = card.name.replace("//", "--")
     input_folder_path = f_documents + "/" + card.set.upper()
-    input_file_path = input_folder_path + "/" + cleansed_name + ".idml"
+    input_file_path = input_folder_path + "/" + card.collector_number + " - " + cleansed_name + ".idml"
     output_folder_path = f_pdf + "/" + card.set.upper()
-    output_file_path = output_folder_path + "/" + cleansed_name + ".pdf"
+    output_file_path = output_folder_path + "/" + card.collector_number + " - " + cleansed_name + ".pdf"
 
     return_code = ""
 

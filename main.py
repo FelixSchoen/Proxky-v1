@@ -13,6 +13,7 @@ from card import *
 from carddata import *
 from info import *
 from layout import *
+from settings import api_url
 from utility import *
 
 
@@ -67,7 +68,7 @@ def process_print(card_names: list[(str, str, str)]):
             continue
 
         for j in range(0, int(card_name[4])):
-            if card.layout in ["modal_dfc", "transform"]:
+            if card.layout in ["modal_dfc", "transform", "double_faced_token"]:
                 list_of_cards.insert(0, card)
             # elif "Land" in helper_get_card_types(card):
             #     list_of_lands.append(card)
@@ -108,10 +109,9 @@ def process_print(card_names: list[(str, str, str)]):
                 utility_cardfile_to_pdf(app, card)
                 handled_cards.append(card.name)
 
-
             # Frontside
             insert_pdf(card, id_general_print_front[ids.SPREAD], id_general_print_front[ids.PRINTING_FRAME_O][j],
-                       f_pdf + "/" + card.set.upper(), cleansed_name)
+                       f_pdf + "/" + card.set.upper(), card.collector_number + " - " + cleansed_name)
 
             # Backside
             if card.layout in ["modal_dfc", "transform"]:
@@ -120,7 +120,7 @@ def process_print(card_names: list[(str, str, str)]):
                 result = carry * 3 + (2 - modulo)
                 insert_pdf(card, id_general_print_back[ids.SPREAD],
                            id_general_print_back[ids.PRINTING_FRAME_O][result],
-                           f_pdf + "/" + card.set.upper(), cleansed_name, page_number=2)
+                           f_pdf + "/" + card.set.upper(), card.collector_number + " - " + cleansed_name, page_number=2)
 
         shutil.make_archive(target_file_path, "zip", "data/memory_print")
         if utility_file_exists(target_file_full_path):
@@ -162,7 +162,7 @@ def process_card(card: Card):
 
     # Folders
     target_folder_path = f_documents + "/" + card.set.upper()
-    target_file_path = target_folder_path + "/" + cleansed_name
+    target_file_path = target_folder_path + "/" + card.collector_number + " - " + cleansed_name
     target_file_full_path = target_file_path + ".idml"
 
     # Setup and extract preset
@@ -174,7 +174,7 @@ def process_card(card: Card):
         card_delete_backside(id_general_back)
 
         card_fill(card, id_general_front, card.layout)
-    elif card.layout in ["modal_dfc", "transform"]:
+    elif card.layout in ["modal_dfc", "transform", "double_faced_token"]:
         card_layout_double_faced([id_general_front, id_general_back])
 
         set_modal(card, [id_general_front, id_general_back], card.layout)

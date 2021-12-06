@@ -3,10 +3,11 @@ import xml
 
 from PIL import Image
 
+from settings import PRINT_FLAVOR_TEXT
 from utility import utility_split_string_along_regex, utility_file_exists, utility_indesign_get_coordinates, \
     utility_vector_bounding_box
 from info import info_fail
-from variables import image_types, regex_oracle, mana_mapping
+from variables import image_types, regex_template_oracle, mana_mapping, regex_template_regular, FONT_STANDARD, FONT_STANDARD_STYLE_ITALIC
 
 
 def insert_value_content(identifier, value):
@@ -143,7 +144,8 @@ def insert_pdf(card, identifier_spread, identifier_field, path_file, name_file, 
     tree.write("data/memory_print/Spreads/Spread_" + identifier_spread + ".xml")
 
 
-def insert_multi_font_text(oracle_text, object_id, align="variable", regex=None, font="", style="", size="8"):
+def insert_multi_font_text(oracle_text, object_id, align="variable", regex=None, font="", style="", size="8",
+                           flavor_text=""):
     id_text_box = object_id
 
     tree = xml.etree.ElementTree.parse("data/memory/Stories/Story_" + id_text_box + ".xml")
@@ -152,17 +154,17 @@ def insert_multi_font_text(oracle_text, object_id, align="variable", regex=None,
     parent.remove(child)
 
     # Check alignment
-    if (len(oracle_text) > 100 and align == "variable") or align == "left":
+    if (len(oracle_text) + len(flavor_text) >= 100 and align == "variable") or align == "left":
         parent.set("Justification", "LeftAlign")
 
     if regex is None:
-        regex = regex_oracle
+        regex = regex_template_oracle
 
     # Split into different cases to treat
     text_array = utility_split_string_along_regex(oracle_text, *regex)
 
     # Remove reminder text
-    text_array = list(filter(lambda x: (x[2] != "reminder"), text_array))
+    # text_array = list(filter(lambda x: (x[2] != "reminder"), text_array))
 
     # Remove initial newline
     if len(text_array) > 0 and text_array[0][0].startswith("\n"):
@@ -173,10 +175,20 @@ def insert_multi_font_text(oracle_text, object_id, align="variable", regex=None,
         text_array[-1] = (
             text_array[-1][0][:-2 or None], text_array[-1][1], text_array[-1][2])
 
+    # Insert flavor text
+    if PRINT_FLAVOR_TEXT and len(flavor_text) > 0:
+        text_array.append(("\n" + flavor_text, "type", "flavor"))
+
     for part in text_array:
         if part[1] == "type":
             if part[2] == "normal":
                 parent.append(insert_text_element(part[0], font=font, style=style, size=size))
+            elif part[2] == "reminder":
+                parent.append(
+                    insert_text_element(part[0], font=FONT_STANDARD, style=FONT_STANDARD_STYLE_ITALIC, size=size))
+            elif part[2] == "flavor":
+                parent.append(
+                    insert_text_element(part[0], font=FONT_STANDARD, style=FONT_STANDARD_STYLE_ITALIC, size=size))
         elif part[1] == "font":
             if part[2][0] == "KyMana":
                 mana = []

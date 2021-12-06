@@ -1,3 +1,6 @@
+from initialize import keywords
+
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -240,8 +243,11 @@ VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE = abs(-200.6929133858268) - abs(-118.629921
 VALUE_SHIFT_TOKEN_NO_VALUE = abs(-210.6141732283465) - abs(
     -200.6929133858268)  # How much to shift for a token without a value
 
-# API
-api_url = "https://api.scryfall.com"
+# Font
+FONT_STANDARD = "Plantin MT Pro"
+FONT_STANDARD_STYLE_ITALIC = "Italic"
+FONT_SANS = "Helvetica Now Var"
+FONT_SANS_STYLE = "Display"
 
 # Folders
 f_preset_folder = "D:/Drive/Creative/Magic/Proxky"
@@ -259,11 +265,9 @@ f_print = f_output_folder + "/Other/Print"
 f_artwork = f_output_folder + "/Artwork"
 f_artwork_downloaded = f_output_folder + "/ArtworkDownload"
 
-font_sans = "Helvetica Now Var"
-font_sans_style = "Display"
-
 # Enumerations
-supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga", "token"]
+supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga", "token",
+                     "double_faced_token"]
 
 # Types
 mana_types = ["W", "U", "B", "R", "G", "C"]
@@ -323,25 +327,22 @@ color_mapping = {
 }
 
 # Regex
-regex_regular = [
-    ([r"({[A-Z0-9]+})+"], "font", ("KyMana", "")),
-    ([r" ?\(.+\)"], "type", "reminder"),
-]
-regex_oracle = regex_regular.copy()
-regex_oracle.append(
-    ([r"Adamant", "Addendum", "Battalion", "Bloodrush", "Channel", "Chroma", "Cohort", "Constellation", "Converge",
-      "Council's dilemma", "Coven", "Delirium", "Domain", "Eminence", "Enrage", "Fateful hour", "Ferocious",
-      "Formidable", "Grandeur", "Hellbent", "Heroic", "Imprint", "Join forces", "Kinship", "Landfall", "Lieutenant",
-      "Magecraft", "Metalcraft", "Morbid", "Pack tactics", "Parley", "Radiance", "Raid", "Rally", "Revolt",
-      "Spell mastery", "Strive", "Sweep", "Tempting offer", "Threshold", "Underdog", "Undergrowth",
-      "Will of the council"], "font", ("Plantin MT Pro", "Italic")))
-regex_planeswalker = [([r"[\+|−]?(?:\d+|X): "], "type", "loyalty")]
+regex_mana = r"(?P<match>{(?P<mana>[A-Z0-9]+)})"
+regex_add_mana = r"(?P<match>(?P<req>(?:{[A-Z0-9]+})+)+: Add (?P<prod>(?:{(?:[A-Z0-9]+)})+))"
+
+regex_template_mana = [([regex_mana], "font", ("KyMana", ""))]
+regex_template_regular = regex_template_mana.copy()
+regex_template_regular.append(
+    ([r" ?\(.+\)"], "type", "reminder"))
+regex_template_oracle = regex_template_regular.copy()
+regex_template_oracle.append(
+    (keywords, "font", ("Plantin MT Pro", "Italic")))
+regex_template_planeswalker = [([r"[\+|−]?(?:\d+|X): "], "type", "loyalty")]
+
 regex_leveler = r"[\"LEVEL [\d]+(-[\d]+|\+)\\n([\d]+|\*)/([\d]+|\*)\"]"
+regex_newline = r"\n"
 regex_decklist_id = r"^(?P<amount>\d+) (?P<name>.+?)(?: \[(ID: (?P<id>.+))\])$"
 regex_decklist = r"^(?P<amount>\d+) (?P<name>.+?)(?: \[(?P<set>.+)\])?$"
-regex_add_mana = r"Add ({[A-Z0-9]+})+"
-regex_mana = r"{([A-Z0-9]+)}"
-regex_newline = r"\n"
 
 # Text Frame Resizing Array, AT LEAST ONE OF EACH ARRAYS MUST CONTAIN MORE THAN ONE ELEMENT
 resize_array = [

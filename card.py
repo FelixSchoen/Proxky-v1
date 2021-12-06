@@ -15,6 +15,7 @@ class Card:
         self.type_line = ""
         self.colors = []
         self.color_identity = []
+        self.keywords = []
         self.produced_mana = []
         self.keywords = []
         self.oracle_text = ""
@@ -23,6 +24,7 @@ class Card:
         self.loyalty = ""
         self.artist = ""
         self.collector_number = ""
+        self.flavor_text = ""
         self.set = ""
         self.rarity = ""
         self.card_faces = []
@@ -40,6 +42,8 @@ class Card:
             self.colors = args["colors"]
         if "color_identity" in args:
             self.color_identity = args["color_identity"]
+        if "keywords" in args:
+            self.keywords = args["keywords"]
         if "produced_mana" in args:
             self.produced_mana = args["produced_mana"]
         if "keywords" in args:
@@ -59,10 +63,12 @@ class Card:
             self.artist = args["artist"]
         if "collector_number" in args:
             self.collector_number = args["collector_number"]
-        if "set" in args:
-            self.set = args["set"]
+        if "flavor_text" in args:
+            self.flavor_text = args["flavor_text"]
         if "rarity" in args:
             self.rarity = args["rarity"]
+        if "set" in args:
+            self.set = args["set"]
         if "image_uris" in args:
             self.image_uris = args["image_uris"]
 
@@ -70,27 +76,46 @@ class Card:
             if "Land" in self.type_line:
                 self.colors.extend(self.produced_mana)
 
+        # Manual fix for faces
         for face in self.card_faces:
             if len(face.image_uris) == 0:
                 face.image_uris = self.image_uris
+
             if len(face.colors) == 0:
                 if "Land" in face.type_line:
                     if len(face.produced_mana) > 1:
                         face.colors.extend(face.produced_mana)
                     else:
+                        # Search for oracle text additions
                         matches = re.finditer(regex_add_mana, face.oracle_text)
                         for match in matches:
-                            colors = re.findall(regex_mana, match.group())
+                            produced_mana = match.group("prod")
+
+                            colors = []
+                            color_matches = re.finditer(regex_mana, produced_mana)
+                            for color_match in color_matches:
+                                colors.append(color_match.group("mana"))
+
                             face.colors.extend(colors)
-                            face.colors = utility_mana_cost_to_color_array(face.colors)
+                            face.produced_mana.extend(colors)
+                        # Sort and format mana
+                        face.colors = utility_mana_cost_to_color_array(face.colors)
+                        face.produced_mana = utility_mana_cost_to_color_array(face.colors)
                 if self.layout in ["split", "adventure"]:
                     face.colors.extend(utility_mana_cost_to_color_array(face.mana_cost))
+
+            if len(face.keywords) == 0:
+                face.keywords = self.keywords
+
             if face.artist == "":
                 face.artist = self.artist
+
             if face.collector_number == "":
                 face.collector_number = self.collector_number
+
             if face.set == "":
                 face.set = self.set
+
             if face.rarity == "":
                 face.rarity = self.rarity
 

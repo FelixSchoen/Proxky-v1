@@ -3,7 +3,7 @@ import xml
 
 from utility import utility_indesign_shift_y_coordinates, utility_split_string_along_regex
 from insert_xml import insert_value_content
-from variables import ids, VALUE_MODAL_HEIGHT, regex_oracle, VALUE_SHIFT_TOKEN_NO_VALUE, \
+from variables import ids, VALUE_MODAL_HEIGHT, regex_template_oracle, VALUE_SHIFT_TOKEN_NO_VALUE, \
     VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE, VALUE_SHIFT_HEADER_TOKEN_WITH_VALUE
 
 
@@ -151,7 +151,7 @@ def card_layout_adventure(id_set):
 def card_layout_token(id_set, card):
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
-    oracle_entries = utility_split_string_along_regex(card.oracle_text, *regex_oracle)
+    oracle_entries = utility_split_string_along_regex(card.oracle_text, *regex_template_oracle)
     if all(oracle_type == "reminder" for (_, _, oracle_type) in oracle_entries):
         card_layout_no_oracle_text(id_set, card)
 
