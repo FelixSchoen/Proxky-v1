@@ -7,7 +7,8 @@ from settings import PRINT_FLAVOR_TEXT
 from utility import utility_split_string_along_regex, utility_file_exists, utility_indesign_get_coordinates, \
     utility_vector_bounding_box
 from info import info_fail
-from variables import image_types, regex_template_oracle, mana_mapping, regex_template_regular, FONT_STANDARD, FONT_STANDARD_STYLE_ITALIC
+from variables import image_types, regex_template_oracle, mana_mapping, regex_template_regular, FONT_STANDARD, \
+    FONT_STANDARD_STYLE_ITALIC, regex_mana
 
 
 def insert_value_content(identifier, value):
@@ -191,10 +192,11 @@ def insert_multi_font_text(oracle_text, object_id, align="variable", regex=None,
                     insert_text_element(part[0], font=FONT_STANDARD, style=FONT_STANDARD_STYLE_ITALIC, size=size))
         elif part[1] == "font":
             if part[2][0] == "KyMana":
-                mana = []
-                for item in re.findall("({[A-Z0-9]+})", part[0]):
-                    mana.append(mana_mapping[item])
-                mana = "".join(mana)
+                mana_array = []
+                match = re.search(regex_mana, part[0])
+                mana_array.append(mana_mapping[match.group("match")])
+
+                mana = "".join(mana_array)
                 parent.append(insert_text_element(mana, font=part[2][0], style=part[2][1], size=size))
             else:
                 parent.append(insert_text_element(part[0], font=part[2][0], style=part[2][1], size=size))

@@ -277,21 +277,32 @@ image_types = ["png", "jpg", "jpeg"]
 mana_mapping = {
     "{T}": "T",
     "{W}": "W",
-    "{U}": "U",
-    "{B}": "B",
-    "{R}": "R",
-    "{G}": "G",
-    "{C}": "C",
     "{W/U}": "",
     "{W/B}": "",
+    "{W/P}": "",
+    "{2/W}": "",
+    "{U}": "U",
     "{U/B}": "",
     "{U/R}": "",
+    "{U/P}": "",
+    "{2/U}": "",
+    "{B}": "B",
     "{B/R}": "",
     "{B/G}": "",
+    "{B/P}": "",
+    "{2/B}": "",
+    "{R}": "R",
     "{R/G}": "",
     "{R/W}": "",
+    "{R/P}": "",
+    "{2/R}": "",
+    "{G}": "G",
     "{G/W}": "",
     "{G/U}": "",
+    "{G/P}": "",
+    "{2/G}": "",
+    "{C}": "C",
+    "{P}": "P",
     "{0}": "0",
     "{1}": "1",
     "{2}": "2",
@@ -327,8 +338,8 @@ color_mapping = {
 }
 
 # Regex
-regex_mana = r"(?P<match>{(?P<mana>[A-Z0-9]+)})"
-regex_add_mana = r"(?P<match>(?P<req>(?:{[A-Z0-9]+})+)+: Add (?P<prod>(?:{(?:[A-Z0-9]+)})+))"
+regex_mana = r"(?P<match>{(?P<mana>[A-Z0-9\/]+)})"
+regex_add_mana = r"(?P<match>(?P<req>(?:{[A-Z0-9\/]+})+)+: Add (?P<prod>(?:{(?:[A-Z0-9\/]+)})+))"
 
 regex_template_mana = [([regex_mana], "font", ("KyMana", ""))]
 regex_template_regular = regex_template_mana.copy()
