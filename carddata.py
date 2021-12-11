@@ -31,21 +31,19 @@ def set_artwork(card, id_set):
             filename = str(card.collector_number) + " - " + card.name
             image_type = possible_image_type
             break
-        elif not utility_file_exists(path_name + "." + possible_image_type):
-            if any(utility_file_exists(f_artwork + "/" + possible_set + "/" + card.name + "." + possible_image_type) for
-                   possible_set in listdir(f_artwork)):
-                image_type = "other"
-            continue
-        else:
+        elif utility_file_exists(path_name + "." + possible_image_type):
             filename = card.name
             image_type = possible_image_type
             break
 
-    if image_type == "other":
-        info_warn(card.name, "Artwork from different set exists")
-        image_type = "na"
-
     if image_type == "na":
+        # Check if alternative artwork exists
+        paths = os.walk(f_artwork)
+        for path in paths:
+            for file in path[2]:
+                if card.name in file:
+                    info_warn(card.name, "Artwork from different set exists: [{}]".format(path[0][-3:]))
+                    break
 
         if "art_crop" not in card.image_uris:
             info_fail(card.name, "No artwork on Scryfall")
@@ -222,6 +220,7 @@ def set_planeswalker_text(card, id_set):
                   [(id_set[ids.PLANESWALKER_VALUE_T][3], id_set[ids.PLANESWALKER_VALUE_O][3]),
                    (id_set[ids.PLANESWALKER_TEXT_T][3], id_set[ids.PLANESWALKER_TEXT_O][3])]]
 
+    # Insert pre text
     if planeswalker_text[0][2] != "loyalty":
         tf = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
         tfp = tf.find(".//TextFramePreference[1]")
@@ -247,7 +246,7 @@ def set_planeswalker_text(card, id_set):
         for i in range(2, len(potential_additional_box)):
             insert_string += potential_additional_box[i][0]
 
-        insert_multi_font_text(insert_string, id_set[ids.PLANESWALKER_ORACLE_T], align="Left")
+        insert_multi_font_text(insert_string, id_set[ids.PLANESWALKER_ORACLE_T], align="left")
 
         planeswalker_text.pop()
         planeswalker_text.append(potential_additional_box[0])
@@ -287,10 +286,13 @@ def set_planeswalker_text(card, id_set):
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
 
-def set_oracle_text(card, id_set):
+def set_oracle_text(card, id_set, align=None):
     if ids.ORACLE_TEXT_T not in id_set:
         return
-    insert_multi_font_text(card.oracle_text, id_set[ids.ORACLE_TEXT_T], flavor_text=card.flavor_text)
+    if align is not None:
+        insert_multi_font_text(card.oracle_text, id_set[ids.ORACLE_TEXT_T], flavor_text=card.flavor_text, align=align)
+    else:
+        insert_multi_font_text(card.oracle_text, id_set[ids.ORACLE_TEXT_T], flavor_text=card.flavor_text)
 
 
 def set_value(card, id_set):

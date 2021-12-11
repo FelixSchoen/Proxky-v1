@@ -68,6 +68,14 @@ def utility_split_string_along_regex(string, *matchers: ([str], str, str), stand
     return result
 
 
+def utility_make_object_transparent(element, opacity):
+    transparency = xml.etree.ElementTree.Element("FillTransparencySetting")
+    blending = xml.etree.ElementTree.Element("BlendingSetting")
+    blending.set("Opacity", str(opacity))
+    transparency.append(blending)
+    element.append(transparency)
+
+
 def utility_nested_reminder_text(text_array):
     array_to_return = []
 
@@ -75,7 +83,7 @@ def utility_nested_reminder_text(text_array):
         if element[2] != "reminder":
             array_to_return.append(element)
         else:
-            returned_array = utility_split_string_along_regex(element[0], *regex_mana,
+            returned_array = utility_split_string_along_regex(element[0], *regex_template_mana,
                                                               standard_identifier="reminder")
             array_to_return.extend(returned_array)
 
@@ -219,8 +227,7 @@ def utility_generate_ids(name, spread, mode="standard", prefix=""):
         tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + spread + ".xml")
 
     # IDs base case
-    names_base = [("Artwork", ids.ARTWORK_O),
-                  ("Header", ids.GROUP_HEADER_O),
+    names_base = [("Header", ids.GROUP_HEADER_O),
                   ("Type", ids.TYPE_O),
                   ("Name", ids.NAME_T, True),
                   ("Type Line", ids.TYPE_LINE_T, True),
@@ -233,7 +240,7 @@ def utility_generate_ids(name, spread, mode="standard", prefix=""):
                   ("Upper Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
                   ("Lower Color Bar", ids.GRADIENTS_O, "FillColor"),
                   ("Lower Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
-                  (tf_names.ORACLE_TEXT, ids.ORACLE_TEXT_T, True),
+                  (id_names.ORACLE_TEXT, ids.ORACLE_TEXT_T, True),
                   ("Oracle Text", ids.ORACLE_TEXT_O),
                   ("Mask", ids.MASK_O),
                   ("Value", ids.VALUE_T, True),
@@ -243,15 +250,17 @@ def utility_generate_ids(name, spread, mode="standard", prefix=""):
                   ("Mask Short", ids.MASK_SHORT_O),
                   ("Mask Long", ids.MASK_LONG_O),
                   ("Bottom", ids.GROUP_BOTTOM_O),
-                  (tf_names.ARTIST, ids.ARTIST_T, True),
-                  (tf_names.COLLECTOR_INFORMATION, ids.COLLECTOR_INFORMATION_T, True),
-                  ("Set Icon", ids.SET_O)]
+                  (id_names.ARTIST, ids.ARTIST_T, True),
+                  (id_names.COLLECTOR_INFORMATION, ids.COLLECTOR_INFORMATION_T, True),
+                  ("Set Icon", ids.SET_O),
+                  (id_names.ARTWORK, ids.ARTWORK_O)]
 
     # IDs to add for standard cards
     names_standard = [("Normal", ids.GROUP_NORMAL_O),
                       ("Split", ids.GROUP_SPLIT_O),
                       ("Modal Text", ids.MODAL_T, True),
                       ("Modal", ids.GROUP_MODAL_O),
+                      (id_names.MODAL_FRAME, ids.MODAL_FRAME_O),
                       ("Layout Planeswalker", ids.GROUP_ORACLE_PLANESWALKER_O),
                       ("Planeswalker Value 1", ids.PLANESWALKER_VALUE_T, True),
                       ("Planeswalker Value 2", ids.PLANESWALKER_VALUE_T, True),
@@ -261,19 +270,20 @@ def utility_generate_ids(name, spread, mode="standard", prefix=""):
                       ("Planeswalker Value 2", ids.PLANESWALKER_VALUE_O),
                       ("Planeswalker Value 3", ids.PLANESWALKER_VALUE_O),
                       ("Planeswalker Value 4", ids.PLANESWALKER_VALUE_O),
-                      (tf_names.PLANESWALKER_TEXT_1, ids.PLANESWALKER_TEXT_T, True),
-                      (tf_names.PLANESWALKER_TEXT_2, ids.PLANESWALKER_TEXT_T, True),
-                      (tf_names.PLANESWALKER_TEXT_3, ids.PLANESWALKER_TEXT_T, True),
-                      (tf_names.PLANESWALKER_TEXT_4, ids.PLANESWALKER_TEXT_T, True),
-                      (tf_names.PLANESWALKER_TEXT_1, ids.PLANESWALKER_TEXT_O),
-                      (tf_names.PLANESWALKER_TEXT_2, ids.PLANESWALKER_TEXT_O),
-                      (tf_names.PLANESWALKER_TEXT_3, ids.PLANESWALKER_TEXT_O),
-                      (tf_names.PLANESWALKER_TEXT_4, ids.PLANESWALKER_TEXT_O),
-                      (tf_names.PLANESWALKER_ORACLE_TEXT, ids.PLANESWALKER_ORACLE_T, True),
-                      (tf_names.PLANESWALKER_ORACLE_TEXT, ids.PLANESWALKER_ORACLE_O),
+                      (id_names.PLANESWALKER_TEXT_1, ids.PLANESWALKER_TEXT_T, True),
+                      (id_names.PLANESWALKER_TEXT_2, ids.PLANESWALKER_TEXT_T, True),
+                      (id_names.PLANESWALKER_TEXT_3, ids.PLANESWALKER_TEXT_T, True),
+                      (id_names.PLANESWALKER_TEXT_4, ids.PLANESWALKER_TEXT_T, True),
+                      (id_names.PLANESWALKER_TEXT_1, ids.PLANESWALKER_TEXT_O),
+                      (id_names.PLANESWALKER_TEXT_2, ids.PLANESWALKER_TEXT_O),
+                      (id_names.PLANESWALKER_TEXT_3, ids.PLANESWALKER_TEXT_O),
+                      (id_names.PLANESWALKER_TEXT_4, ids.PLANESWALKER_TEXT_O),
+                      (id_names.PLANESWALKER_ORACLE_TEXT, ids.PLANESWALKER_ORACLE_T, True),
+                      (id_names.PLANESWALKER_ORACLE_TEXT, ids.PLANESWALKER_ORACLE_O),
                       ("Layout Adventure", ids.GROUP_ORACLE_ADVENTURE_O),
                       ("Side Indicator Text", ids.SIDE_INDICATOR_T, True),
-                      ("Side Indicator", ids.SIDE_INDICATOR_O)]
+                      ("Side Indicator", ids.SIDE_INDICATOR_O),
+                      (id_names.BACKDROP, ids.BACKDROP_O)]
 
     # IDs to add for adventure cards
     names_adventure = [("Adventure Type", ids.TYPE_O),
@@ -284,10 +294,10 @@ def utility_generate_ids(name, spread, mode="standard", prefix=""):
                        ("Adventure Color Bar Bleed", ids.COLOR_BARS_O),
                        ("Adventure Color Bar", ids.GRADIENTS_O, "FillColor"),
                        ("Adventure Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
-                       (tf_names.ADVENTURE_ORACLE_TEXT_LEFT, ids.ADVENTURE_ORACLE_TEXT_L_T, True),
-                       (tf_names.ADVENTURE_ORACLE_TEXT_LEFT, ids.ADVENTURE_ORACLE_TEXT_L_O),
-                       (tf_names.ADVENTURE_ORACLE_TEXT_RIGHT, ids.ADVENTURE_ORACLE_TEXT_R_T, True),
-                       (tf_names.ADVENTURE_ORACLE_TEXT_RIGHT, ids.ADVENTURE_ORACLE_TEXT_R_O)]
+                       (id_names.ADVENTURE_ORACLE_TEXT_LEFT, ids.ADVENTURE_ORACLE_TEXT_L_T, True),
+                       (id_names.ADVENTURE_ORACLE_TEXT_LEFT, ids.ADVENTURE_ORACLE_TEXT_L_O),
+                       (id_names.ADVENTURE_ORACLE_TEXT_RIGHT, ids.ADVENTURE_ORACLE_TEXT_R_T, True),
+                       (id_names.ADVENTURE_ORACLE_TEXT_RIGHT, ids.ADVENTURE_ORACLE_TEXT_R_O)]
 
     names_printing = [
         ("Frame 1", ids.PRINTING_FRAME_O),
@@ -369,7 +379,7 @@ def utility_generate_ids(name, spread, mode="standard", prefix=""):
 
 def utility_generate_all_ids():
     front_id = "uff"
-    back_id = "u4ba2"
+    back_id = "u5989"
     print_front_id = "uce"
     print_back_id = "u20b"
 

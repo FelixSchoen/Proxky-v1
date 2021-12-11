@@ -23,34 +23,40 @@ def process_decklist(path):
     with open(path) as f:
         lines = f.readlines()
         for line in lines:
-            if re.match(regex_decklist_id, line) is not None:
-                result = re.match(regex_decklist_id, line)
-                name = result.group("name")
-                id = result.group("id")
-                amount = result.group("amount")
-                cards.append((name, "id", id, "amount", amount))
-            else:
-                result = re.match(regex_decklist, line)
-                name = result.group("name")
-                card_set = result.group("set")
-                amount = result.group("amount")
+            dictionary = dict()
+            options = dict()
+            match = re.match(regex_card_entry, line)
 
-                if card_set is not None:
-                    cards.append((name, "set", card_set, "amount", amount))
-                else:
-                    cards.append((name, "type", "normal", "amount", amount))
+            dictionary["options"] = options
+            dictionary["amount"] = match.group("amount")
+            dictionary["name"] = match.group("name")
+
+            option_string = match.group("flags")
+
+            if option_string is not None:
+                specified_options = option_string[2:-1].split(", ")
+
+                for option in specified_options:
+                    option_match = re.match(regex_card_options, option)
+                    if option_match.group("type") in ["set", "id"]:
+                        dictionary[option_match.group("type")] = option_match.group("id")
+                    else:
+                        options[option_match.group("type")] = option_match.group("id")
+
+            cards.append(dictionary)
+
     return cards
 
 
-def process_cards(card_names: list[(str, str, str)]):
-    for i, card_name in enumerate(card_names):
+def process_cards(card_names):
+    for i, entry in enumerate(card_names):
         start_time = time.time()
 
-        card = get_card_object(card_name)
+        card = get_card_object(entry)
         if card is None:
             continue
 
-        if process_card(card):
+        if process_card(card, entry["options"]):
             info_success(card.name, "Successfully processed card")
 
         end_time = time.time()
@@ -58,24 +64,19 @@ def process_cards(card_names: list[(str, str, str)]):
             sleep(0.1)
 
 
-def process_print(card_names: list[(str, str, str)]):
+def process_print(card_names):
     list_of_cards = []
-    list_of_lands = []
 
-    for i, card_name in enumerate(card_names):
-        card = get_card_object(card_name)
+    for i, entry in enumerate(card_names):
+        card = get_card_object(entry)
         if card is None:
             continue
 
-        for j in range(0, int(card_name[4])):
+        for j in range(0, int(entry["amount"])):
             if card.layout in ["modal_dfc", "transform", "double_faced_token"]:
                 list_of_cards.insert(0, card)
-            # elif "Land" in helper_get_card_types(card):
-            #     list_of_lands.append(card)
             else:
                 list_of_cards.append(card)
-
-    list_of_cards.extend(list_of_lands)
 
     # Folders
     target_folder_path = f_print
@@ -127,37 +128,34 @@ def process_print(card_names: list[(str, str, str)]):
             os.remove(target_file_full_path)
         os.rename(target_file_path + ".zip", target_file_path + ".idml")
 
-    # if app is not None:
-    #     app.Quit()
 
-
-def get_card_object(card_name):
-    if card_name[1] == "set":
+def get_card_object(dictionary):
+    if "id" in dictionary:
         response = requests.get(
-            api_url + "/cards/named?exact=" + urllib.parse.quote(card_name[0]) + "&set=" + urllib.parse.quote(
-                card_name[2]))
-    elif card_name[1] == "id":
+            api_url + "/cards/" + urllib.parse.quote(dictionary["id"]))
+    elif "set" in dictionary:
         response = requests.get(
-            api_url + "/cards/" + urllib.parse.quote(card_name[2]))
+            api_url + "/cards/named?exact=" + urllib.parse.quote(dictionary["name"]) + "&set=" + urllib.parse.quote(
+                dictionary["set"]))
     else:
         response = requests.get(
-            api_url + "/cards/named?exact=" + urllib.parse.quote(card_name[0]))
+            api_url + "/cards/named?exact=" + urllib.parse.quote(dictionary["name"]))
 
     # Check status code
     if response.status_code != 200:
-        info_fail(card_name[0], "Could not fetch card")
+        info_fail(dictionary["name"], "Could not fetch card")
         return None
 
     return Card(json.loads(response.text))
 
 
-def process_card(card: Card):
+def process_card(card: Card, options):
     # Check layout of card
     if card.layout not in supported_layouts:
         info_fail(card.name, "Layout not supported")
         return False
 
-    # Cleansed cardname for saving file
+    # Cleansed card name for saving file
     cleansed_name = card.name.replace("//", "--")
 
     # Folders
@@ -170,9 +168,17 @@ def process_card(card: Card):
     with zipfile.ZipFile(f_preset, "r") as archive:
         archive.extractall("data/memory")
 
-    if card.layout in ["normal", "class", "saga"]:
+    # General operations
+    if "fba" in options:
+        if options["fba"] in ["front", "both"]:
+            card_layout_full_body_art(id_general_front, card)
+        if options["fba"] in ["back", "both"]:
+            card_layout_full_body_art(id_general_back, card)
+
+    if card.layout not in double_faced_layouts:
         card_delete_backside(id_general_back)
 
+    if card.layout in ["normal", "class", "saga"]:
         card_fill(card, id_general_front, card.layout)
     elif card.layout in ["modal_dfc", "transform", "double_faced_token"]:
         card_layout_double_faced([id_general_front, id_general_back])
@@ -183,13 +189,11 @@ def process_card(card: Card):
         card_fill(card.card_faces[1], id_general_back, card.layout)
     elif card.layout in ["split"]:
         card_layout_split(id_general_front)
-        card_delete_backside(id_general_back)
 
         card_fill(card.card_faces[0], id_general_front_st, card.layout)
         card_fill(card.card_faces[1], id_general_front_sb, card.layout)
     elif card.layout in ["adventure"]:
         card_layout_adventure(id_general_front)
-        card_delete_backside(id_general_back)
 
         id_adventure_right = id_general_front.copy()
         id_adventure_right[ids.ORACLE_TEXT_T] = id_general_front_adventure[ids.ADVENTURE_ORACLE_TEXT_R_T]
@@ -202,7 +206,6 @@ def process_card(card: Card):
         card_fill(card.card_faces[0], id_adventure_right, card.layout)
     elif card.layout in ["token"]:
         card_layout_token(id_general_front, card)
-        card_delete_backside(id_general_back)
 
         card_fill(card, id_general_front, card.layout)
 
@@ -212,8 +215,6 @@ def process_card(card: Card):
         os.remove(target_file_full_path)
     os.rename(target_file_path + ".zip", target_file_path + ".idml")
 
-    # Remove files from working memory
-    # shutil.rmtree("data/memory")
     return True
 
 
@@ -278,7 +279,7 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "m:d:", ["mode=", "deck="])
     except getopt.GetoptError:
-        info_fail("[ProxKy] Invalid command line options")
+        info_fail("[ProxKy]", "Invalid command line options")
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-m", "--mode"):

@@ -18,12 +18,12 @@ class ids:
     GROUP_NORMAL_O = "id_group_normal_o"
     GROUP_SPLIT_O = "id_group_split_o"
     GROUP_HEADER_O = "id_group_header_o"
-    ARTWORK_O = "id_artwork_o"
     TYPE_O = "id_type_o"
     NAME_T = "id_name_t"
     TYPE_LINE_T = "id_type_line_t"
     MANA_COST_T = "id_mana_cost_t"
     MODAL_T = "id_modal_t"
+    MODAL_FRAME_O = "id_modal_frame_o"
     GROUP_MODAL_O = "id_group_modal_o"
     COLOR_BARS_O = "id_color_bars_o"
     GRADIENTS_O = "id_gradients_o"
@@ -54,10 +54,13 @@ class ids:
     SIDE_INDICATOR_O = "id_side_indicator_o"
     COLLECTOR_INFORMATION_T = "id_collector_information_t"
     SET_O = "id_set_o"
+    BACKDROP_O = "id_backdrop_o"
+    ARTWORK_O = "id_artwork_o"
+
     PRINTING_FRAME_O = "pid_frame_o"
 
 
-class tf_names:
+class id_names:
     ORACLE_TEXT = "Oracle Text"
     PLANESWALKER_TEXT_1 = "Planeswalker Text 1"
     PLANESWALKER_TEXT_2 = "Planeswalker Text 2"
@@ -68,6 +71,7 @@ class tf_names:
     ADVENTURE_ORACLE_TEXT_RIGHT = "Adventure Oracle Text Right"
     ARTIST = "Artist"
     COLLECTOR_INFORMATION = "Collector Information"
+    MODAL_FRAME = "Frame"
 
     ST_ORACLE_TEXT = "ST Oracle Text"
     ST_ARTIST = "ST Artist"
@@ -77,11 +81,13 @@ class tf_names:
     SB_ARTIST = "SB Artist"
     SB_COLLECTOR_INFORMATION = "SB Collector Information"
 
+    BACKDROP = "Backdrop"
+    ARTWORK = "Artwork"
+
 
 # IDs
 id_general_front = {
     "id_spread": "uff",
-    "id_artwork_o": "u2e6",
     "id_group_header_o": "u273",
     "id_type_o": "u2e5",
     "id_name_t": "u2d0",
@@ -102,10 +108,12 @@ id_general_front = {
     "id_artist_t": "u176",
     "id_collector_information_t": "u13e",
     "id_set_o": "u13c",
+    "id_artwork_o": "u2e6",
     "id_group_normal_o": "uc21",
     "id_group_split_o": "u1cdf",
     "id_modal_t": "u281",
     "id_group_modal_o": "u274",
+    "id_modal_frame_o": "u275",
     "id_group_oracle_planeswalker_o": "u1ac",
     "id_planeswalker_value_t": ['u248', 'u21c', 'u1f0', 'u1c4'],
     "id_planeswalker_value_o": ['u25a', 'u22e', 'u202', 'u1d6'],
@@ -116,10 +124,10 @@ id_general_front = {
     "id_group_oracle_adventure_o": "ub82",
     "id_side_indicator_t": "u160",
     "id_side_indicator_o": "u153",
+    "id_backdrop_o": "u2a2",
 }
 id_general_front_st = {
     "id_spread": "uff",
-    "id_artwork_o": "u18f4",
     "id_group_header_o": "u1886",
     "id_type_o": "u18f3",
     "id_name_t": "u18df",
@@ -140,10 +148,10 @@ id_general_front_st = {
     "id_artist_t": "u170c",
     "id_collector_information_t": "u16d9",
     "id_set_o": "u16d5",
+    "id_artwork_o": "u18f4",
 }
 id_general_front_sb = {
     "id_spread": "uff",
-    "id_artwork_o": "u1ccf",
     "id_group_header_o": "u1c81",
     "id_type_o": "u1cce",
     "id_name_t": "u1cba",
@@ -164,6 +172,7 @@ id_general_front_sb = {
     "id_artist_t": "u1c3b",
     "id_collector_information_t": "u1c24",
     "id_set_o": "u1c20",
+    "id_artwork_o": "u1ccf",
 }
 id_general_front_adventure = {
     "id_spread": "uff",
@@ -179,42 +188,44 @@ id_general_front_adventure = {
     "id_adventure_oracle_text_r_o": "ube6",
 }
 id_general_back = {
-    "id_spread": "u4ba2",
-    "id_artwork_o": "u4fc3",
-    "id_group_header_o": "u4f56",
-    "id_type_o": "u4fc2",
-    "id_name_t": "u4fae",
-    "id_type_line_t": "u4f97",
-    "id_mana_cost_t": "u4f7f",
-    "id_color_bars_o": ['u4f79', 'u4f78', 'u4d7e', 'u4d7d'],
+    "id_spread": "u5989",
+    "id_group_header_o": "u5d40",
+    "id_type_o": "u5dab",
+    "id_name_t": "u5d97",
+    "id_type_line_t": "u5d80",
+    "id_mana_cost_t": "u5d69",
+    "id_color_bars_o": ['u5d63', 'u5d62', 'u5b68', 'u5b67'],
     "id_gradients_o": ['udf', 'udf', 'udf', 'udf'],
-    "id_oracle_text_t": "u4f42",
-    "id_oracle_text_o": "u4f3f",
-    "id_mask_o": "u4d61",
-    "id_value_t": "u4ddf",
-    "id_value_o": "u4ddc",
-    "id_value_short_frame_o": "u4d85",
-    "id_value_long_frame_o": "u4d7f",
-    "id_mask_short_o": "u4d84",
-    "id_mask_long_o": "u4d63",
-    "id_bottom_o": "u4d64",
-    "id_artist_t": "u4dc3",
-    "id_collector_information_t": "u4d90",
-    "id_set_o": "u4d8b",
-    "id_group_normal_o": "u4d5f",
-    "id_group_split_o": "u4ba8",
-    "id_modal_t": "u4f60",
-    "id_group_modal_o": "u4f57",
-    "id_group_oracle_planeswalker_o": "u4e6e",
-    "id_planeswalker_value_t": ['u4f2b', 'u4efd', 'u4ecf', 'u4ea1'],
-    "id_planeswalker_value_o": ['u4f28', 'u4efa', 'u4ecc', 'u4e9e'],
-    "id_planeswalker_text_t": ['u4f14', 'u4ee6', 'u4eb8', 'u4e8a'],
-    "id_planeswalker_text_o": ['u4f11', 'u4ee3', 'u4eb5', 'u4e86'],
-    "id_planeswalker_oracle_t": "u4e72",
-    "id_planeswalker_oracle_o": "u4e6f",
-    "id_group_oracle_adventure_o": "u4df4",
-    "id_side_indicator_t": "u4dac",
-    "id_side_indicator_o": "u4da4",
+    "id_oracle_text_t": "u5d2c",
+    "id_oracle_text_o": "u5d29",
+    "id_mask_o": "u5b4a",
+    "id_value_t": "u5bc9",
+    "id_value_o": "u5bc6",
+    "id_value_short_frame_o": "u5b6f",
+    "id_value_long_frame_o": "u5b69",
+    "id_mask_short_o": "u5b6e",
+    "id_mask_long_o": "u5b4c",
+    "id_bottom_o": "u5b4e",
+    "id_artist_t": "u5bad",
+    "id_collector_information_t": "u5b7a",
+    "id_set_o": "u5b76",
+    "id_artwork_o": "u5b47",
+    "id_group_normal_o": "u5b45",
+    "id_group_split_o": "u598f",
+    "id_modal_t": "u5d4a",
+    "id_group_modal_o": "u5d41",
+    "id_modal_frame_o": "u5d42",
+    "id_group_oracle_planeswalker_o": "u5c58",
+    "id_planeswalker_value_t": ['u5d15', 'u5ce7', 'u5cb9', 'u5c8b'],
+    "id_planeswalker_value_o": ['u5d12', 'u5ce4', 'u5cb6', 'u5c88'],
+    "id_planeswalker_text_t": ['u5cfe', 'u5cd0', 'u5ca2', 'u5c74'],
+    "id_planeswalker_text_o": ['u5cfb', 'u5ccd', 'u5c9f', 'u5c71'],
+    "id_planeswalker_oracle_t": "u5c5d",
+    "id_planeswalker_oracle_o": "u5c5a",
+    "id_group_oracle_adventure_o": "u5bde",
+    "id_side_indicator_t": "u5b96",
+    "id_side_indicator_o": "u5b8e",
+    "id_backdrop_o": "u5b48",
 }
 id_general_print_front = {
     "id_spread": "uce",
@@ -242,6 +253,7 @@ VALUE_SHIFT_HEADER_TOKEN_WITH_VALUE = 80.50393700787403 + abs(
 VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE = abs(-200.6929133858268) - abs(-118.62992125984258)
 VALUE_SHIFT_TOKEN_NO_VALUE = abs(-210.6141732283465) - abs(
     -200.6929133858268)  # How much to shift for a token without a value
+VALUE_SHIFT_ARTWORK_FULL_BODY = abs(10.204724409448769 - 139.03937007874012)
 
 # Font
 FONT_STANDARD = "Plantin MT Pro"
@@ -268,6 +280,7 @@ f_artwork_downloaded = f_output_folder + "/ArtworkDownload"
 # Enumerations
 supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga", "token",
                      "double_faced_token"]
+double_faced_layouts = ["modal_dfc", "transform", "double_faced_token"]
 
 # Types
 mana_types = ["W", "U", "B", "R", "G", "C"]
@@ -353,29 +366,30 @@ regex_template_flavor = [([r"\*(?:.)+\*"], "type", "normal")]
 
 regex_leveler = r"[\"LEVEL [\d]+(-[\d]+|\+)\\n([\d]+|\*)/([\d]+|\*)\"]"
 regex_newline = r"\n"
-regex_decklist_id = r"^(?P<amount>\d+) (?P<name>.+?)(?: \[(ID: (?P<id>.+))\])$"
-regex_decklist = r"^(?P<amount>\d+) (?P<name>.+?)(?: \[(?P<set>.+)\])?$"
+
+regex_card_entry = r"^(?P<amount>\d+) (?P<name>.+?)(?P<flags> \[.+\])?$"
+regex_card_options = r"(?P<type>(?:.)+): (?P<id>(?:.)+)"
 
 # Text Frame Resizing Array, AT LEAST ONE OF EACH ARRAYS MUST CONTAIN MORE THAN ONE ELEMENT
 resize_array = [
     # Text Frames to Resize
     [
-        [tf_names.ORACLE_TEXT],
-        [tf_names.PLANESWALKER_TEXT_1, tf_names.PLANESWALKER_TEXT_2,
-         tf_names.PLANESWALKER_TEXT_3, tf_names.PLANESWALKER_TEXT_4],
-        [tf_names.PLANESWALKER_ORACLE_TEXT],
-        [tf_names.ST_ORACLE_TEXT],
-        [tf_names.SB_ORACLE_TEXT],
+        [id_names.ORACLE_TEXT],
+        [id_names.PLANESWALKER_TEXT_1, id_names.PLANESWALKER_TEXT_2,
+         id_names.PLANESWALKER_TEXT_3, id_names.PLANESWALKER_TEXT_4],
+        [id_names.PLANESWALKER_ORACLE_TEXT],
+        [id_names.ST_ORACLE_TEXT],
+        [id_names.SB_ORACLE_TEXT],
         ["Placeholder", "Placeholder"]
     ],
     # Text Frames to Condense
     [
-        [tf_names.ARTIST, tf_names.ARTIST],
-        [tf_names.COLLECTOR_INFORMATION],
-        [tf_names.ST_ARTIST],
-        [tf_names.ST_COLLECTOR_INFORMATION],
-        [tf_names.SB_ARTIST],
-        [tf_names.SB_COLLECTOR_INFORMATION],
+        [id_names.ARTIST, id_names.ARTIST],
+        [id_names.COLLECTOR_INFORMATION],
+        [id_names.ST_ARTIST],
+        [id_names.ST_COLLECTOR_INFORMATION],
+        [id_names.SB_ARTIST],
+        [id_names.SB_COLLECTOR_INFORMATION],
         ["Placeholder", "Placeholder"]
     ]
 ]

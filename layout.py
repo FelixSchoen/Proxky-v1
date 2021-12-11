@@ -1,10 +1,11 @@
 import os
 import xml
 
-from utility import utility_indesign_shift_y_coordinates, utility_split_string_along_regex
+from utility import utility_indesign_shift_y_coordinates, utility_split_string_along_regex, \
+    utility_make_object_transparent
 from insert_xml import insert_value_content
 from variables import ids, VALUE_MODAL_HEIGHT, regex_template_oracle, VALUE_SHIFT_TOKEN_NO_VALUE, \
-    VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE, VALUE_SHIFT_HEADER_TOKEN_WITH_VALUE
+    VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE, VALUE_SHIFT_HEADER_TOKEN_WITH_VALUE, VALUE_SHIFT_ARTWORK_FULL_BODY
 
 
 def card_layout_double_faced(id_sets):
@@ -15,6 +16,7 @@ def card_layout_double_faced(id_sets):
 
         shift_by = VALUE_MODAL_HEIGHT
 
+        # Shift color bars
         color_bars = [tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_BARS_O][0] + "']"),
                       tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_BARS_O][1] + "']")]
 
@@ -24,9 +26,23 @@ def card_layout_double_faced(id_sets):
                           coordinates[0] + " " + coordinates[1] + " " + coordinates[2] + " " + coordinates[3] + " " +
                           coordinates[4] + " " + str(float(coordinates[5]) + shift_by))
 
+        # Shift oracle text
         oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
-
         utility_indesign_shift_y_coordinates(oracle_text, [shift_by, shift_by, 0, 0])
+
+        # Shift planeswalker texts
+        planeswalker_boxes = [id_set[ids.PLANESWALKER_VALUE_O][0],
+                              id_set[ids.PLANESWALKER_TEXT_O][0],
+                              id_set[ids.PLANESWALKER_VALUE_O][1],
+                              id_set[ids.PLANESWALKER_TEXT_O][1],
+                              id_set[ids.PLANESWALKER_VALUE_O][2],
+                              id_set[ids.PLANESWALKER_TEXT_O][2],
+                              id_set[ids.PLANESWALKER_VALUE_O][3],
+                              id_set[ids.PLANESWALKER_TEXT_O][3],
+                              id_set[ids.PLANESWALKER_ORACLE_O]]
+        for box_id in planeswalker_boxes:
+            box = tree.find(".//TextFrame[@Self='" + box_id + "']")
+            utility_indesign_shift_y_coordinates(box, [shift_by, shift_by, shift_by, shift_by])
 
         side_indicator_o = tree.find(".//Group[@Self='" + id_set[ids.SIDE_INDICATOR_O] + "']")
         side_indicator_o.set("Visible", "true")
@@ -149,8 +165,6 @@ def card_layout_adventure(id_set):
 
 
 def card_layout_token(id_set, card):
-    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
-
     oracle_entries = utility_split_string_along_regex(card.oracle_text, *regex_template_oracle)
     if all(oracle_type == "reminder" for (_, _, oracle_type) in oracle_entries):
         card_layout_no_oracle_text(id_set, card)
@@ -164,6 +178,7 @@ def card_layout_no_oracle_text(id_set, card):
 
     artwork = tree.find(".//Rectangle[@Self='" + id_set[ids.ARTWORK_O] + "']")
     header = tree.find(".//Group[@Self='" + id_set[ids.GROUP_HEADER_O] + "']")
+    backdrop = tree.find(".//Rectangle[@Self='" + id_set[ids.BACKDROP_O] + "']")
 
     additional_shift = 0
 
@@ -172,12 +187,49 @@ def card_layout_no_oracle_text(id_set, card):
 
     utility_indesign_shift_y_coordinates(artwork, [0, 0, VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE + additional_shift,
                                                    VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE + additional_shift])
+    utility_indesign_shift_y_coordinates(backdrop, [VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE + additional_shift,
+                                                    VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE + additional_shift, 0, 0])
 
     coordinates = header.attrib["ItemTransform"].split(" ")
     header.set("ItemTransform",
                coordinates[0] + " " + coordinates[1] + " " + coordinates[2] + " " + coordinates[3] + " " +
                coordinates[4] + " " + str(
                    float(coordinates[5]) + VALUE_SHIFT_HEADER_TOKEN_WITH_VALUE + additional_shift))
+
+    tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+
+def card_layout_full_body_art(id_set, card):
+    tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
+
+    artwork = tree.find(".//Rectangle[@Self='" + id_set[ids.ARTWORK_O] + "']")
+    utility_indesign_shift_y_coordinates(artwork, [0, 0, VALUE_SHIFT_ARTWORK_FULL_BODY,
+                                                   VALUE_SHIFT_ARTWORK_FULL_BODY])
+
+    textframes = [id_set[ids.PLANESWALKER_VALUE_O][0],
+                  id_set[ids.PLANESWALKER_TEXT_O][0],
+                  id_set[ids.PLANESWALKER_VALUE_O][1],
+                  id_set[ids.PLANESWALKER_TEXT_O][1],
+                  id_set[ids.PLANESWALKER_VALUE_O][2],
+                  id_set[ids.PLANESWALKER_TEXT_O][2],
+                  id_set[ids.PLANESWALKER_VALUE_O][3],
+                  id_set[ids.PLANESWALKER_TEXT_O][3],
+                  id_set[ids.PLANESWALKER_ORACLE_O]]
+
+    rectangles_50 = []
+    rectangles_75 = [id_set[ids.BACKDROP_O], id_set[ids.MODAL_FRAME_O]]
+
+    for object_id in textframes:
+        element = tree.find(".//TextFrame[@Self='" + object_id + "']")
+        utility_make_object_transparent(element, 50)
+
+    for object_id in rectangles_50:
+        element = tree.find(".//Rectangle[@Self='" + object_id + "']")
+        utility_make_object_transparent(element, 50)
+
+    for object_id in rectangles_75:
+        element = tree.find(".//Rectangle[@Self='" + object_id + "']")
+        utility_make_object_transparent(element, 75)
 
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
