@@ -124,6 +124,8 @@ def set_modal(card, id_sets, modal_type="modal"):
             caps_type = "MODAL"
         elif modal_type == "transform":
             caps_type = "TRANSFORM"
+        elif modal_type == "meld":
+            caps_type = "MELD"
         elif modal_type == "double_faced_token":
             caps_type = "FLIP"
 

@@ -52,7 +52,7 @@ def process_cards(card_names):
     for i, entry in enumerate(card_names):
         start_time = time.time()
 
-        card = get_card_object(entry)
+        card = Card.get_card_object(entry)
         if card is None:
             continue
 
@@ -62,91 +62,6 @@ def process_cards(card_names):
         end_time = time.time()
         if (end_time - start_time) * 1000 < 100 and i < len(card_names) - 1:
             sleep(0.1)
-
-
-def process_print(card_names):
-    list_of_cards = []
-
-    for i, entry in enumerate(card_names):
-        card = get_card_object(entry)
-        if card is None:
-            continue
-
-        for j in range(0, int(entry["amount"])):
-            if card.layout in ["modal_dfc", "transform", "double_faced_token"]:
-                list_of_cards.insert(0, card)
-            else:
-                list_of_cards.append(card)
-
-    # Folders
-    target_folder_path = f_print
-    for filename in os.listdir(target_folder_path):
-        file_path = os.path.join(target_folder_path, filename)
-        try:
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
-
-    app = win32com.client.Dispatch("InDesign.Application.2022")
-
-    handled_cards = []
-
-    for i, page in enumerate(list(utility_divide_chunks(list_of_cards, 9))):
-        target_file_path = target_folder_path + "/" + str(i)
-        target_file_full_path = target_file_path + ".idml"
-
-        os.makedirs(target_folder_path, exist_ok=True)
-        with zipfile.ZipFile(f_preset_print, "r") as archive:
-            archive.extractall("data/memory_print")
-
-        for j, card in enumerate(page):
-            cleansed_name = card.name.replace("//", "--")
-
-            # Convert to PDF
-            if card.name not in handled_cards:
-                utility_cardfile_to_pdf(app, card)
-                handled_cards.append(card.name)
-
-            # Frontside
-            insert_pdf(card, id_general_print_front[ids.SPREAD], id_general_print_front[ids.PRINTING_FRAME_O][j],
-                       f_pdf + "/" + card.set.upper(), card.collector_number + " - " + cleansed_name)
-
-            # Backside
-            if card.layout in ["modal_dfc", "transform"]:
-                modulo = j % 3
-                carry = int(j / 3)
-                result = carry * 3 + (2 - modulo)
-                insert_pdf(card, id_general_print_back[ids.SPREAD],
-                           id_general_print_back[ids.PRINTING_FRAME_O][result],
-                           f_pdf + "/" + card.set.upper(), card.collector_number + " - " + cleansed_name, page_number=2)
-
-        shutil.make_archive(target_file_path, "zip", "data/memory_print")
-        if utility_file_exists(target_file_full_path):
-            os.remove(target_file_full_path)
-        os.rename(target_file_path + ".zip", target_file_path + ".idml")
-
-
-def get_card_object(dictionary):
-    if "id" in dictionary:
-        response = requests.get(
-            api_url + "/cards/" + urllib.parse.quote(dictionary["id"]))
-    elif "set" in dictionary:
-        response = requests.get(
-            api_url + "/cards/named?exact=" + urllib.parse.quote(dictionary["name"]) + "&set=" + urllib.parse.quote(
-                dictionary["set"]))
-    else:
-        response = requests.get(
-            api_url + "/cards/named?exact=" + urllib.parse.quote(dictionary["name"]))
-
-    # Check status code
-    if response.status_code != 200:
-        info_fail(dictionary["name"], "Could not fetch card")
-        return None
-
-    return Card(json.loads(response.text))
 
 
 def process_card(card: Card, options):
@@ -180,7 +95,7 @@ def process_card(card: Card, options):
 
     if card.layout in ["normal", "class", "saga"]:
         card_fill(card, id_general_front, card.layout)
-    elif card.layout in ["modal_dfc", "transform", "double_faced_token"]:
+    elif card.layout in double_faced_layouts:
         card_layout_double_faced([id_general_front, id_general_back])
 
         set_modal(card, [id_general_front, id_general_back], card.layout)
@@ -270,6 +185,71 @@ def card_fill(card: Card, id_set, layout):
 
     # Set
     set_set(card, id_set)
+
+
+def process_print(card_names):
+    list_of_cards = []
+
+    for i, entry in enumerate(card_names):
+        card = Card.get_card_object(entry)
+        if card is None:
+            continue
+
+        for j in range(0, int(entry["amount"])):
+            if card.layout in double_faced_layouts:
+                list_of_cards.insert(0, card)
+            else:
+                list_of_cards.append(card)
+
+    # Folders
+    target_folder_path = f_print
+    for filename in os.listdir(target_folder_path):
+        file_path = os.path.join(target_folder_path, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+    app = win32com.client.Dispatch("InDesign.Application.2022")
+
+    handled_cards = []
+
+    for i, page in enumerate(list(utility_divide_chunks(list_of_cards, 9))):
+        target_file_path = target_folder_path + "/" + str(i)
+        target_file_full_path = target_file_path + ".idml"
+
+        os.makedirs(target_folder_path, exist_ok=True)
+        with zipfile.ZipFile(f_preset_print, "r") as archive:
+            archive.extractall("data/memory_print")
+
+        for j, card in enumerate(page):
+            cleansed_name = card.name.replace("//", "--")
+
+            # Convert to PDF
+            if card.name not in handled_cards:
+                utility_cardfile_to_pdf(app, card)
+                handled_cards.append(card.name)
+
+            # Frontside
+            insert_pdf(card, id_general_print_front[ids.SPREAD], id_general_print_front[ids.PRINTING_FRAME_O][j],
+                       f_pdf + "/" + card.set.upper(), card.collector_number + " - " + cleansed_name)
+
+            # Backside
+            if card.layout in double_faced_layouts:
+                modulo = j % 3
+                carry = int(j / 3)
+                result = carry * 3 + (2 - modulo)
+                insert_pdf(card, id_general_print_back[ids.SPREAD],
+                           id_general_print_back[ids.PRINTING_FRAME_O][result],
+                           f_pdf + "/" + card.set.upper(), card.collector_number + " - " + cleansed_name, page_number=2)
+
+        shutil.make_archive(target_file_path, "zip", "data/memory_print")
+        if utility_file_exists(target_file_full_path):
+            os.remove(target_file_full_path)
+        os.rename(target_file_path + ".zip", target_file_path + ".idml")
 
 
 def main(argv):

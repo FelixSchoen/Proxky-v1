@@ -1,5 +1,11 @@
+import json
 import re
+import urllib
 
+import requests
+
+from info import info_fail
+from settings import api_url
 from utility import utility_mana_cost_to_color_array
 from variables import regex_add_mana, regex_mana
 
@@ -9,6 +15,7 @@ class Card:
     def __init__(self, args: dict):
         super().__init__()
 
+        self.id = ""
         self.name = ""
         self.layout = ""
         self.mana_cost = ""
@@ -30,6 +37,8 @@ class Card:
         self.card_faces = []
         self.image_uris = []
 
+        if "id" in args:
+            self.id = args["id"]
         if "name" in args:
             self.name = args["name"]
         if "layout" in args:
@@ -76,6 +85,18 @@ class Card:
             if "Land" in self.type_line:
                 self.colors.extend(self.produced_mana)
 
+        # Add meld card as backside
+        if self.layout in ["meld"] and "all_parts" in args:
+            parts = args["all_parts"]
+            meld_result_dict = next(obj for obj in parts if obj["component"] == "meld_result")
+
+            if self.id != meld_result_dict["id"]:
+                dictionary = dict()
+                dictionary["id"] = meld_result_dict["id"]
+                meld_result = Card.get_card_object(dictionary)
+                self.card_faces.append(self)
+                self.card_faces.append(meld_result)
+
         # Manual fix for faces
         for face in self.card_faces:
             if len(face.image_uris) == 0:
@@ -121,3 +142,23 @@ class Card:
 
     def __repr__(self) -> str:
         return "[{}]".format(self.name)
+
+    @staticmethod
+    def get_card_object(dictionary):
+        if "id" in dictionary:
+            response = requests.get(
+                api_url + "/cards/" + urllib.parse.quote(dictionary["id"]))
+        elif "set" in dictionary:
+            response = requests.get(
+                api_url + "/cards/named?exact=" + urllib.parse.quote(dictionary["name"]) + "&set=" + urllib.parse.quote(
+                    dictionary["set"]))
+        else:
+            response = requests.get(
+                api_url + "/cards/named?exact=" + urllib.parse.quote(dictionary["name"]))
+
+        # Check status code
+        if response.status_code != 200:
+            info_fail(dictionary["name"], "Could not fetch card")
+            return None
+
+        return Card(json.loads(response.text))

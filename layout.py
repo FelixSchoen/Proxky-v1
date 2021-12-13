@@ -218,6 +218,7 @@ def card_layout_full_body_art(id_set, card):
 
     rectangles_50 = []
     rectangles_75 = [id_set[ids.BACKDROP_O], id_set[ids.MODAL_FRAME_O]]
+    groups_75 = [id_set[ids.GROUP_COLOR_BAR_TOP_O]]
 
     for object_id in textframes:
         element = tree.find(".//TextFrame[@Self='" + object_id + "']")
@@ -230,6 +231,10 @@ def card_layout_full_body_art(id_set, card):
     for object_id in rectangles_75:
         element = tree.find(".//Rectangle[@Self='" + object_id + "']")
         utility_make_object_transparent(element, 75)
+
+    for object_id in groups_75:
+        element = tree.find(".//Group[@Self='" + object_id + "']")
+        utility_make_object_transparent(element, 75, mode="")
 
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 

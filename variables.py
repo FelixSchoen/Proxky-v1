@@ -25,6 +25,7 @@ class ids:
     MODAL_T = "id_modal_t"
     MODAL_FRAME_O = "id_modal_frame_o"
     GROUP_MODAL_O = "id_group_modal_o"
+    GROUP_COLOR_BAR_TOP_O = "id_group_color_bar_top_o"
     COLOR_BARS_O = "id_color_bars_o"
     GRADIENTS_O = "id_gradients_o"
     ORACLE_TEXT_T = "id_oracle_text_t"
@@ -72,6 +73,7 @@ class id_names:
     ARTIST = "Artist"
     COLLECTOR_INFORMATION = "Collector Information"
     MODAL_FRAME = "Frame"
+    GROUP_COLOR_BAR_TOP = "Color Bar Top"
 
     ST_ORACLE_TEXT = "ST Oracle Text"
     ST_ARTIST = "ST Artist"
@@ -114,6 +116,7 @@ id_general_front = {
     "id_modal_t": "u281",
     "id_group_modal_o": "u274",
     "id_modal_frame_o": "u275",
+    "id_group_color_bar_top_o": "u29e",
     "id_group_oracle_planeswalker_o": "u1ac",
     "id_planeswalker_value_t": ['u248', 'u21c', 'u1f0', 'u1c4'],
     "id_planeswalker_value_o": ['u25a', 'u22e', 'u202', 'u1d6'],
@@ -215,6 +218,7 @@ id_general_back = {
     "id_modal_t": "u5d4a",
     "id_group_modal_o": "u5d41",
     "id_modal_frame_o": "u5d42",
+    "id_group_color_bar_top_o": "u5d61",
     "id_group_oracle_planeswalker_o": "u5c58",
     "id_planeswalker_value_t": ['u5d15', 'u5ce7', 'u5cb9', 'u5c8b'],
     "id_planeswalker_value_o": ['u5d12', 'u5ce4', 'u5cb6', 'u5c88'],
@@ -278,9 +282,9 @@ f_artwork = f_output_folder + "/Artwork"
 f_artwork_downloaded = f_output_folder + "/ArtworkDownload"
 
 # Enumerations
-supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga", "token",
-                     "double_faced_token"]
-double_faced_layouts = ["modal_dfc", "transform", "double_faced_token"]
+supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga", "meld",
+                     "token", "double_faced_token"]
+double_faced_layouts = ["modal_dfc", "transform", "meld", "double_faced_token"]
 
 # Types
 mana_types = ["W", "U", "B", "R", "G", "C"]

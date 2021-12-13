@@ -68,8 +68,8 @@ def utility_split_string_along_regex(string, *matchers: ([str], str, str), stand
     return result
 
 
-def utility_make_object_transparent(element, opacity):
-    transparency = xml.etree.ElementTree.Element("FillTransparencySetting")
+def utility_make_object_transparent(element, opacity, mode="Fill"):
+    transparency = xml.etree.ElementTree.Element(mode + "TransparencySetting")
     blending = xml.etree.ElementTree.Element("BlendingSetting")
     blending.set("Opacity", str(opacity))
     transparency.append(blending)
@@ -261,6 +261,7 @@ def utility_generate_ids(name, spread, mode="standard", prefix=""):
                       ("Modal Text", ids.MODAL_T, True),
                       ("Modal", ids.GROUP_MODAL_O),
                       (id_names.MODAL_FRAME, ids.MODAL_FRAME_O),
+                      (id_names.GROUP_COLOR_BAR_TOP, ids.GROUP_COLOR_BAR_TOP_O),
                       ("Layout Planeswalker", ids.GROUP_ORACLE_PLANESWALKER_O),
                       ("Planeswalker Value 1", ids.PLANESWALKER_VALUE_T, True),
                       ("Planeswalker Value 2", ids.PLANESWALKER_VALUE_T, True),
