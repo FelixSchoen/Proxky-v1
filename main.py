@@ -119,7 +119,7 @@ def process_card(card: Card, options):
 
         card_fill(card.card_faces[1], id_adventure_left, card.layout)
         card_fill(card.card_faces[0], id_adventure_right, card.layout)
-    elif card.layout in ["token"]:
+    elif card.layout in ["token", "emblem"]:
         card_layout_token(id_general_front, card)
 
         card_fill(card, id_general_front, card.layout)
@@ -226,16 +226,16 @@ def process_print(card_names):
             archive.extractall("data/memory_print")
 
         for j, card in enumerate(page):
-            cleansed_name = card.name.replace("//", "--")
+            name = utility_cleanse_id_name(card)
 
             # Convert to PDF
-            if card.name not in handled_cards:
+            if card.id not in handled_cards:
                 utility_cardfile_to_pdf(app, card)
-                handled_cards.append(card.name)
+                handled_cards.append(card.id)
 
             # Frontside
             insert_pdf(card, id_general_print_front[ids.SPREAD], id_general_print_front[ids.PRINTING_FRAME_O][j],
-                       f_pdf + "/" + card.set.upper(), card.collector_number + " - " + cleansed_name)
+                       f_pdf + "/" + card.set.upper(), name)
 
             # Backside
             if card.layout in double_faced_layouts:
@@ -244,7 +244,7 @@ def process_print(card_names):
                 result = carry * 3 + (2 - modulo)
                 insert_pdf(card, id_general_print_back[ids.SPREAD],
                            id_general_print_back[ids.PRINTING_FRAME_O][result],
-                           f_pdf + "/" + card.set.upper(), card.collector_number + " - " + cleansed_name, page_number=2)
+                           f_pdf + "/" + card.set.upper(), name, page_number=2)
 
         shutil.make_archive(target_file_path, "zip", "data/memory_print")
         if utility_file_exists(target_file_full_path):

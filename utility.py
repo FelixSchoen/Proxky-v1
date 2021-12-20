@@ -222,6 +222,11 @@ def utility_divide_chunks(l, n):
         yield l[i:i + n]
 
 
+def utility_cleanse_id_name(card):
+    cleansed_name = card.name.replace("//", "--")
+    return card.collector_number + " - " + cleansed_name
+
+
 def utility_generate_ids(name, spread, mode="standard", prefix=""):
     if mode != "printing":
         tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + spread + ".xml")

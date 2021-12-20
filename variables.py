@@ -283,7 +283,7 @@ f_artwork_downloaded = f_output_folder + "/ArtworkDownload"
 
 # Enumerations
 supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga", "meld",
-                     "token", "double_faced_token"]
+                     "token", "double_faced_token", "emblem"]
 double_faced_layouts = ["modal_dfc", "transform", "meld", "double_faced_token"]
 
 # Types

@@ -1,3 +1,4 @@
+import math
 import os
 from os import listdir
 
@@ -110,7 +111,8 @@ def set_mana_cost(card, id_set):
     mana = list(filter(None, [s.replace("{", "") for s in card.mana_cost.split("}")]))
     mapping = "".join([mana_mapping["{" + m + "}"] for m in mana])
     if len(mapping) > 5:
-        mapping = mapping[:5] + "\n" + mapping[5:]
+        cutoff_point = math.floor(len(mapping)/2)
+        mapping = mapping[:cutoff_point] + "\n" + mapping[cutoff_point:]
     insert_value_content(id_mana_cost, mapping)
 
 
