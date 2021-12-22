@@ -4,6 +4,7 @@ from os import listdir
 
 import requests
 
+import utility
 from utility import utility_sort_mana_array, utility_indesign_set_y_coordinates, utility_indesign_shift_y_coordinates, \
     utility_get_card_types
 from info import info_warn, info_normal
@@ -11,7 +12,8 @@ from insert_xml import *
 from insert_xml import insert_multi_font_text
 from variables import ids, f_artwork, f_artwork_downloaded, f_icon_types, COORDINATE_TOP_ORACLE_TEXT, \
     VALUE_MODAL_HEIGHT, COORDINATE_BOT_ORACLE_TEXT, VALUE_DISTANCE_VALUE, mana_mapping, f_icon_set, \
-    regex_template_planeswalker, color_mapping, FONT_SANS, FONT_SANS_STYLE, regex_template_regular, regex_add_mana
+    regex_template_planeswalker, color_mapping, FONT_SANS, FONT_SANS_STYLE, regex_template_regular, regex_add_mana, \
+    regex_card_name
 
 
 def set_artwork(card, id_set):
@@ -42,7 +44,8 @@ def set_artwork(card, id_set):
         paths = os.walk(f_artwork)
         for path in paths:
             for file in path[2]:
-                if card.name in file:
+                file_name = re.match(regex_card_name, file).group("name").split(".")[0]
+                if card.name == file_name:
                     info_warn(card.name, "Artwork from different set exists: [{}]".format(path[0][-3:]))
                     break
 

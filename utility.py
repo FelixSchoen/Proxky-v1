@@ -1,7 +1,9 @@
 import math
 import os
 import re
+import shutil
 import xml.etree.ElementTree
+import zipfile
 
 import variables
 from info import info_fail
@@ -386,8 +388,13 @@ def utility_generate_ids(name, spread, mode="standard", prefix=""):
 def utility_generate_all_ids():
     front_id = "uff"
     back_id = "u5989"
-    print_front_id = "uce"
-    print_back_id = "u20b"
+    print_front_id = "ue7"
+    print_back_id = "uf6"
+
+    with zipfile.ZipFile(f_preset, "r") as archive:
+        archive.extractall("data/memory")
+    with zipfile.ZipFile(f_preset_print, "r") as archive:
+        archive.extractall("data/memory_print")
 
     utility_generate_ids("front", front_id)
     utility_generate_ids("front", front_id, mode="split", prefix="ST")
@@ -396,3 +403,6 @@ def utility_generate_all_ids():
     utility_generate_ids("back", back_id)
     utility_generate_ids("print_front", print_front_id, mode="printing")
     utility_generate_ids("print_back", print_back_id, mode="printing")
+
+    shutil.rmtree("data/memory")
+    shutil.rmtree("data/memory_print")

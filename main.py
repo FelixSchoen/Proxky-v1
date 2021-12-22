@@ -250,6 +250,7 @@ def process_print(card_names):
         if utility_file_exists(target_file_full_path):
             os.remove(target_file_full_path)
         os.rename(target_file_path + ".zip", target_file_path + ".idml")
+        shutil.rmtree("data/memory_print")
 
 
 def main(argv):
@@ -271,6 +272,8 @@ def main(argv):
         cards = process_decklist("data/decks/" + deck + ".txt")
         process_cards(cards)
         process_print(cards)
+
+        shutil.rmtree("data/memory")
     elif mode == "generate_id":
         utility_generate_all_ids()
 
