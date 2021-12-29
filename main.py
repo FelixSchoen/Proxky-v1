@@ -137,7 +137,6 @@ def card_fill(card: Card, id_set, layout):
     types = utility_get_card_types(card)
 
     # Check if basic
-    # TODO
     if "Basic" in types and "Land" in types:
         card_layout_no_oracle_text(id_set, card)
 
@@ -183,9 +182,6 @@ def card_fill(card: Card, id_set, layout):
 
     # Collector Information
     set_collector_information(card, id_set)
-
-    # Set
-    set_set(card, id_set)
 
 
 def process_print(card_names):
@@ -274,7 +270,7 @@ def main(argv):
         process_cards(cards)
         process_print(cards)
 
-        shutil.rmtree("data/memory")
+        # shutil.rmtree("data/memory")
     elif mode == "generate_id":
         utility_generate_all_ids()
 

@@ -36,6 +36,7 @@ class Card:
         self.rarity = ""
         self.card_faces = []
         self.image_uris = []
+        self.side = ""
 
         if "id" in args:
             self.id = args["id"]
@@ -58,8 +59,14 @@ class Card:
         if "keywords" in args:
             self.keywords = args["keywords"]
         if "card_faces" in args:
-            for card_face in args["card_faces"]:
-                self.card_faces.append(Card(card_face))
+            for i, card_face in enumerate(args["card_faces"]):
+                face = Card(card_face)
+                if i == 0:
+                    face.side = "front"
+                else:
+                    face.side = "back"
+
+                self.card_faces.append(face)
         if "oracle_text" in args:
             self.oracle_text = args["oracle_text"]
         if "power" in args:

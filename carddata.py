@@ -10,10 +10,10 @@ from utility import utility_sort_mana_array, utility_indesign_set_y_coordinates,
 from info import info_warn, info_normal
 from insert_xml import *
 from insert_xml import insert_multi_font_text
-from variables import ids, f_artwork, f_artwork_downloaded, f_icon_card_types, COORDINATE_TOP_ORACLE_TEXT, \
-    VALUE_MODAL_HEIGHT, COORDINATE_BOT_ORACLE_TEXT, VALUE_DISTANCE_VALUE, mana_mapping, \
+from variables import ids, f_artwork, f_artwork_downloaded, f_icon_card_types, COORDINATE_TOP_ORACLE, \
+    VALUE_MODAL_HEIGHT, COORDINATE_BOT_ORACLE, mana_mapping, \
     regex_template_planeswalker, color_mapping, FONT_SANS, FONT_SANS_STYLE, regex_template_regular, regex_add_mana, \
-    regex_card_name
+    regex_card_name, VALUE_SPACING_PLANESWALKER
 
 
 def set_artwork(card, id_set):
@@ -99,13 +99,13 @@ def set_type_icon(card, id_set):
 def set_card_name(card, id_set):
     id_name = id_set[ids.TITLE_T]
 
-    insert_value_content(id_name, card.name)
+    insert_content(id_name, card.name)
 
 
 def set_type_line(card, id_set):
     id_type_line = id_set[ids.TYPE_LINE_T]
 
-    insert_value_content(id_type_line, card.type_line.replace("—", "•"))
+    insert_content(id_type_line, card.type_line.replace("—", "•"))
 
 
 def set_mana_cost(card, id_set):
@@ -116,7 +116,7 @@ def set_mana_cost(card, id_set):
     if len(mapping) > 5:
         cutoff_point = math.floor(len(mapping) / 2)
         mapping = mapping[:cutoff_point] + "\n" + mapping[cutoff_point:]
-    insert_value_content(id_mana_cost, mapping)
+    insert_content(id_mana_cost, mapping)
 
 
 def set_modal(card, id_sets, modal_type="modal"):
@@ -144,8 +144,10 @@ def set_modal(card, id_sets, modal_type="modal"):
             if match:
                 line_to_insert += " • " + match.group("match")
 
+        line_to_insert = "{◄}\t" + line_to_insert + "\t{►}"
+
         insert_multi_font_text(line_to_insert, id_set[ids.MODAL_T], align="center", font=FONT_SANS,
-                               style=FONT_SANS_STYLE, size="5", regex=regex_template_regular)
+                               style=FONT_SANS_STYLE, size="4.5", regex=regex_template_regular)
 
 
 def set_color_bar(card, id_set):
@@ -202,18 +204,15 @@ def set_planeswalker_text(card, id_set):
         return
 
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
-    modal = tree.find(".//Group[@Self='" + id_set[ids.GROUP_MODAL_O] + "']")
+    modal = tree.find(".//TextFrame[@Self='" + id_set[ids.MODAL_O] + "']")
 
     amount_textboxes = amount_abilities
-    top_y_coordinate = COORDINATE_TOP_ORACLE_TEXT
+    top_y_coordinate = COORDINATE_TOP_ORACLE
 
     if modal.attrib["Visible"] == "true":
         top_y_coordinate += VALUE_MODAL_HEIGHT
 
-    total_height = COORDINATE_BOT_ORACLE_TEXT + abs(top_y_coordinate)
-
-    if card.loyalty == "":
-        total_height += VALUE_DISTANCE_VALUE
+    total_height = COORDINATE_BOT_ORACLE + abs(top_y_coordinate)
 
     text_boxes = [[(id_set[ids.PLANESWALKER_VALUE_T][0], id_set[ids.PLANESWALKER_VALUE_O][0]),
                    (id_set[ids.PLANESWALKER_ORACLE_NUMBERED_T][0], id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][0])],
@@ -258,7 +257,7 @@ def set_planeswalker_text(card, id_set):
         planeswalker_text.pop()
         planeswalker_text.append(potential_additional_box[0])
 
-    step_size = total_height / amount_textboxes
+    box_size = (total_height - VALUE_SPACING_PLANESWALKER * (amount_textboxes - 1)) / amount_textboxes
     shifter = 1 if amount_textboxes > amount_abilities else 0
 
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
@@ -271,8 +270,8 @@ def set_planeswalker_text(card, id_set):
 
             if i < amount_textboxes:
                 object_box.set("Visible", "true")
-                if i % 2 == 1:
-                    object_box.set("FillColor", "Color/Grey")
+                # if i % 2 == 1:
+                #     object_box.set("FillColor", "Color/Grey")
 
                 top_left = object_box.find(".//PathPointType[1]")
                 x_coordinate, y_coordinate = top_left.attrib["Anchor"].split(" ")
@@ -280,8 +279,9 @@ def set_planeswalker_text(card, id_set):
 
                 utility_indesign_set_y_coordinates(object_box,
                                                    [y_coordinate, y_coordinate,
-                                                    y_coordinate + step_size, y_coordinate + step_size])
-                shift_coordinates = [step_size * i, step_size * i, step_size * i, step_size * i]
+                                                    y_coordinate + box_size, y_coordinate + box_size])
+                shift_length = (box_size + VALUE_SPACING_PLANESWALKER) * i
+                shift_coordinates = [shift_length, shift_length, shift_length, shift_length]
                 utility_indesign_shift_y_coordinates(object_box, shift_coordinates)
             else:
                 object_box.set("Visible", "false")
@@ -303,9 +303,6 @@ def set_oracle_text(card, id_set, align=None):
 
 
 def set_value(card, id_set):
-    if ids.VALUE_T not in id_set:
-        return
-
     id_value = id_set[ids.VALUE_T]
 
     if card.power != "" or card.toughness != "":
@@ -313,10 +310,10 @@ def set_value(card, id_set):
         if len(card.power) > 1 or len(card.toughness) > 1:
             value_string = value_string.replace(" ", "")
 
-        insert_value_content(id_value, value_string)
+        insert_content(id_value, value_string)
 
     if card.loyalty != "":
-        insert_value_content(id_value, card.loyalty)
+        insert_content(id_value, card.loyalty)
 
 
 def set_artist(card, id_set):
@@ -325,30 +322,14 @@ def set_artist(card, id_set):
 
     id_artist = id_set[ids.ARTIST_T]
 
-    insert_value_content(id_artist, card.artist)
+    insert_content(id_artist, card.artist)
 
 
 def set_collector_information(card, id_set):
-    if ids.COLLECTOR_INFORMATION_T not in id_set:
-        return
-
     id_collector_information = id_set[ids.COLLECTOR_INFORMATION_T]
 
-    insert_value_content(id_collector_information,
-                         card.collector_number.zfill(3) + " • " + card.set.upper() + " • " + card.rarity.upper()[0])
+    string_to_insert = card.collector_number.zfill(3) + " • " + card.set.upper() + " • " + card.rarity.upper()[0]
+    if len(card.side) > 0:
+        string_to_insert = card.side.upper() + " • " + string_to_insert
 
-
-def set_set(card, id_set):
-    if ids.SET_O not in id_set:
-        return
-
-    id_spread = id_set[ids.SPREAD]
-    id_set_icon = id_set[ids.SET_O]
-
-    if not utility_file_exists(f_icon_set + "/" + card.set.lower() + ".svg"):
-        if card.set.lower()[0] == "t" and utility_file_exists(f_icon_set + "/" + card.set.lower()[1:] + ".svg"):
-            insert_graphic(card, id_spread, id_set_icon, f_icon_set, card.set.lower()[1:])
-        else:
-            info_warn(card.name, "No icon for set: " + card.set.lower())
-    else:
-        insert_graphic(card, id_spread, id_set_icon, f_icon_set, card.set.lower())
+    insert_content(id_collector_information, string_to_insert)

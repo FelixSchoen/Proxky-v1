@@ -11,10 +11,15 @@ from variables import image_types, regex_template_oracle, mana_mapping, regex_te
     FONT_STANDARD_STYLE_ITALIC, regex_mana, regex_template_flavor
 
 
-def insert_value_content(identifier, value):
+def insert_content(identifier, content, size=None):
     tree = xml.etree.ElementTree.parse("data/memory/Stories/Story_" + identifier + ".xml")
+
+    if size is not None:
+        parent = tree.find(".//CharacterStyleRange[1]")
+        parent.set("PointSize", size)
+
     entry = tree.find(".//Content[1]")
-    entry.text = value
+    entry.text = content
 
     tree.write("data/memory/Stories/Story_" + identifier + ".xml")
 
@@ -151,11 +156,17 @@ def insert_multi_font_text(oracle_text, object_id, align="variable", regex=None,
 
     tree = xml.etree.ElementTree.parse("data/memory/Stories/Story_" + id_text_box + ".xml")
     parent = tree.find(".//ParagraphStyleRange[1]")
-    child = tree.find(".//CharacterStyleRange[1]")
-    parent.remove(child)
+
+    child = parent.find(".//CharacterStyleRange[1]")
+
+    while child is not None:
+        parent.remove(child)
+        child = parent.find(".//CharacterStyleRange[1]")
+
+    flavor_text_cleaned = flavor_text.replace("\n", " ")
 
     # Check alignment
-    if (len(oracle_text) + len(flavor_text) >= 100 and align == "variable") or align == "left":
+    if (len(oracle_text) + len(flavor_text_cleaned) >= 100 and align == "variable") or align == "left":
         parent.set("Justification", "LeftAlign")
 
     if regex is None:
@@ -180,8 +191,8 @@ def insert_multi_font_text(oracle_text, object_id, align="variable", regex=None,
             text_array[-1][0][:-2 or None], text_array[-1][1], text_array[-1][2])
 
     # Insert flavor text
-    if PRINT_FLAVOR_TEXT and len(flavor_text) > 0:
-        flavor_array = utility_split_string_along_regex(flavor_text, *regex_template_flavor,
+    if PRINT_FLAVOR_TEXT and len(flavor_text_cleaned) > 0:
+        flavor_array = utility_split_string_along_regex(flavor_text_cleaned, *regex_template_flavor,
                                                         standard_identifier="flavor")
         if len(text_array) > 0:
             text_array.append(("\n", "type", "flavor"))

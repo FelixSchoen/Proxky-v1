@@ -283,6 +283,7 @@ def utility_generate_ids(name, spread, root_element, mode="standard"):
         (id_names.GROUP_ADVENTURE, ids.GROUP_ADVENTURE_O),
 
         (id_names.MODAL, ids.MODAL_T, "ParentStory"),
+        (id_names.MODAL, ids.MODAL_O),
 
         (id_names.PLANESWALKER_VALUE_1, ids.PLANESWALKER_VALUE_T, "ParentStory"),
         (id_names.PLANESWALKER_VALUE_2, ids.PLANESWALKER_VALUE_T, "ParentStory"),

@@ -25,6 +25,7 @@ class ids:
 
     # Body
     MODAL_T = "id_modal_t"
+    MODAL_O = "id_modal_o"
     ORACLE_T = "id_oracle_t"
     ORACLE_O = "id_oracle_o"
 
@@ -153,6 +154,7 @@ id_general_front = {
     "id_group_planeswalker_o": "u4ea",
     "id_group_adventure_o": "u3db",
     "id_modal_t": "u3fe",
+    "id_modal_o": "u3fb",
     "id_planeswalker_value_t": ['u41b', 'u469', 'u497', 'u4ca'],
     "id_planeswalker_value_o": ['u42d', 'u466', 'u494', 'u4c7'],
     "id_planeswalker_oracle_numbered_t": ['u436', 'u452', 'u480', 'u4b3'],
@@ -232,6 +234,7 @@ id_general_back = {
     "id_group_planeswalker_o": "u1a8a",
     "id_group_adventure_o": "u1a13",
     "id_modal_t": "u1b74",
+    "id_modal_o": "u1b71",
     "id_planeswalker_value_t": ['u1b46', 'u1b18', 'u1aea', 'u1abc'],
     "id_planeswalker_value_o": ['u1b43', 'u1b15', 'u1ae7', 'u1ab9'],
     "id_planeswalker_oracle_numbered_t": ['u1b2f', 'u1b01', 'u1ad3', 'u1aa5'],
@@ -255,17 +258,24 @@ FLAG_FILE_EXISTS = 11001
 FLAG_PREFLIGHT_FAIL = 12000
 
 # Values
-VALUE_MODAL_HEIGHT = 23.822047244094502 - 13.546456692913399
-VALUE_DISTANCE_VALUE = 4.960627698522806  # Distance how much the value panel extends over the bottom color line
-COORDINATE_TOP_ORACLE_TEXT = -47.905511811023686 \
-                             + 0  # Top coordinate of the oracle box, note not necessarily same for all boxes shifting
-COORDINATE_BOT_ORACLE_TEXT = 37.13385826771649
-VALUE_SHIFT_HEADER_TOKEN_WITH_VALUE = 80.50393700787403 + abs(
-    -1.559055118110237)  # How much to shift the header for a token that has a power toughness value
-VALUE_SHIFT_ARTWORK_TOKEN_WITH_VALUE = abs(-200.6929133858268) - abs(-118.62992125984258)
-VALUE_SHIFT_TOKEN_NO_VALUE = abs(-210.6141732283465) - abs(
-    -200.6929133858268)  # How much to shift for a token without a value
-VALUE_SHIFT_ARTWORK_FULL_BODY = abs(10.204724409448769 - 139.03937007874012)
+
+# Height of the modal plus the amount of distance between oracle and the modal box
+VALUE_MODAL_HEIGHT = 9.212598425197
+
+# How much to shift the header for a token that has a power toughness value
+VALUE_SHIFT_WITHOUT_ORACLE_WITH_VALUE = 81.92125984252
+
+# How much shift to add if there is no value for the layout without oracle text
+VALUE_SHIFT_WITHOUT_ORACLE_WITHOUT_VALUE = 6.377952755906
+
+# How much to shift the artwork in order to cover the entire card
+VALUE_SHIFT_ARTWORK_FULL_BODY = 130.1102362205
+
+# Top Coordinate of the Oracle Box, in order to distribute planeswalker boxes
+COORDINATE_TOP_ORACLE = -29.55631007189999
+COORDINATE_BOT_ORACLE = 48.11298126668268
+# Space between planeswalker textframes
+VALUE_SPACING_PLANESWALKER = 2.125984251969
 
 # Font
 FONT_STANDARD = "Plantin MT Pro"
@@ -287,8 +297,8 @@ f_artwork = f_main + "/Artwork"
 f_artwork_downloaded = f_main + "/Artwork Downloaded"
 
 # Enumerations
-supported_layouts = ["normal"]  # , "modal_dfc", "transform", "split", "adventure", "class", "saga", "meld",
-# "token", "double_faced_token", "emblem"]
+supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga", "meld",
+                     "token", "double_faced_token", "emblem"]
 double_faced_layouts = ["modal_dfc", "transform", "meld", "double_faced_token"]
 
 # Types
@@ -349,6 +359,8 @@ mana_mapping = {
     "{S}": "S",
     "{X}": "X",
     "{E}": "E",
+    "{►}": "►",
+    "{◄}": "◄",
 }
 color_mapping = {
     "C": "Magic Grey",
@@ -360,7 +372,7 @@ color_mapping = {
 }
 
 # Regex
-regex_mana = r"(?P<match>{(?P<mana>[A-Z0-9\/]+)})"
+regex_mana = r"(?P<match>{(?P<mana>[A-Z0-9\/◄►]+)})"
 regex_add_mana = r"(?P<match>(?P<req>(?:{[A-Z0-9\/]+})+)+: Add (?P<prod>(?:{(?:[A-Z0-9\/]+)})+))"
 
 regex_template_mana = [([regex_mana], "font", ("KyMana", ""))]
