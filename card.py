@@ -22,6 +22,7 @@ class Card:
         self.type_line = ""
         self.colors = []
         self.color_identity = []
+        self.color_indicator = []
         self.keywords = []
         self.produced_mana = []
         self.keywords = []
@@ -52,6 +53,8 @@ class Card:
             self.colors = args["colors"]
         if "color_identity" in args:
             self.color_identity = args["color_identity"]
+        if "color_indicator" in args:
+            self.color_indicator = args["color_indicator"]
         if "keywords" in args:
             self.keywords = args["keywords"]
         if "produced_mana" in args:
@@ -89,10 +92,6 @@ class Card:
             self.set = args["set"]
         if "image_uris" in args:
             self.image_uris = args["image_uris"]
-
-        if len(self.colors) == 0:
-            if "Land" in self.type_line:
-                self.colors.extend(self.produced_mana)
 
         # Add meld card as backside
         if self.layout in ["meld"] and "all_parts" in args:

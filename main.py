@@ -164,7 +164,7 @@ def card_fill(card: Card, id_set, layout):
     set_mana_cost(card, id_set)
 
     # Color Bar
-    set_color_bar(card, id_set)
+    set_color_indicator(card, id_set)
 
     # Oracle Text
     if "Planeswalker" in types:

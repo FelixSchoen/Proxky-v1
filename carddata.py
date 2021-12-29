@@ -150,11 +150,18 @@ def set_modal(card, id_sets, modal_type="modal"):
                                style=FONT_SANS_STYLE, size="4.5", regex=regex_template_regular)
 
 
-def set_color_bar(card, id_set):
+def set_color_indicator(card, id_set):
     id_gradients = id_set[ids.GRADIENTS_O]
 
-    distance = 1.5
-    colors_to_apply = card.colors
+    distance = 0
+    if len(card.color_indicator) > 0:
+        colors_to_apply = card.color_indicator
+    else:
+        colors_to_apply = card.colors
+
+    if len(colors_to_apply) == 0:
+        if "Land" in card.type_line:
+            colors_to_apply.extend(card.produced_mana)
 
     if len(colors_to_apply) == 0:
         colors_to_apply.append("C")

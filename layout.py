@@ -65,6 +65,18 @@ def card_layout_no_value(id_set):
     value_text = tree.find(".//TextFrame[@Self='" + id_set[ids.VALUE_O] + "']")
     value_text.set("Visible", "false")
 
+    # Remove mask
+    footer = tree.find(".//Group[@Self='" + id_set[ids.GROUP_FOOTER_O] + "']")
+    mask = tree.find(".//Polygon[@Self='" + id_set[ids.MASK_COLOR_INDICATOR_BOT_O] + "']")
+    color_indicator_bot = tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_INDICATOR_BOT_O] + "']")
+
+    # Appending it to footer group incurs this movement, idk why
+    SHIFT_BY = -1.417322834646
+    utility_indesign_shift_y_coordinates(color_indicator_bot, [SHIFT_BY, SHIFT_BY, SHIFT_BY, SHIFT_BY])
+
+    mask.remove(color_indicator_bot)
+    footer.append(color_indicator_bot)
+
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
 
@@ -136,23 +148,23 @@ def card_layout_full_body_art(id_set, card):
     utility_indesign_shift_y_coordinates(artwork, [0, 0, VALUE_SHIFT_ARTWORK_FULL_BODY,
                                                    VALUE_SHIFT_ARTWORK_FULL_BODY])
 
-    textframes = [id_set[ids.PLANESWALKER_VALUE_O][0],
-                  id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][0],
-                  id_set[ids.PLANESWALKER_VALUE_O][1],
-                  id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][1],
-                  id_set[ids.PLANESWALKER_VALUE_O][2],
-                  id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][2],
-                  id_set[ids.PLANESWALKER_VALUE_O][3],
-                  id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][3],
-                  id_set[ids.PLANESWALKER_ORACLE_FINAL_O]]
+    # textframes = [id_set[ids.PLANESWALKER_VALUE_O][0],
+    #               id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][0],
+    #               id_set[ids.PLANESWALKER_VALUE_O][1],
+    #               id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][1],
+    #               id_set[ids.PLANESWALKER_VALUE_O][2],
+    #               id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][2],
+    #               id_set[ids.PLANESWALKER_VALUE_O][3],
+    #               id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][3],
+    #               id_set[ids.PLANESWALKER_ORACLE_FINAL_O]]
 
     rectangles_50 = []
-    rectangles_75 = [id_set[ids.BACKDROP_O], id_set[ids.MODAL_FRAME_O]]
-    groups_75 = [id_set[ids.GROUP_COLOR_BAR_TOP_O]]
+    rectangles_75 = [id_set[ids.BACKDROP_O]]
+    groups_75 = []  # [id_set[ids.GROUP_COLOR_BAR_TOP_O]]
 
-    for object_id in textframes:
-        element = tree.find(".//TextFrame[@Self='" + object_id + "']")
-        utility_make_object_transparent(element, 50)
+    # for object_id in textframes:
+    #     element = tree.find(".//TextFrame[@Self='" + object_id + "']")
+    #     utility_make_object_transparent(element, 50)
 
     for object_id in rectangles_50:
         element = tree.find(".//Rectangle[@Self='" + object_id + "']")
