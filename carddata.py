@@ -10,8 +10,8 @@ from utility import utility_sort_mana_array, utility_indesign_set_y_coordinates,
 from info import info_warn, info_normal
 from insert_xml import *
 from insert_xml import insert_multi_font_text
-from variables import ids, f_artwork, f_artwork_downloaded, f_icon_types, COORDINATE_TOP_ORACLE_TEXT, \
-    VALUE_MODAL_HEIGHT, COORDINATE_BOT_ORACLE_TEXT, VALUE_DISTANCE_VALUE, mana_mapping, f_icon_set, \
+from variables import ids, f_artwork, f_artwork_downloaded, f_icon_card_types, COORDINATE_TOP_ORACLE_TEXT, \
+    VALUE_MODAL_HEIGHT, COORDINATE_BOT_ORACLE_TEXT, VALUE_DISTANCE_VALUE, mana_mapping, \
     regex_template_planeswalker, color_mapping, FONT_SANS, FONT_SANS_STYLE, regex_template_regular, regex_add_mana, \
     regex_card_name
 
@@ -72,7 +72,7 @@ def set_artwork(card, id_set):
 
 def set_type_icon(card, id_set):
     id_spread = id_set[ids.SPREAD]
-    id_type = id_set[ids.TYPE_O]
+    id_type = id_set[ids.TYPE_ICON_O]
 
     # Get types of card
     types = utility_get_card_types(card)
@@ -90,14 +90,14 @@ def set_type_icon(card, id_set):
     else:
         card_type = types[0]
 
-    if not utility_file_exists(f_icon_types + "/" + card_type.lower() + ".svg"):
+    if not utility_file_exists(f_icon_card_types + "/" + card_type.lower() + ".svg"):
         info_warn(card.name, "No icon for card type")
     else:
-        insert_graphic(card, id_spread, id_type, f_icon_types, card_type.lower())
+        insert_graphic(card, id_spread, id_type, f_icon_card_types, card_type.lower())
 
 
 def set_card_name(card, id_set):
-    id_name = id_set[ids.NAME_T]
+    id_name = id_set[ids.TITLE_T]
 
     insert_value_content(id_name, card.name)
 
@@ -114,7 +114,7 @@ def set_mana_cost(card, id_set):
     mana = list(filter(None, [s.replace("{", "") for s in card.mana_cost.split("}")]))
     mapping = "".join([mana_mapping["{" + m + "}"] for m in mana])
     if len(mapping) > 5:
-        cutoff_point = math.floor(len(mapping)/2)
+        cutoff_point = math.floor(len(mapping) / 2)
         mapping = mapping[:cutoff_point] + "\n" + mapping[cutoff_point:]
     insert_value_content(id_mana_cost, mapping)
 
@@ -216,36 +216,36 @@ def set_planeswalker_text(card, id_set):
         total_height += VALUE_DISTANCE_VALUE
 
     text_boxes = [[(id_set[ids.PLANESWALKER_VALUE_T][0], id_set[ids.PLANESWALKER_VALUE_O][0]),
-                   (id_set[ids.PLANESWALKER_TEXT_T][0], id_set[ids.PLANESWALKER_TEXT_O][0])],
+                   (id_set[ids.PLANESWALKER_ORACLE_NUMBERED_T][0], id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][0])],
 
                   [(id_set[ids.PLANESWALKER_VALUE_T][1], id_set[ids.PLANESWALKER_VALUE_O][1]),
-                   (id_set[ids.PLANESWALKER_TEXT_T][1], id_set[ids.PLANESWALKER_TEXT_O][1])],
+                   (id_set[ids.PLANESWALKER_ORACLE_NUMBERED_T][1], id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][1])],
 
                   [(id_set[ids.PLANESWALKER_VALUE_T][2], id_set[ids.PLANESWALKER_VALUE_O][2]),
-                   (id_set[ids.PLANESWALKER_TEXT_T][2], id_set[ids.PLANESWALKER_TEXT_O][2])],
+                   (id_set[ids.PLANESWALKER_ORACLE_NUMBERED_T][2], id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][2])],
 
                   [(id_set[ids.PLANESWALKER_VALUE_T][3], id_set[ids.PLANESWALKER_VALUE_O][3]),
-                   (id_set[ids.PLANESWALKER_TEXT_T][3], id_set[ids.PLANESWALKER_TEXT_O][3])]]
+                   (id_set[ids.PLANESWALKER_ORACLE_NUMBERED_T][3], id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][3])]]
 
     # Insert pre text
     if planeswalker_text[0][2] != "loyalty":
-        tf = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
+        tf = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_O] + "']")
         tfp = tf.find(".//TextFramePreference[1]")
         tfp.set("VerticalJustification", "CenterAlign")
 
-        text_boxes.insert(0, [(id_set[ids.ORACLE_TEXT_T], id_set[ids.ORACLE_TEXT_O])])
+        text_boxes.insert(0, [(id_set[ids.ORACLE_T], id_set[ids.ORACLE_O])])
         amount_textboxes += 1
-        insert_multi_font_text(planeswalker_text[0][0], id_set[ids.ORACLE_TEXT_T], align="left")
+        insert_multi_font_text(planeswalker_text[0][0], id_set[ids.ORACLE_T], align="left")
         planeswalker_text = planeswalker_text[1:]
 
     potential_additional_box = utility_split_string_along_regex(planeswalker_text[-1][0], ("\n", "type", "break"))
     if len(potential_additional_box) > 1:
-        tf = tree.find(".//TextFrame[@Self='" + id_set[ids.PLANESWALKER_ORACLE_O] + "']")
+        tf = tree.find(".//TextFrame[@Self='" + id_set[ids.PLANESWALKER_ORACLE_FINAL_O] + "']")
         tfp = tf.find(".//TextFramePreference[1]")
         tfp.set("VerticalJustification", "CenterAlign")
 
         text_boxes = text_boxes[0:amount_textboxes]
-        text_boxes.append([(id_set[ids.PLANESWALKER_ORACLE_T], id_set[ids.PLANESWALKER_ORACLE_O])])
+        text_boxes.append([(id_set[ids.PLANESWALKER_ORACLE_FINAL_T], id_set[ids.PLANESWALKER_ORACLE_FINAL_O])])
         amount_textboxes += 1
 
         insert_string = ""
@@ -253,7 +253,7 @@ def set_planeswalker_text(card, id_set):
         for i in range(2, len(potential_additional_box)):
             insert_string += potential_additional_box[i][0]
 
-        insert_multi_font_text(insert_string, id_set[ids.PLANESWALKER_ORACLE_T], align="left")
+        insert_multi_font_text(insert_string, id_set[ids.PLANESWALKER_ORACLE_FINAL_T], align="left")
 
         planeswalker_text.pop()
         planeswalker_text.append(potential_additional_box[0])
@@ -294,12 +294,12 @@ def set_planeswalker_text(card, id_set):
 
 
 def set_oracle_text(card, id_set, align=None):
-    if ids.ORACLE_TEXT_T not in id_set:
+    if ids.ORACLE_T not in id_set:
         return
     if align is not None:
-        insert_multi_font_text(card.oracle_text, id_set[ids.ORACLE_TEXT_T], flavor_text=card.flavor_text, align=align)
+        insert_multi_font_text(card.oracle_text, id_set[ids.ORACLE_T], flavor_text=card.flavor_text, align=align)
     else:
-        insert_multi_font_text(card.oracle_text, id_set[ids.ORACLE_TEXT_T], flavor_text=card.flavor_text)
+        insert_multi_font_text(card.oracle_text, id_set[ids.ORACLE_T], flavor_text=card.flavor_text)
 
 
 def set_value(card, id_set):

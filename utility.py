@@ -229,127 +229,134 @@ def utility_cleanse_id_name(card):
     return card.collector_number + " - " + cleansed_name
 
 
-def utility_generate_ids(name, spread, mode="standard", prefix=""):
+def utility_generate_ids(name, spread, root_element, mode="standard"):
+    """
+    :param name: Name of the ID set to generate
+    :param spread: Which spread to check the IDs on
+    :param root_element: Root XML to search in, e.g. for split use only the split element as root
+    :param mode: Which mode to generate IDs for, e.g. different treatment for split and double sided cards
+    :return: None
+    For the names, each entry consists of a string to match in the actual document, the internal ID to match it to, a
+    boolean that states whether it is a text box or not or a component to extract.
+    """
+    global tree
     if mode != "printing":
         tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + spread + ".xml")
+        if root_element is not None:
+            tree = tree.find(".//*[@Name='" + root_element + "']")
+    else:
+        tree = xml.etree.ElementTree.parse("data/memory_print/Spreads/Spread_" + spread + ".xml")
 
     # IDs base case
-    names_base = [("Header", ids.GROUP_HEADER_O),
-                  ("Type", ids.TYPE_O),
-                  ("Name", ids.NAME_T, True),
-                  ("Type Line", ids.TYPE_LINE_T, True),
-                  ("Mana Cost", ids.MANA_COST_T, True),
-                  ("Upper Color Bar", ids.COLOR_BARS_O),
-                  ("Upper Color Bar Bleed", ids.COLOR_BARS_O),
-                  ("Lower Color Bar", ids.COLOR_BARS_O),
-                  ("Lower Color Bar Bleed", ids.COLOR_BARS_O),
-                  ("Upper Color Bar", ids.GRADIENTS_O, "FillColor"),
-                  ("Upper Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
-                  ("Lower Color Bar", ids.GRADIENTS_O, "FillColor"),
-                  ("Lower Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
-                  (id_names.ORACLE_TEXT, ids.ORACLE_TEXT_T, True),
-                  ("Oracle Text", ids.ORACLE_TEXT_O),
-                  ("Mask", ids.MASK_O),
-                  ("Value", ids.VALUE_T, True),
-                  ("Value", ids.VALUE_O),
-                  ("Value Short Frame", ids.VALUE_SHORT_FRAME_O),
-                  ("Value Long Frame", ids.VALUE_LONG_FRAME_O),
-                  ("Mask Short", ids.MASK_SHORT_O),
-                  ("Mask Long", ids.MASK_LONG_O),
-                  ("Bottom", ids.GROUP_BOTTOM_O),
-                  (id_names.ARTIST, ids.ARTIST_T, True),
-                  (id_names.COLLECTOR_INFORMATION, ids.COLLECTOR_INFORMATION_T, True),
-                  ("Set Icon", ids.SET_O),
-                  (id_names.ARTWORK, ids.ARTWORK_O)]
+    names_base = [
+        # Groups
+        (id_names.GROUP_HEADER, ids.GROUP_HEADER_O),
+
+        # Header
+        (id_names.TYPE_ICON, ids.TYPE_ICON_O),
+        (id_names.TITLE, ids.TITLE_T, "ParentStory"),
+        (id_names.TYPE_LINE, ids.TYPE_LINE_T, "ParentStory"),
+        (id_names.MANA_COST, ids.MANA_COST_T, "ParentStory"),
+        (id_names.COLOR_INDICATOR_TOP, ids.COLOR_INDICATOR_TOP_O),
+        (id_names.COLOR_INDICATOR_TOP, ids.GRADIENTS_O, "FillColor"),
+        (id_names.COLOR_INDICATOR_BOT, ids.GRADIENTS_O, "FillColor"),
+
+        # Body
+        (id_names.ORACLE, ids.ORACLE_T, "ParentStory"),
+        (id_names.ORACLE, ids.ORACLE_O),
+
+        # Footer
+        (id_names.COLOR_INDICATOR_BOT, ids.COLOR_INDICATOR_BOT_O),
+        (id_names.VALUE, ids.VALUE_T, "ParentStory"),
+        (id_names.VALUE, ids.VALUE_O),
+        (id_names.ARTIST_INFORMATION, ids.ARTIST_T, "ParentStory"),
+        (id_names.COLLECTOR_INFORMATION, ids.COLLECTOR_INFORMATION_T, "ParentStory"),
+        (id_names.ARTWORK, ids.ARTWORK_O),
+        (id_names.BACKDROP, ids.BACKDROP_O),
+    ]
 
     # IDs to add for standard cards
-    names_standard = [("Normal", ids.GROUP_NORMAL_O),
-                      ("Split", ids.GROUP_SPLIT_O),
-                      ("Modal Text", ids.MODAL_T, True),
-                      ("Modal", ids.GROUP_MODAL_O),
-                      (id_names.MODAL_FRAME, ids.MODAL_FRAME_O),
-                      (id_names.GROUP_COLOR_BAR_TOP, ids.GROUP_COLOR_BAR_TOP_O),
-                      ("Layout Planeswalker", ids.GROUP_ORACLE_PLANESWALKER_O),
-                      ("Planeswalker Value 1", ids.PLANESWALKER_VALUE_T, True),
-                      ("Planeswalker Value 2", ids.PLANESWALKER_VALUE_T, True),
-                      ("Planeswalker Value 3", ids.PLANESWALKER_VALUE_T, True),
-                      ("Planeswalker Value 4", ids.PLANESWALKER_VALUE_T, True),
-                      ("Planeswalker Value 1", ids.PLANESWALKER_VALUE_O),
-                      ("Planeswalker Value 2", ids.PLANESWALKER_VALUE_O),
-                      ("Planeswalker Value 3", ids.PLANESWALKER_VALUE_O),
-                      ("Planeswalker Value 4", ids.PLANESWALKER_VALUE_O),
-                      (id_names.PLANESWALKER_TEXT_1, ids.PLANESWALKER_TEXT_T, True),
-                      (id_names.PLANESWALKER_TEXT_2, ids.PLANESWALKER_TEXT_T, True),
-                      (id_names.PLANESWALKER_TEXT_3, ids.PLANESWALKER_TEXT_T, True),
-                      (id_names.PLANESWALKER_TEXT_4, ids.PLANESWALKER_TEXT_T, True),
-                      (id_names.PLANESWALKER_TEXT_1, ids.PLANESWALKER_TEXT_O),
-                      (id_names.PLANESWALKER_TEXT_2, ids.PLANESWALKER_TEXT_O),
-                      (id_names.PLANESWALKER_TEXT_3, ids.PLANESWALKER_TEXT_O),
-                      (id_names.PLANESWALKER_TEXT_4, ids.PLANESWALKER_TEXT_O),
-                      (id_names.PLANESWALKER_ORACLE_TEXT, ids.PLANESWALKER_ORACLE_T, True),
-                      (id_names.PLANESWALKER_ORACLE_TEXT, ids.PLANESWALKER_ORACLE_O),
-                      ("Layout Adventure", ids.GROUP_ORACLE_ADVENTURE_O),
-                      ("Side Indicator Text", ids.SIDE_INDICATOR_T, True),
-                      ("Side Indicator", ids.SIDE_INDICATOR_O),
-                      (id_names.BACKDROP, ids.BACKDROP_O)]
+    names_standard = [
+        # Groups
+        # (id_names.GROUP_SPLIT, ids.GROUP_SPLIT_O),
+        (id_names.GROUP_PLANESWALKER, ids.GROUP_PLANESWALKER_O),
+        (id_names.GROUP_ADVENTURE, ids.GROUP_ADVENTURE_O),
+
+        (id_names.MODAL, ids.MODAL_T, "ParentStory"),
+
+        (id_names.PLANESWALKER_VALUE_1, ids.PLANESWALKER_VALUE_T, "ParentStory"),
+        (id_names.PLANESWALKER_VALUE_2, ids.PLANESWALKER_VALUE_T, "ParentStory"),
+        (id_names.PLANESWALKER_VALUE_3, ids.PLANESWALKER_VALUE_T, "ParentStory"),
+        (id_names.PLANESWALKER_VALUE_4, ids.PLANESWALKER_VALUE_T, "ParentStory"),
+        (id_names.PLANESWALKER_VALUE_1, ids.PLANESWALKER_VALUE_O),
+        (id_names.PLANESWALKER_VALUE_2, ids.PLANESWALKER_VALUE_O),
+        (id_names.PLANESWALKER_VALUE_3, ids.PLANESWALKER_VALUE_O),
+        (id_names.PLANESWALKER_VALUE_4, ids.PLANESWALKER_VALUE_O),
+        (id_names.PLANESWALKER_ORACLE_1, ids.PLANESWALKER_ORACLE_NUMBERED_T, "ParentStory"),
+        (id_names.PLANESWALKER_ORACLE_2, ids.PLANESWALKER_ORACLE_NUMBERED_T, "ParentStory"),
+        (id_names.PLANESWALKER_ORACLE_3, ids.PLANESWALKER_ORACLE_NUMBERED_T, "ParentStory"),
+        (id_names.PLANESWALKER_ORACLE_4, ids.PLANESWALKER_ORACLE_NUMBERED_T, "ParentStory"),
+        (id_names.PLANESWALKER_ORACLE_1, ids.PLANESWALKER_ORACLE_NUMBERED_O),
+        (id_names.PLANESWALKER_ORACLE_2, ids.PLANESWALKER_ORACLE_NUMBERED_O),
+        (id_names.PLANESWALKER_ORACLE_3, ids.PLANESWALKER_ORACLE_NUMBERED_O),
+        (id_names.PLANESWALKER_ORACLE_4, ids.PLANESWALKER_ORACLE_NUMBERED_O),
+        (id_names.PLANESWALKER_ORACLE_FINAL, ids.PLANESWALKER_ORACLE_FINAL_T, "ParentStory"),
+        (id_names.PLANESWALKER_ORACLE_FINAL, ids.PLANESWALKER_ORACLE_FINAL_O),
+    ]
 
     # IDs to add for adventure cards
-    names_adventure = [("Adventure Type", ids.TYPE_O),
-                       ("Adventure Name", ids.NAME_T, True),
-                       ("Adventure Type Line", ids.TYPE_LINE_T, True),
-                       ("Adventure Mana Cost", ids.MANA_COST_T, True),
-                       ("Adventure Color Bar", ids.COLOR_BARS_O),
-                       ("Adventure Color Bar Bleed", ids.COLOR_BARS_O),
-                       ("Adventure Color Bar", ids.GRADIENTS_O, "FillColor"),
-                       ("Adventure Color Bar Bleed", ids.GRADIENTS_O, "FillColor"),
-                       (id_names.ADVENTURE_ORACLE_TEXT_LEFT, ids.ADVENTURE_ORACLE_TEXT_L_T, True),
-                       (id_names.ADVENTURE_ORACLE_TEXT_LEFT, ids.ADVENTURE_ORACLE_TEXT_L_O),
-                       (id_names.ADVENTURE_ORACLE_TEXT_RIGHT, ids.ADVENTURE_ORACLE_TEXT_R_T, True),
-                       (id_names.ADVENTURE_ORACLE_TEXT_RIGHT, ids.ADVENTURE_ORACLE_TEXT_R_O)]
+    names_adventure = [(id_names.ADVENTURE_TYPE_ICON, ids.TYPE_ICON_O),
+                       (id_names.ADVENTURE_TITLE, ids.TITLE_T, "ParentStory"),
+                       (id_names.ADVENTURE_TYPE_LINE, ids.TYPE_LINE_T, "ParentStory"),
+                       (id_names.ADVENTURE_MANA_COST, ids.MANA_COST_T, "ParentStory"),
+                       (id_names.ADVENTURE_COLOR_INDICATOR, ids.COLOR_INDICATOR_TOP_O),
+                       (id_names.ADVENTURE_COLOR_INDICATOR, ids.GRADIENTS_O, "FillColor"),
+                       (id_names.ADVENTURE_ORACLE_LEFT, ids.ADVENTURE_ORACLE_LEFT_T, "ParentStory"),
+                       (id_names.ADVENTURE_ORACLE_LEFT, ids.ADVENTURE_ORACLE_LEFT_O),
+                       (id_names.ADVENTURE_ORACLE_RIGHT, ids.ADVENTURE_ORACLE_RIGHT_T, "ParentStory"),
+                       (id_names.ADVENTURE_ORACLE_RIGHT, ids.ADVENTURE_ORACLE_RIGHT_O)
+                       ]
 
+    # IDs to use for printing
     names_printing = [
-        ("Frame 1", ids.PRINTING_FRAME_O),
-        ("Frame 2", ids.PRINTING_FRAME_O),
-        ("Frame 3", ids.PRINTING_FRAME_O),
-        ("Frame 4", ids.PRINTING_FRAME_O),
-        ("Frame 5", ids.PRINTING_FRAME_O),
-        ("Frame 6", ids.PRINTING_FRAME_O),
-        ("Frame 7", ids.PRINTING_FRAME_O),
-        ("Frame 8", ids.PRINTING_FRAME_O),
-        ("Frame 9", ids.PRINTING_FRAME_O),
+        (id_names.P_FRAME + " 1", ids.PRINTING_FRAME_O),
+        (id_names.P_FRAME + " 2", ids.PRINTING_FRAME_O),
+        (id_names.P_FRAME + " 3", ids.PRINTING_FRAME_O),
+        (id_names.P_FRAME + " 4", ids.PRINTING_FRAME_O),
+        (id_names.P_FRAME + " 5", ids.PRINTING_FRAME_O),
+        (id_names.P_FRAME + " 6", ids.PRINTING_FRAME_O),
+        (id_names.P_FRAME + " 7", ids.PRINTING_FRAME_O),
+        (id_names.P_FRAME + " 8", ids.PRINTING_FRAME_O),
+        (id_names.P_FRAME + " 9", ids.PRINTING_FRAME_O),
     ]
 
     names = names_base
 
+    # Modes
     if mode == "standard":
         names.extend(names_standard)
     elif mode == "adventure":
         names = names_adventure
     elif mode == "printing":
         names = names_printing
-        tree = xml.etree.ElementTree.parse("data/memory_print/Spreads/Spread_" + spread + ".xml")
 
     with open("data/ids.txt", "a") as f:
-        if prefix == "":
-            print("id_general_" + name + " = {", file=f)
-        else:
-            print("id_general_" + name + "_" + prefix.lower() + " = {", file=f)
-
+        print("id_general_" + name + " = {", file=f)
         print("\"" + ids.SPREAD + "\": " + "\"" + spread + "\",", file=f)
 
         entries = []
 
         for name in names:
             name_to_search_for = name[0]
-            if prefix != "":
-                name_to_search_for = prefix + " " + name_to_search_for
 
             element = tree.find(".//*[@Name='" + name_to_search_for + "']")
 
-            if len(name) > 2 and name[2] is True:
-                to_add = "\"" + element.attrib["ParentStory"] + "\","
-            elif len(name) > 2:
-                to_add = "\"" + element.attrib[name[2]].split("/")[1] + "\","
+            # Text box
+            if len(name) > 2:
+                if name[2] == "FillColor":
+                    to_add = "\"" + element.attrib[name[2]].split("/")[1] + "\","
+                else:
+                    to_add = "\"" + element.attrib[name[2]] + "\","
             else:
                 to_add = "\"" + element.attrib["Self"] + "\","
 
@@ -386,23 +393,25 @@ def utility_generate_ids(name, spread, mode="standard", prefix=""):
 
 
 def utility_generate_all_ids():
-    front_id = "uff"
-    back_id = "u5989"
+    front_id = "uce"
+    back_id = "u1837"
     print_front_id = "ue7"
-    print_back_id = "uf6"
+    print_back_id = "u11d"
 
-    with zipfile.ZipFile(f_preset, "r") as archive:
+    open('data/ids.txt', 'w').close()
+
+    with zipfile.ZipFile(file_template, "r") as archive:
         archive.extractall("data/memory")
-    with zipfile.ZipFile(f_preset_print, "r") as archive:
+    with zipfile.ZipFile(file_print, "r") as archive:
         archive.extractall("data/memory_print")
 
-    utility_generate_ids("front", front_id)
-    utility_generate_ids("front", front_id, mode="split", prefix="ST")
-    utility_generate_ids("front", front_id, mode="split", prefix="SB")
-    utility_generate_ids("front_adventure", front_id, mode="adventure")
-    utility_generate_ids("back", back_id)
-    utility_generate_ids("print_front", print_front_id, mode="printing")
-    utility_generate_ids("print_back", print_back_id, mode="printing")
+    utility_generate_ids("front", front_id, id_names.GROUP_NORMAL)
+    utility_generate_ids("split_top_front", front_id, id_names.GROUP_SPLIT_TOP, mode="split")
+    utility_generate_ids("split_bot_front", front_id, id_names.GROUP_SPLIT_BOT, mode="split")
+    utility_generate_ids("front_adventure", front_id, id_names.GROUP_NORMAL, mode="adventure")
+    utility_generate_ids("back", back_id, id_names.GROUP_NORMAL)
+    utility_generate_ids("print_front", print_front_id, None, mode="printing")
+    utility_generate_ids("print_back", print_back_id, None, mode="printing")
 
-    shutil.rmtree("data/memory")
-    shutil.rmtree("data/memory_print")
+    # shutil.rmtree("data/memory")
+    # shutil.rmtree("data/memory_print")

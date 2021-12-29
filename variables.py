@@ -1,6 +1,124 @@
 from initialize import keywords
 
 
+class ids:
+    SPREAD = "id_spread"
+
+    # Groups
+    GROUP_NORMAL_O = "id_group_normal_o"
+    GROUP_SPLIT_O = "id_group_split_o"
+    GROUP_HEADER_O = "id_group_header_o"
+    GROUP_BODY_O = "id_group_body_o"
+    GROUP_PLANESWALKER_O = "id_group_planeswalker_o"
+    GROUP_ADVENTURE_O = "id_group_adventure_o"
+    GROUP_FOOTER_O = "id_group_footer_o"
+
+    # Misc
+    GRADIENTS_O = "id_gradients_o"
+
+    # Header
+    TYPE_ICON_O = "id_type_icon_o"
+    TITLE_T = "id_title_t"
+    TYPE_LINE_T = "id_type_line_t"
+    MANA_COST_T = "id_mana_cost_t"
+    COLOR_INDICATOR_TOP_O = "id_color_indicator_top_o"
+
+    # Body
+    MODAL_T = "id_modal_t"
+    ORACLE_T = "id_oracle_t"
+    ORACLE_O = "id_oracle_o"
+
+    # Planeswalker
+    PLANESWALKER_VALUE_T = "id_planeswalker_value_t"
+    PLANESWALKER_VALUE_O = "id_planeswalker_value_o"
+    PLANESWALKER_ORACLE_NUMBERED_T = "id_planeswalker_oracle_numbered_t"
+    PLANESWALKER_ORACLE_NUMBERED_O = "id_planeswalker_oracle_numbered_o"
+    PLANESWALKER_ORACLE_FINAL_T = "id_planeswalker_oracle_final_t"
+    PLANESWALKER_ORACLE_FINAL_O = "id_planeswalker_oracle_final_o"
+
+    # Adventure
+    ADVENTURE_ORACLE_LEFT_T = "id_adventure_oracle_left_t"
+    ADVENTURE_ORACLE_LEFT_O = "id_adventure_oracle_left_o"
+    ADVENTURE_ORACLE_RIGHT_T = "id_adventure_oracle_right_t"
+    ADVENTURE_ORACLE_RIGHT_O = "id_adventure_oracle_right_o"
+
+    # Footer
+    VALUE_T = "id_value_t"
+    VALUE_O = "id_value_o"
+    COLOR_INDICATOR_BOT_O = "id_color_indicator_bot_o"
+    ARTIST_T = "id_artist_t"
+    COLLECTOR_INFORMATION_T = "id_collector_information_t"
+
+    # Artwork
+    BACKDROP_O = "id_backdrop_o"
+    ARTWORK_O = "id_artwork_o"
+
+    PRINTING_FRAME_O = "pid_frame_o"
+
+
+class id_names:
+    # Groups
+    GROUP_NORMAL = "Normal"
+    GROUP_SPLIT = "Split"
+    GROUP_SPLIT_TOP = "Split Top"
+    GROUP_SPLIT_BOT = "Split Bot"
+    GROUP_HEADER = "Header"
+    GROUP_PLANESWALKER = "Layout Planeswalker"
+    GROUP_ADVENTURE = "Layout Adventure"
+
+    # Header
+    TYPE_ICON = "Type Icon"
+    TITLE = "Title"
+    TYPE_LINE = "Type Line"
+    MANA_COST = "Mana Cost"
+    COLOR_INDICATOR_TOP = "Color Indicator Top"
+
+    # Body
+    MODAL = "Modal"
+    ORACLE = "Oracle"
+
+    # Planeswalker
+    PLANESWALKER_VALUE_1 = "Planeswalker Value 1"
+    PLANESWALKER_VALUE_2 = "Planeswalker Value 2"
+    PLANESWALKER_VALUE_3 = "Planeswalker Value 3"
+    PLANESWALKER_VALUE_4 = "Planeswalker Value 4"
+    PLANESWALKER_ORACLE_1 = "Planeswalker Oracle 1"
+    PLANESWALKER_ORACLE_2 = "Planeswalker Oracle 2"
+    PLANESWALKER_ORACLE_3 = "Planeswalker Oracle 3"
+    PLANESWALKER_ORACLE_4 = "Planeswalker Oracle 4"
+    PLANESWALKER_ORACLE_FINAL = "Planeswalker Oracle"
+
+    # Adventure
+    ADVENTURE_TYPE_ICON = "Adventure Type Icon"
+    ADVENTURE_TITLE = "Adventure Title"
+    ADVENTURE_TYPE_LINE = "Adventure Type Line"
+    ADVENTURE_MANA_COST = "Adventure Mana Cost"
+    ADVENTURE_COLOR_INDICATOR = "Adventure Color Indicator"
+    ADVENTURE_ORACLE_LEFT = "Adventure Oracle Left"
+    ADVENTURE_ORACLE_RIGHT = "Adventure Oracle Right"
+
+    # Footer
+    VALUE = "Value"
+    COLOR_INDICATOR_BOT = "Color Indicator Bot"
+    ARTIST_INFORMATION = "Artist Information"
+    COLLECTOR_INFORMATION = "Collector Information"
+
+    # Split
+    ST_ORACLE = "ST Oracle"
+    ST_ARTIST_INFORMATION = "ST Artist Information"
+    ST_COLLECTOR_INFORMATION = "ST Collector Information"
+
+    SB_ORACLE = "SB Oracle"
+    SB_ARTIST_INFORMATION = "SB Artist Information"
+    SB_COLLECTOR_INFORMATION = "SB Collector Information"
+
+    BACKDROP = "Backdrop"
+    ARTWORK = "Artwork"
+
+    # Printing
+    P_FRAME = "Frame"
+
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -13,374 +131,121 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-class ids:
-    SPREAD = "id_spread"
-    GROUP_NORMAL_O = "id_group_normal_o"
-    GROUP_SPLIT_O = "id_group_split_o"
-    GROUP_HEADER_O = "id_group_header_o"
-    TYPE_O = "id_type_o"
-    NAME_T = "id_name_t"
-    TYPE_LINE_T = "id_type_line_t"
-    MANA_COST_T = "id_mana_cost_t"
-    MODAL_T = "id_modal_t"
-    MODAL_FRAME_O = "id_modal_frame_o"
-    GROUP_MODAL_O = "id_group_modal_o"
-    GROUP_COLOR_BAR_TOP_O = "id_group_color_bar_top_o"
-    COLOR_BARS_O = "id_color_bars_o"
-    GRADIENTS_O = "id_gradients_o"
-    ORACLE_TEXT_T = "id_oracle_text_t"
-    ORACLE_TEXT_O = "id_oracle_text_o"
-    ADVENTURE_ORACLE_TEXT_L_T = "id_adventure_oracle_text_l_t"
-    ADVENTURE_ORACLE_TEXT_L_O = "id_adventure_oracle_text_l_o"
-    ADVENTURE_ORACLE_TEXT_R_T = "id_adventure_oracle_text_r_t"
-    ADVENTURE_ORACLE_TEXT_R_O = "id_adventure_oracle_text_r_o"
-    GROUP_ORACLE_PLANESWALKER_O = "id_group_oracle_planeswalker_o"
-    PLANESWALKER_VALUE_T = "id_planeswalker_value_t"
-    PLANESWALKER_VALUE_O = "id_planeswalker_value_o"
-    PLANESWALKER_TEXT_T = "id_planeswalker_text_t"
-    PLANESWALKER_TEXT_O = "id_planeswalker_text_o"
-    PLANESWALKER_ORACLE_T = "id_planeswalker_oracle_t"
-    PLANESWALKER_ORACLE_O = "id_planeswalker_oracle_o"
-    GROUP_ORACLE_ADVENTURE_O = "id_group_oracle_adventure_o"
-    MASK_O = "id_mask_o"
-    VALUE_T = "id_value_t"
-    VALUE_O = "id_value_o"
-    VALUE_SHORT_FRAME_O = "id_value_short_frame_o"
-    VALUE_LONG_FRAME_O = "id_value_long_frame_o"
-    MASK_SHORT_O = "id_mask_short_o"
-    MASK_LONG_O = "id_mask_long_o"
-    GROUP_BOTTOM_O = "id_bottom_o"
-    ARTIST_T = "id_artist_t"
-    SIDE_INDICATOR_T = "id_side_indicator_t"
-    SIDE_INDICATOR_O = "id_side_indicator_o"
-    COLLECTOR_INFORMATION_T = "id_collector_information_t"
-    SET_O = "id_set_o"
-    BACKDROP_O = "id_backdrop_o"
-    ARTWORK_O = "id_artwork_o"
-
-    PRINTING_FRAME_O = "pid_frame_o"
-
-
-class id_names:
-    ORACLE_TEXT = "Oracle Text"
-    PLANESWALKER_TEXT_1 = "Planeswalker Text 1"
-    PLANESWALKER_TEXT_2 = "Planeswalker Text 2"
-    PLANESWALKER_TEXT_3 = "Planeswalker Text 3"
-    PLANESWALKER_TEXT_4 = "Planeswalker Text 4"
-    PLANESWALKER_ORACLE_TEXT = "Planeswalker Oracle Text"
-    ADVENTURE_ORACLE_TEXT_LEFT = "Adventure Oracle Text Left"
-    ADVENTURE_ORACLE_TEXT_RIGHT = "Adventure Oracle Text Right"
-    ARTIST = "Artist"
-    COLLECTOR_INFORMATION = "Collector Information"
-    MODAL_FRAME = "Frame"
-    GROUP_COLOR_BAR_TOP = "Color Bar Top"
-
-    ST_ORACLE_TEXT = "ST Oracle Text"
-    ST_ARTIST = "ST Artist"
-    ST_COLLECTOR_INFORMATION = "ST Collector Information"
-
-    SB_ORACLE_TEXT = "SB Oracle Text"
-    SB_ARTIST = "SB Artist"
-    SB_COLLECTOR_INFORMATION = "SB Collector Information"
-
-    BACKDROP = "Backdrop"
-    ARTWORK = "Artwork"
-
-
 # IDs
 id_general_front = {
-    "id_spread": "uff",
-    "id_group_header_o": "u273",
-    "id_type_o": "u2e5",
-    "id_name_t": "u2d0",
-    "id_type_line_t": "u2ba",
-    "id_mana_cost_t": "u2a4",
-    "id_color_bars_o": ['u2a0', 'u29f', 'u122', 'u121'],
-    "id_gradients_o": ['ue1', 'ue3', 'ue2', 'ue4'],
-    "id_oracle_text_t": "u25e",
-    "id_oracle_text_o": "u270",
-    "id_mask_o": "u106",
-    "id_value_t": "u196",
-    "id_value_o": "u1a8",
-    "id_value_short_frame_o": "u130",
-    "id_value_long_frame_o": "u123",
-    "id_mask_short_o": "u12f",
-    "id_mask_long_o": "u108",
-    "id_bottom_o": "u109",
-    "id_artist_t": "u176",
-    "id_collector_information_t": "u13e",
-    "id_set_o": "u13c",
-    "id_artwork_o": "u2e6",
-    "id_group_normal_o": "uc21",
-    "id_group_split_o": "u1cdf",
-    "id_modal_t": "u281",
-    "id_group_modal_o": "u274",
-    "id_modal_frame_o": "u275",
-    "id_group_color_bar_top_o": "u29e",
-    "id_group_oracle_planeswalker_o": "u1ac",
-    "id_planeswalker_value_t": ['u248', 'u21c', 'u1f0', 'u1c4'],
-    "id_planeswalker_value_o": ['u25a', 'u22e', 'u202', 'u1d6'],
-    "id_planeswalker_text_t": ['u232', 'u206', 'u1da', 'u1ae'],
-    "id_planeswalker_text_o": ['u244', 'u218', 'u1ec', 'u1c0'],
-    "id_planeswalker_oracle_t": "u342c",
-    "id_planeswalker_oracle_o": "u3429",
-    "id_group_oracle_adventure_o": "ub82",
-    "id_side_indicator_t": "u160",
-    "id_side_indicator_o": "u153",
-    "id_backdrop_o": "u2a2",
+    "id_spread": "uce",
+    "id_group_header_o": "u3f9",
+    "id_type_icon_o": "u17b",
+    "id_title_t": "u158",
+    "id_type_line_t": "u1c1",
+    "id_mana_cost_t": "u1a7",
+    "id_color_indicator_top_o": "u2ed",
+    "id_gradients_o": ['u105f', 'u1061'],
+    "id_oracle_t": "u1da",
+    "id_oracle_o": "u1ec",
+    "id_color_indicator_bot_o": "u204",
+    "id_value_t": "u23f",
+    "id_value_o": "u251",
+    "id_artist_t": "u20c",
+    "id_collector_information_t": "u229",
+    "id_artwork_o": "u14d",
+    "id_backdrop_o": "u12f5",
+    "id_group_planeswalker_o": "u4ea",
+    "id_group_adventure_o": "u3db",
+    "id_modal_t": "u3fe",
+    "id_planeswalker_value_t": ['u41b', 'u469', 'u497', 'u4ca'],
+    "id_planeswalker_value_o": ['u42d', 'u466', 'u494', 'u4c7'],
+    "id_planeswalker_oracle_numbered_t": ['u436', 'u452', 'u480', 'u4b3'],
+    "id_planeswalker_oracle_numbered_o": ['u432', 'u44f', 'u47d', 'u4b0'],
+    "id_planeswalker_oracle_final_t": "u4ef",
+    "id_planeswalker_oracle_final_o": "u4ec",
 }
-id_general_front_st = {
-    "id_spread": "uff",
-    "id_group_header_o": "u1886",
-    "id_type_o": "u18f3",
-    "id_name_t": "u18df",
-    "id_type_line_t": "u18c8",
-    "id_mana_cost_t": "u18b1",
-    "id_color_bars_o": ['u18a9', 'u18a8', 'u16c8', 'u16c7'],
-    "id_gradients_o": ['u2634', 'u2626', 'u2628', 'u2633'],
-    "id_oracle_text_t": "u1872",
-    "id_oracle_text_o": "u186f",
-    "id_mask_o": "u16ab",
-    "id_value_t": "u1727",
-    "id_value_o": "u1724",
-    "id_value_short_frame_o": "u16d0",
-    "id_value_long_frame_o": "u16c9",
-    "id_mask_short_o": "u16cf",
-    "id_mask_long_o": "u16ad",
-    "id_bottom_o": "u16ae",
-    "id_artist_t": "u170c",
-    "id_collector_information_t": "u16d9",
-    "id_set_o": "u16d5",
-    "id_artwork_o": "u18f4",
+id_general_split_top_front = {
+    "id_spread": "uce",
+    "id_group_header_o": "u16ef",
+    "id_type_icon_o": "u1736",
+    "id_title_t": "u1722",
+    "id_type_line_t": "u170b",
+    "id_mana_cost_t": "u16f4",
+    "id_color_indicator_top_o": "u16f0",
+    "id_gradients_o": ['u1055', 'u1057'],
+    "id_oracle_t": "u16c4",
+    "id_oracle_o": "u16c1",
+    "id_color_indicator_bot_o": "u1560",
+    "id_value_t": "u1564",
+    "id_value_o": "u1561",
+    "id_artist_t": "u154c",
+    "id_collector_information_t": "u1535",
+    "id_artwork_o": "u152f",
+    "id_backdrop_o": "u1530",
 }
-id_general_front_sb = {
-    "id_spread": "uff",
-    "id_group_header_o": "u1c81",
-    "id_type_o": "u1cce",
-    "id_name_t": "u1cba",
-    "id_type_line_t": "u1ca3",
-    "id_mana_cost_t": "u1c8c",
-    "id_color_bars_o": ['u1c84', 'u1c83', 'u1c14', 'u1c13'],
-    "id_gradients_o": ['u262a', 'u262a', 'u2631', 'u2631'],
-    "id_oracle_text_t": "u1c6d",
-    "id_oracle_text_o": "u1c6a",
-    "id_mask_o": "u1bf7",
-    "id_value_t": "u1c56",
-    "id_value_o": "u1c53",
-    "id_value_short_frame_o": "u1c1b",
-    "id_value_long_frame_o": "u1c15",
-    "id_mask_short_o": "u1c1a",
-    "id_mask_long_o": "u1bf9",
-    "id_bottom_o": "u1bfa",
-    "id_artist_t": "u1c3b",
-    "id_collector_information_t": "u1c24",
-    "id_set_o": "u1c20",
-    "id_artwork_o": "u1ccf",
+id_general_split_bot_front = {
+    "id_spread": "uce",
+    "id_group_header_o": "u17e2",
+    "id_type_icon_o": "u182a",
+    "id_title_t": "u1816",
+    "id_type_line_t": "u17fe",
+    "id_mana_cost_t": "u17e7",
+    "id_color_indicator_top_o": "u17e3",
+    "id_gradients_o": ['u1055', 'u1057'],
+    "id_oracle_t": "u17b7",
+    "id_oracle_o": "u17b4",
+    "id_color_indicator_bot_o": "u179b",
+    "id_value_t": "u179f",
+    "id_value_o": "u179c",
+    "id_artist_t": "u1787",
+    "id_collector_information_t": "u1770",
+    "id_artwork_o": "u176a",
+    "id_backdrop_o": "u176b",
 }
 id_general_front_adventure = {
-    "id_spread": "uff",
-    "id_type_o": "ubca",
-    "id_name_t": "ubb6",
-    "id_type_line_t": "ub9f",
-    "id_mana_cost_t": "ub88",
-    "id_color_bars_o": ['uc15', 'uc16'],
-    "id_gradients_o": ['udf', 'udf'],
-    "id_adventure_oracle_text_l_t": "uc00",
-    "id_adventure_oracle_text_l_o": "ubfd",
-    "id_adventure_oracle_text_r_t": "ube9",
-    "id_adventure_oracle_text_r_o": "ube6",
+    "id_spread": "uce",
+    "id_type_icon_o": "u3d8",
+    "id_title_t": "u3c4",
+    "id_type_line_t": "u3ad",
+    "id_mana_cost_t": "u396",
+    "id_color_indicator_top_o": "u3df",
+    "id_gradients_o": "Black",
+    "id_adventure_oracle_left_t": "u1065",
+    "id_adventure_oracle_left_o": "u1062",
+    "id_adventure_oracle_right_t": "u107e",
+    "id_adventure_oracle_right_o": "u107b",
 }
 id_general_back = {
-    "id_spread": "u5989",
-    "id_group_header_o": "u5d40",
-    "id_type_o": "u5dab",
-    "id_name_t": "u5d97",
-    "id_type_line_t": "u5d80",
-    "id_mana_cost_t": "u5d69",
-    "id_color_bars_o": ['u5d63', 'u5d62', 'u5b68', 'u5b67'],
-    "id_gradients_o": ['udf', 'udf', 'udf', 'udf'],
-    "id_oracle_text_t": "u5d2c",
-    "id_oracle_text_o": "u5d29",
-    "id_mask_o": "u5b4a",
-    "id_value_t": "u5bc9",
-    "id_value_o": "u5bc6",
-    "id_value_short_frame_o": "u5b6f",
-    "id_value_long_frame_o": "u5b69",
-    "id_mask_short_o": "u5b6e",
-    "id_mask_long_o": "u5b4c",
-    "id_bottom_o": "u5b4e",
-    "id_artist_t": "u5bad",
-    "id_collector_information_t": "u5b7a",
-    "id_set_o": "u5b76",
-    "id_artwork_o": "u5b47",
-    "id_group_normal_o": "u5b45",
-    "id_group_split_o": "u598f",
-    "id_modal_t": "u5d4a",
-    "id_group_modal_o": "u5d41",
-    "id_modal_frame_o": "u5d42",
-    "id_group_color_bar_top_o": "u5d61",
-    "id_group_oracle_planeswalker_o": "u5c58",
-    "id_planeswalker_value_t": ['u5d15', 'u5ce7', 'u5cb9', 'u5c8b'],
-    "id_planeswalker_value_o": ['u5d12', 'u5ce4', 'u5cb6', 'u5c88'],
-    "id_planeswalker_text_t": ['u5cfe', 'u5cd0', 'u5ca2', 'u5c74'],
-    "id_planeswalker_text_o": ['u5cfb', 'u5ccd', 'u5c9f', 'u5c71'],
-    "id_planeswalker_oracle_t": "u5c5d",
-    "id_planeswalker_oracle_o": "u5c5a",
-    "id_group_oracle_adventure_o": "u5bde",
-    "id_side_indicator_t": "u5b96",
-    "id_side_indicator_o": "u5b8e",
-    "id_backdrop_o": "u5b48",
-}
-id_general_front = {
-    "id_spread": "uff",
-    "id_group_header_o": "u273",
-    "id_type_o": "u2e5",
-    "id_name_t": "u2d0",
-    "id_type_line_t": "u2ba",
-    "id_mana_cost_t": "u2a4",
-    "id_color_bars_o": ['u2a0', 'u29f', 'u122', 'u121'],
-    "id_gradients_o": ['ue1', 'ue3', 'ue2', 'ue4'],
-    "id_oracle_text_t": "u25e",
-    "id_oracle_text_o": "u270",
-    "id_mask_o": "u106",
-    "id_value_t": "u196",
-    "id_value_o": "u1a8",
-    "id_value_short_frame_o": "u130",
-    "id_value_long_frame_o": "u123",
-    "id_mask_short_o": "u12f",
-    "id_mask_long_o": "u108",
-    "id_bottom_o": "u109",
-    "id_artist_t": "u176",
-    "id_collector_information_t": "u13e",
-    "id_set_o": "u13c",
-    "id_artwork_o": "u2e6",
-    "id_group_normal_o": "uc21",
-    "id_group_split_o": "u1cdf",
-    "id_modal_t": "u281",
-    "id_group_modal_o": "u274",
-    "id_modal_frame_o": "u275",
-    "id_group_color_bar_top_o": "u29e",
-    "id_group_oracle_planeswalker_o": "u1ac",
-    "id_planeswalker_value_t": ['u248', 'u21c', 'u1f0', 'u1c4'],
-    "id_planeswalker_value_o": ['u25a', 'u22e', 'u202', 'u1d6'],
-    "id_planeswalker_text_t": ['u232', 'u206', 'u1da', 'u1ae'],
-    "id_planeswalker_text_o": ['u244', 'u218', 'u1ec', 'u1c0'],
-    "id_planeswalker_oracle_t": "u342c",
-    "id_planeswalker_oracle_o": "u3429",
-    "id_group_oracle_adventure_o": "ub82",
-    "id_side_indicator_t": "u160",
-    "id_side_indicator_o": "u153",
-    "id_backdrop_o": "u2a2",
-}
-id_general_front_st = {
-    "id_spread": "uff",
-    "id_group_header_o": "u1886",
-    "id_type_o": "u18f3",
-    "id_name_t": "u18df",
-    "id_type_line_t": "u18c8",
-    "id_mana_cost_t": "u18b1",
-    "id_color_bars_o": ['u18a9', 'u18a8', 'u16c8', 'u16c7'],
-    "id_gradients_o": ['u2634', 'u2626', 'u2628', 'u2633'],
-    "id_oracle_text_t": "u1872",
-    "id_oracle_text_o": "u186f",
-    "id_mask_o": "u16ab",
-    "id_value_t": "u1727",
-    "id_value_o": "u1724",
-    "id_value_short_frame_o": "u16d0",
-    "id_value_long_frame_o": "u16c9",
-    "id_mask_short_o": "u16cf",
-    "id_mask_long_o": "u16ad",
-    "id_bottom_o": "u16ae",
-    "id_artist_t": "u170c",
-    "id_collector_information_t": "u16d9",
-    "id_set_o": "u16d5",
-    "id_artwork_o": "u18f4",
-}
-id_general_front_sb = {
-    "id_spread": "uff",
-    "id_group_header_o": "u1c81",
-    "id_type_o": "u1cce",
-    "id_name_t": "u1cba",
-    "id_type_line_t": "u1ca3",
-    "id_mana_cost_t": "u1c8c",
-    "id_color_bars_o": ['u1c84', 'u1c83', 'u1c14', 'u1c13'],
-    "id_gradients_o": ['u262a', 'u262a', 'u2631', 'u2631'],
-    "id_oracle_text_t": "u1c6d",
-    "id_oracle_text_o": "u1c6a",
-    "id_mask_o": "u1bf7",
-    "id_value_t": "u1c56",
-    "id_value_o": "u1c53",
-    "id_value_short_frame_o": "u1c1b",
-    "id_value_long_frame_o": "u1c15",
-    "id_mask_short_o": "u1c1a",
-    "id_mask_long_o": "u1bf9",
-    "id_bottom_o": "u1bfa",
-    "id_artist_t": "u1c3b",
-    "id_collector_information_t": "u1c24",
-    "id_set_o": "u1c20",
-    "id_artwork_o": "u1ccf",
-}
-id_general_front_adventure = {
-    "id_spread": "uff",
-    "id_type_o": "ubca",
-    "id_name_t": "ubb6",
-    "id_type_line_t": "ub9f",
-    "id_mana_cost_t": "ub88",
-    "id_color_bars_o": ['uc15', 'uc16'],
-    "id_gradients_o": ['udf', 'udf'],
-    "id_adventure_oracle_text_l_t": "uc00",
-    "id_adventure_oracle_text_l_o": "ubfd",
-    "id_adventure_oracle_text_r_t": "ube9",
-    "id_adventure_oracle_text_r_o": "ube6",
-}
-id_general_back = {
-    "id_spread": "u5989",
-    "id_group_header_o": "u5d40",
-    "id_type_o": "u5dab",
-    "id_name_t": "u5d97",
-    "id_type_line_t": "u5d80",
-    "id_mana_cost_t": "u5d69",
-    "id_color_bars_o": ['u5d63', 'u5d62', 'u5b68', 'u5b67'],
-    "id_gradients_o": ['udf', 'udf', 'udf', 'udf'],
-    "id_oracle_text_t": "u5d2c",
-    "id_oracle_text_o": "u5d29",
-    "id_mask_o": "u5b4a",
-    "id_value_t": "u5bc9",
-    "id_value_o": "u5bc6",
-    "id_value_short_frame_o": "u5b6f",
-    "id_value_long_frame_o": "u5b69",
-    "id_mask_short_o": "u5b6e",
-    "id_mask_long_o": "u5b4c",
-    "id_bottom_o": "u5b4e",
-    "id_artist_t": "u5bad",
-    "id_collector_information_t": "u5b7a",
-    "id_set_o": "u5b76",
-    "id_artwork_o": "u5b47",
-    "id_group_normal_o": "u5b45",
-    "id_group_split_o": "u598f",
-    "id_modal_t": "u5d4a",
-    "id_group_modal_o": "u5d41",
-    "id_modal_frame_o": "u5d42",
-    "id_group_color_bar_top_o": "u5d61",
-    "id_group_oracle_planeswalker_o": "u5c58",
-    "id_planeswalker_value_t": ['u5d15', 'u5ce7', 'u5cb9', 'u5c8b'],
-    "id_planeswalker_value_o": ['u5d12', 'u5ce4', 'u5cb6', 'u5c88'],
-    "id_planeswalker_text_t": ['u5cfe', 'u5cd0', 'u5ca2', 'u5c74'],
-    "id_planeswalker_text_o": ['u5cfb', 'u5ccd', 'u5c9f', 'u5c71'],
-    "id_planeswalker_oracle_t": "u5c5d",
-    "id_planeswalker_oracle_o": "u5c5a",
-    "id_group_oracle_adventure_o": "u5bde",
-    "id_side_indicator_t": "u5b96",
-    "id_side_indicator_o": "u5b8e",
-    "id_backdrop_o": "u5b48",
+    "id_spread": "u1837",
+    "id_group_header_o": "u1b88",
+    "id_type_icon_o": "u1bd0",
+    "id_title_t": "u1bbc",
+    "id_type_line_t": "u1ba4",
+    "id_mana_cost_t": "u1b8d",
+    "id_color_indicator_top_o": "u1b89",
+    "id_gradients_o": ['u1055', 'u1057'],
+    "id_oracle_t": "u1b5d",
+    "id_oracle_o": "u1b5a",
+    "id_color_indicator_bot_o": "u19fa",
+    "id_value_t": "u19fe",
+    "id_value_o": "u19fb",
+    "id_artist_t": "u19e6",
+    "id_collector_information_t": "u19cf",
+    "id_artwork_o": "u19c9",
+    "id_backdrop_o": "u19ca",
+    "id_group_planeswalker_o": "u1a8a",
+    "id_group_adventure_o": "u1a13",
+    "id_modal_t": "u1b74",
+    "id_planeswalker_value_t": ['u1b46', 'u1b18', 'u1aea', 'u1abc'],
+    "id_planeswalker_value_o": ['u1b43', 'u1b15', 'u1ae7', 'u1ab9'],
+    "id_planeswalker_oracle_numbered_t": ['u1b2f', 'u1b01', 'u1ad3', 'u1aa5'],
+    "id_planeswalker_oracle_numbered_o": ['u1b2c', 'u1afe', 'u1ad0', 'u1aa2'],
+    "id_planeswalker_oracle_final_t": "u1a8e",
+    "id_planeswalker_oracle_final_o": "u1a8b",
 }
 id_general_print_front = {
     "id_spread": "ue7",
-    "pid_frame_o": ['uf5', 'uf4', 'uf3', 'uf2', 'uf1', 'uf0', 'uef', 'uee', 'ued'],
+    "pid_frame_o": ['uf5', 'u114', 'u115', 'u119', 'u118', 'u117', 'u11c', 'u11b', 'u11a'],
 }
 id_general_print_back = {
-    "id_spread": "uf6",
-    "pid_frame_o": ['u104', 'u103', 'u102', 'u101', 'u100', 'uff', 'ufe', 'ufd', 'ufc'],
+    "id_spread": "u11d",
+    "pid_frame_o": ['u12c', 'u12b', 'u12a', 'u129', 'u127', 'u126', 'u125', 'u124', 'u123'],
 }
 
 # Flags
@@ -409,24 +274,21 @@ FONT_SANS = "Helvetica Now Var"
 FONT_SANS_STYLE = "Display"
 
 # Folders
-f_preset_folder = "D:/Drive/Creative/Magic/Proxky"
-f_output_folder = "D:/Games/Magic/Proxky/v1/"
+f_main = "D:/Games/Magic/Proxky/v2"
 
-f_preset = f_preset_folder + "/Types/General.idml"
-f_preset_print = f_preset_folder + "/Types/Printing.idml"
-f_icon_types = f_preset_folder + "/Resource/Icons/Card Types"
-f_icon_mana = f_preset_folder + "/Resource/Icons/Mana"
-f_icon_set = f_preset_folder + "/Resource/Icons/Set"
+file_template = f_main + "/Resources/Templates/Proxky.idml"
+file_print = f_main + "/Resources/Templates/Print.idml"
 
-f_documents = f_output_folder + "/Documents"
-f_pdf = f_output_folder + "/PDF"
-f_print = f_output_folder + "/Other/Print"
-f_artwork = f_output_folder + "/Artwork"
-f_artwork_downloaded = f_output_folder + "/ArtworkDownload"
+f_icon_card_types = f_main + "/Resources/Icons/Card Types"
+f_documents = f_main + "/Documents"
+f_pdf = f_main + "/PDF"
+f_print = f_main + "/Print"
+f_artwork = f_main + "/Artwork"
+f_artwork_downloaded = f_main + "/Artwork Downloaded"
 
 # Enumerations
-supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga", "meld",
-                     "token", "double_faced_token", "emblem"]
+supported_layouts = ["normal"]  # , "modal_dfc", "transform", "split", "adventure", "class", "saga", "meld",
+# "token", "double_faced_token", "emblem"]
 double_faced_layouts = ["modal_dfc", "transform", "meld", "double_faced_token"]
 
 # Types
@@ -522,21 +384,21 @@ regex_card_name = r"^(?P<set>.+) - (?P<name>.+?)$"
 resize_array = [
     # Text Frames to Resize
     [
-        [id_names.ORACLE_TEXT],
-        [id_names.PLANESWALKER_TEXT_1, id_names.PLANESWALKER_TEXT_2,
-         id_names.PLANESWALKER_TEXT_3, id_names.PLANESWALKER_TEXT_4],
-        [id_names.PLANESWALKER_ORACLE_TEXT],
-        [id_names.ST_ORACLE_TEXT],
-        [id_names.SB_ORACLE_TEXT],
+        [id_names.ORACLE],
+        [id_names.PLANESWALKER_ORACLE_1, id_names.PLANESWALKER_ORACLE_2,
+         id_names.PLANESWALKER_ORACLE_3, id_names.PLANESWALKER_ORACLE_4],
+        [id_names.PLANESWALKER_ORACLE_FINAL],
+        [id_names.ST_ORACLE],
+        [id_names.SB_ORACLE],
         ["Placeholder", "Placeholder"]
     ],
     # Text Frames to Condense
     [
-        [id_names.ARTIST, id_names.ARTIST],
+        [id_names.ARTIST_INFORMATION, id_names.ARTIST_INFORMATION],
         [id_names.COLLECTOR_INFORMATION],
-        [id_names.ST_ARTIST],
+        [id_names.ST_ARTIST_INFORMATION],
         [id_names.ST_COLLECTOR_INFORMATION],
-        [id_names.SB_ARTIST],
+        [id_names.SB_ARTIST_INFORMATION],
         [id_names.SB_COLLECTOR_INFORMATION],
         ["Placeholder", "Placeholder"]
     ]

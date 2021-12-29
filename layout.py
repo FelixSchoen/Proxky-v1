@@ -17,8 +17,8 @@ def card_layout_double_faced(id_sets):
         shift_by = VALUE_MODAL_HEIGHT
 
         # Shift color bars
-        color_bars = [tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_BARS_O][0] + "']"),
-                      tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_BARS_O][1] + "']")]
+        color_bars = [tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_INDICATOR_TOP_O][0] + "']"),
+                      tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_INDICATOR_TOP_O][1] + "']")]
 
         for color_bar in color_bars:
             coordinates = color_bar.attrib["ItemTransform"].split(" ")
@@ -27,19 +27,19 @@ def card_layout_double_faced(id_sets):
                           coordinates[4] + " " + str(float(coordinates[5]) + shift_by))
 
         # Shift oracle text
-        oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
+        oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_O] + "']")
         utility_indesign_shift_y_coordinates(oracle_text, [shift_by, shift_by, 0, 0])
 
         # Shift planeswalker texts
         planeswalker_boxes = [id_set[ids.PLANESWALKER_VALUE_O][0],
-                              id_set[ids.PLANESWALKER_TEXT_O][0],
+                              id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][0],
                               id_set[ids.PLANESWALKER_VALUE_O][1],
-                              id_set[ids.PLANESWALKER_TEXT_O][1],
+                              id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][1],
                               id_set[ids.PLANESWALKER_VALUE_O][2],
-                              id_set[ids.PLANESWALKER_TEXT_O][2],
+                              id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][2],
                               id_set[ids.PLANESWALKER_VALUE_O][3],
-                              id_set[ids.PLANESWALKER_TEXT_O][3],
-                              id_set[ids.PLANESWALKER_ORACLE_O]]
+                              id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][3],
+                              id_set[ids.PLANESWALKER_ORACLE_FINAL_O]]
         for box_id in planeswalker_boxes:
             box = tree.find(".//TextFrame[@Self='" + box_id + "']")
             utility_indesign_shift_y_coordinates(box, [shift_by, shift_by, shift_by, shift_by])
@@ -63,7 +63,7 @@ def card_layout_planeswalker(id_set):
     value_text.set("Visible", "true")
 
     # Show Planeswalker
-    oracle_planeswalker = tree.find(".//Group[@Self='" + id_set[ids.GROUP_ORACLE_PLANESWALKER_O] + "']")
+    oracle_planeswalker = tree.find(".//Group[@Self='" + id_set[ids.GROUP_PLANESWALKER_O] + "']")
     oracle_planeswalker.set("Visible", "true")
 
     value_short_frame = tree.find(".//Rectangle[@Self='" + id_set[ids.VALUE_SHORT_FRAME_O] + "']")
@@ -84,7 +84,7 @@ def card_layout_planeswalker(id_set):
 
     mask_short.append(bottom)
 
-    oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
+    oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_O] + "']")
     oracle_text.set("Visible", "false")
 
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
@@ -119,7 +119,7 @@ def card_layout_no_value(id_set):
         mask_long.remove(child)
 
     # Expand Oracle Text Box
-    oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
+    oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_O] + "']")
 
     shift_by = 42.0944859662393 - 37.13385826771649
 
@@ -155,10 +155,10 @@ def card_layout_split(id_set):
 def card_layout_adventure(id_set):
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
-    oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
+    oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_O] + "']")
     oracle_text.set("Visible", "false")
 
-    layout_adventure = tree.find(".//Group[@Self='" + id_set[ids.GROUP_ORACLE_ADVENTURE_O] + "']")
+    layout_adventure = tree.find(".//Group[@Self='" + id_set[ids.GROUP_ADVENTURE_O] + "']")
     layout_adventure.set("Visible", "true")
 
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
@@ -173,7 +173,7 @@ def card_layout_token(id_set, card):
 def card_layout_no_oracle_text(id_set, card):
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
-    oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_TEXT_O] + "']")
+    oracle_text = tree.find(".//TextFrame[@Self='" + id_set[ids.ORACLE_O] + "']")
     oracle_text.set("Visible", "false")
 
     artwork = tree.find(".//Rectangle[@Self='" + id_set[ids.ARTWORK_O] + "']")
@@ -207,14 +207,14 @@ def card_layout_full_body_art(id_set, card):
                                                    VALUE_SHIFT_ARTWORK_FULL_BODY])
 
     textframes = [id_set[ids.PLANESWALKER_VALUE_O][0],
-                  id_set[ids.PLANESWALKER_TEXT_O][0],
+                  id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][0],
                   id_set[ids.PLANESWALKER_VALUE_O][1],
-                  id_set[ids.PLANESWALKER_TEXT_O][1],
+                  id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][1],
                   id_set[ids.PLANESWALKER_VALUE_O][2],
-                  id_set[ids.PLANESWALKER_TEXT_O][2],
+                  id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][2],
                   id_set[ids.PLANESWALKER_VALUE_O][3],
-                  id_set[ids.PLANESWALKER_TEXT_O][3],
-                  id_set[ids.PLANESWALKER_ORACLE_O]]
+                  id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][3],
+                  id_set[ids.PLANESWALKER_ORACLE_FINAL_O]]
 
     rectangles_50 = []
     rectangles_75 = [id_set[ids.BACKDROP_O], id_set[ids.MODAL_FRAME_O]]

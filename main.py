@@ -80,7 +80,7 @@ def process_card(card: Card, options):
 
     # Setup and extract preset
     os.makedirs(target_folder_path, exist_ok=True)
-    with zipfile.ZipFile(f_preset, "r") as archive:
+    with zipfile.ZipFile(file_template, "r") as archive:
         archive.extractall("data/memory")
 
     # General operations
@@ -105,17 +105,17 @@ def process_card(card: Card, options):
     elif card.layout in ["split"]:
         card_layout_split(id_general_front)
 
-        card_fill(card.card_faces[0], id_general_front_st, card.layout)
-        card_fill(card.card_faces[1], id_general_front_sb, card.layout)
+        card_fill(card.card_faces[0], id_general_split_top_front, card.layout)
+        card_fill(card.card_faces[1], id_general_split_bot_front, card.layout)
     elif card.layout in ["adventure"]:
         card_layout_adventure(id_general_front)
 
         id_adventure_right = id_general_front.copy()
-        id_adventure_right[ids.ORACLE_TEXT_T] = id_general_front_adventure[ids.ADVENTURE_ORACLE_TEXT_R_T]
-        id_adventure_right[ids.ORACLE_TEXT_O] = id_general_front_adventure[ids.ADVENTURE_ORACLE_TEXT_R_O]
+        id_adventure_right[ids.ORACLE_T] = id_general_front_adventure[ids.ADVENTURE_ORACLE_RIGHT_T]
+        id_adventure_right[ids.ORACLE_O] = id_general_front_adventure[ids.ADVENTURE_ORACLE_RIGHT_O]
 
         id_adventure_left = id_general_front_adventure.copy()
-        id_adventure_left[ids.ORACLE_TEXT_T] = id_adventure_left[ids.ADVENTURE_ORACLE_TEXT_L_T]
+        id_adventure_left[ids.ORACLE_T] = id_adventure_left[ids.ADVENTURE_ORACLE_LEFT_T]
 
         card_fill(card.card_faces[1], id_adventure_left, card.layout)
         card_fill(card.card_faces[0], id_adventure_right, card.layout)
@@ -137,6 +137,7 @@ def card_fill(card: Card, id_set, layout):
     types = utility_get_card_types(card)
 
     # Check if basic
+    # TODO
     if "Basic" in types and "Land" in types:
         card_layout_no_oracle_text(id_set, card)
 
@@ -222,7 +223,7 @@ def process_print(card_names):
         target_file_full_path = target_file_path + ".idml"
 
         os.makedirs(target_folder_path, exist_ok=True)
-        with zipfile.ZipFile(f_preset_print, "r") as archive:
+        with zipfile.ZipFile(file_print, "r") as archive:
             archive.extractall("data/memory_print")
 
         for j, card in enumerate(page):
