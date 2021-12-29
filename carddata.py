@@ -303,6 +303,9 @@ def set_oracle_text(card, id_set, align=None):
 
 
 def set_value(card, id_set):
+    # Important for adventure cards
+    if ids.VALUE_T not in id_set:
+        return
     id_value = id_set[ids.VALUE_T]
 
     if card.power != "" or card.toughness != "":
@@ -317,15 +320,18 @@ def set_value(card, id_set):
 
 
 def set_artist(card, id_set):
-    if ids.ARTIST_T not in id_set:
+    if ids.ARTIST_INFORMATION_T not in id_set:
         return
 
-    id_artist = id_set[ids.ARTIST_T]
+    id_artist = id_set[ids.ARTIST_INFORMATION_T]
 
     insert_content(id_artist, card.artist)
 
 
 def set_collector_information(card, id_set):
+    # Important for adventure cards
+    if ids.COLLECTOR_INFORMATION_T not in id_set:
+        return
     id_collector_information = id_set[ids.COLLECTOR_INFORMATION_T]
 
     string_to_insert = card.collector_number.zfill(3) + " • " + card.set.upper() + " • " + card.rarity.upper()[0]

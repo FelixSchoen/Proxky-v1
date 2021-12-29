@@ -7,7 +7,7 @@ import requests
 from info import info_fail
 from settings import api_url
 from utility import utility_mana_cost_to_color_array
-from variables import regex_add_mana, regex_mana
+from variables import regex_add_mana, regex_mana, double_sided_layouts
 
 
 class Card:
@@ -61,10 +61,12 @@ class Card:
         if "card_faces" in args:
             for i, card_face in enumerate(args["card_faces"]):
                 face = Card(card_face)
-                if i == 0:
-                    face.side = "front"
-                else:
-                    face.side = "back"
+
+                if self.layout in double_sided_layouts:
+                    if i == 0:
+                        face.side = "front"
+                    else:
+                        face.side = "back"
 
                 self.card_faces.append(face)
         if "oracle_text" in args:

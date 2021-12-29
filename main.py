@@ -90,12 +90,12 @@ def process_card(card: Card, options):
         if options["fba"] in ["back", "both"]:
             card_layout_full_body_art(id_general_back, card)
 
-    if card.layout not in double_faced_layouts:
+    if card.layout not in double_sided_layouts:
         card_delete_backside(id_general_back)
 
     if card.layout in ["normal", "class", "saga"]:
         card_fill(card, id_general_front, card.layout)
-    elif card.layout in double_faced_layouts:
+    elif card.layout in double_sided_layouts:
         card_layout_double_faced([id_general_front, id_general_back])
 
         set_modal(card, [id_general_front, id_general_back], card.layout)
@@ -193,7 +193,7 @@ def process_print(card_names):
             continue
 
         for j in range(0, int(entry["amount"])):
-            if card.layout in double_faced_layouts:
+            if card.layout in double_sided_layouts:
                 list_of_cards.insert(0, card)
             else:
                 list_of_cards.append(card)
@@ -235,7 +235,7 @@ def process_print(card_names):
                        f_pdf + "/" + card.set.upper(), name)
 
             # Backside
-            if card.layout in double_faced_layouts:
+            if card.layout in double_sided_layouts:
                 modulo = j % 3
                 carry = int(j / 3)
                 result = carry * 3 + (2 - modulo)

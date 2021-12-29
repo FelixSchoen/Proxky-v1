@@ -55,6 +55,10 @@ def card_layout_planeswalker(id_set):
 
 
 def card_layout_no_value(id_set):
+    # Important for adventure type cards
+    if ids.VALUE_O not in id_set:
+        return
+
     tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
     # Hide value

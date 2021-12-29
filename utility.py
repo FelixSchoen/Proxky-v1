@@ -242,6 +242,7 @@ def utility_generate_ids(name, spread, root_element, mode="standard"):
     global tree
     if mode != "printing":
         tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + spread + ".xml")
+        base_tree = tree
         if root_element is not None:
             tree = tree.find(".//*[@Name='" + root_element + "']")
     else:
@@ -250,6 +251,7 @@ def utility_generate_ids(name, spread, root_element, mode="standard"):
     # IDs base case
     names_base = [
         # Groups
+        (id_names.GROUP_NORMAL, ids.GROUP_NORMAL_O, "root"),
         (id_names.GROUP_HEADER, ids.GROUP_HEADER_O),
 
         # Header
@@ -269,8 +271,10 @@ def utility_generate_ids(name, spread, root_element, mode="standard"):
         (id_names.COLOR_INDICATOR_BOT, ids.COLOR_INDICATOR_BOT_O),
         (id_names.VALUE, ids.VALUE_T, "ParentStory"),
         (id_names.VALUE, ids.VALUE_O),
-        (id_names.ARTIST_INFORMATION, ids.ARTIST_T, "ParentStory"),
+        (id_names.ARTIST_INFORMATION, ids.ARTIST_INFORMATION_T, "ParentStory"),
+        (id_names.ARTIST_INFORMATION, ids.ARTIST_INFORMATION_O),
         (id_names.COLLECTOR_INFORMATION, ids.COLLECTOR_INFORMATION_T, "ParentStory"),
+        (id_names.COLLECTOR_INFORMATION, ids.COLLECTOR_INFORMATION_O),
         (id_names.ARTWORK, ids.ARTWORK_O),
         (id_names.BACKDROP, ids.BACKDROP_O),
     ]
@@ -278,7 +282,7 @@ def utility_generate_ids(name, spread, root_element, mode="standard"):
     # IDs to add for standard cards
     names_standard = [
         # Groups
-        # (id_names.GROUP_SPLIT, ids.GROUP_SPLIT_O),
+        (id_names.GROUP_SPLIT, ids.GROUP_SPLIT_O, "base_tree"),
         (id_names.GROUP_PLANESWALKER, ids.GROUP_PLANESWALKER_O),
         (id_names.GROUP_ADVENTURE, ids.GROUP_ADVENTURE_O),
 
@@ -311,6 +315,8 @@ def utility_generate_ids(name, spread, root_element, mode="standard"):
                        (id_names.ADVENTURE_TYPE_LINE, ids.TYPE_LINE_T, "ParentStory"),
                        (id_names.ADVENTURE_MANA_COST, ids.MANA_COST_T, "ParentStory"),
                        (id_names.ADVENTURE_COLOR_INDICATOR, ids.COLOR_INDICATOR_TOP_O),
+                       (id_names.ADVENTURE_COLOR_INDICATOR, ids.GRADIENTS_O, "FillColor"),
+                       # A bit hacky
                        (id_names.ADVENTURE_COLOR_INDICATOR, ids.GRADIENTS_O, "FillColor"),
                        (id_names.ADVENTURE_ORACLE_LEFT, ids.ADVENTURE_ORACLE_LEFT_T, "ParentStory"),
                        (id_names.ADVENTURE_ORACLE_LEFT, ids.ADVENTURE_ORACLE_LEFT_O),
@@ -354,7 +360,14 @@ def utility_generate_ids(name, spread, root_element, mode="standard"):
 
             # Text box
             if len(name) > 2:
-                if name[2] == "FillColor":
+                # Get ID of root element
+                if name[2] == "root":
+                    to_add = "\"" + tree.attrib["Self"] + "\","
+                # Get ID of element outside of current tree
+                elif name[2] == "base_tree":
+                    element = base_tree.find(".//*[@Name='" + name_to_search_for + "']")
+                    to_add = "\"" + element.attrib["Self"] + "\","
+                elif name[2] == "FillColor":
                     to_add = "\"" + element.attrib[name[2]].split("/")[1] + "\","
                 else:
                     to_add = "\"" + element.attrib[name[2]] + "\","
@@ -395,7 +408,7 @@ def utility_generate_ids(name, spread, root_element, mode="standard"):
 
 def utility_generate_all_ids():
     front_id = "uce"
-    back_id = "u1837"
+    back_id = "u2069"
     print_front_id = "ue7"
     print_back_id = "u11d"
 
