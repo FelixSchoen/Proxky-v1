@@ -148,31 +148,17 @@ def card_layout_full_body_art(id_set, card):
     utility_indesign_shift_y_coordinates(artwork, [0, 0, VALUE_SHIFT_ARTWORK_FULL_BODY,
                                                    VALUE_SHIFT_ARTWORK_FULL_BODY])
 
-    # textframes = [id_set[ids.PLANESWALKER_VALUE_O][0],
-    #               id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][0],
-    #               id_set[ids.PLANESWALKER_VALUE_O][1],
-    #               id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][1],
-    #               id_set[ids.PLANESWALKER_VALUE_O][2],
-    #               id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][2],
-    #               id_set[ids.PLANESWALKER_VALUE_O][3],
-    #               id_set[ids.PLANESWALKER_ORACLE_NUMBERED_O][3],
-    #               id_set[ids.PLANESWALKER_ORACLE_FINAL_O]]
-
     rectangles_50 = []
-    rectangles_75 = [id_set[ids.BACKDROP_O]]
-    groups_75 = []  # [id_set[ids.GROUP_COLOR_BAR_TOP_O]]
-
-    # for object_id in textframes:
-    #     element = tree.find(".//TextFrame[@Self='" + object_id + "']")
-    #     utility_make_object_transparent(element, 50)
+    rectangles_85 = [id_set[ids.BACKDROP_O]]
+    groups_75 = []
 
     for object_id in rectangles_50:
         element = tree.find(".//Rectangle[@Self='" + object_id + "']")
         utility_make_object_transparent(element, 50)
 
-    for object_id in rectangles_75:
+    for object_id in rectangles_85:
         element = tree.find(".//Rectangle[@Self='" + object_id + "']")
-        utility_make_object_transparent(element, 75)
+        utility_make_object_transparent(element, 85)
 
     for object_id in groups_75:
         element = tree.find(".//Group[@Self='" + object_id + "']")

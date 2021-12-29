@@ -38,7 +38,7 @@ def process_decklist(path):
 
                 for option in specified_options:
                     option_match = re.match(regex_card_options, option)
-                    if option_match.group("type") in ["set", "id"]:
+                    if option_match.group("type") in ["set", "id", "cn"]:
                         dictionary[option_match.group("type")] = option_match.group("id")
                     else:
                         options[option_match.group("type")] = option_match.group("id")

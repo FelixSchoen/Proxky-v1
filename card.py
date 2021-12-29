@@ -156,6 +156,11 @@ class Card:
         if "id" in dictionary:
             response = requests.get(
                 api_url + "/cards/" + urllib.parse.quote(dictionary["id"]))
+        elif "cn" in dictionary:
+            if "set" not in dictionary:
+                info_fail(dictionary["name"], "Set not provided")
+            response = requests.get(
+                api_url + "/cards/" + urllib.parse.quote(dictionary["set"].lower()) + "/" + urllib.parse.quote(dictionary["cn"]))
         elif "set" in dictionary:
             response = requests.get(
                 api_url + "/cards/named?exact=" + urllib.parse.quote(dictionary["name"]) + "&set=" + urllib.parse.quote(
