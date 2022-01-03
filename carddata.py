@@ -5,7 +5,7 @@ from os import listdir
 import requests
 
 import utility
-from utility import utility_sort_mana_array, utility_indesign_set_y_coordinates, utility_indesign_shift_y_coordinates, \
+from utility import utility_sort_mana_array, utility_indesign_change_coordinates, utility_indesign_shift_coordinates, \
     utility_get_card_types
 from info import info_warn, info_normal
 from insert_xml import *
@@ -284,12 +284,12 @@ def set_planeswalker_text(card, id_set):
                 x_coordinate, y_coordinate = top_left.attrib["Anchor"].split(" ")
                 y_coordinate = float(y_coordinate)
 
-                utility_indesign_set_y_coordinates(object_box,
-                                                   [y_coordinate, y_coordinate,
-                                                    y_coordinate + box_size, y_coordinate + box_size])
+                utility_indesign_change_coordinates(object_box,
+                                                    y_coordinates=[y_coordinate, y_coordinate,
+                                                                   y_coordinate + box_size, y_coordinate + box_size])
                 shift_length = (box_size + VALUE_SPACING_PLANESWALKER) * i
                 shift_coordinates = [shift_length, shift_length, shift_length, shift_length]
-                utility_indesign_shift_y_coordinates(object_box, shift_coordinates)
+                utility_indesign_shift_coordinates(object_box, y_coordinates=shift_coordinates)
             else:
                 object_box.set("Visible", "false")
 

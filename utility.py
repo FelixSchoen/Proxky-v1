@@ -78,6 +78,16 @@ def utility_make_object_transparent(element, opacity, mode="Fill"):
     element.append(transparency)
 
 
+def utility_change_text_color(element, color):
+    for entry in element.findall(".//CharacterStyleRange"):
+        entry.set("FillColor", color)
+
+
+def utility_change_text_style(element, style):
+    for entry in element.findall(".//CharacterStyleRange"):
+        entry.set("FontStyle", style)
+
+
 def utility_nested_reminder_text(text_array):
     array_to_return = []
 
@@ -123,7 +133,7 @@ def utility_indesign_get_coordinates(element):
     return coordinates_top_left, coordinates_top_right, coordinates_bottom_left, coordinates_bottom_right
 
 
-def utility_indesign_set_y_coordinates(indesign_object, set_to):
+def utility_indesign_change_coordinates(indesign_object, x_coordinates=None, y_coordinates=None):
     top_left = indesign_object.find(".//PathPointType[1]")
     top_right = indesign_object.find(".//PathPointType[4]")
     bottom_left = indesign_object.find(".//PathPointType[2]")
@@ -135,7 +145,17 @@ def utility_indesign_set_y_coordinates(indesign_object, set_to):
         point.attrib.pop("LeftDirection")
         point.attrib.pop("RightDirection")
 
-        coordinates = x_coordinate + " " + str(set_to[i])
+        coordinates = ""
+
+        if x_coordinates is not None:
+            coordinates += str(x_coordinates[i]) + " "
+        else:
+            coordinates += x_coordinate + " "
+        if y_coordinates is not None:
+            coordinates += str(y_coordinates[i])
+        else:
+            coordinates += y_coordinate
+
         point.set("Anchor", coordinates)
         point.set("LeftDirection", coordinates)
         point.set("RightDirection", coordinates)
@@ -143,19 +163,29 @@ def utility_indesign_set_y_coordinates(indesign_object, set_to):
     return indesign_object
 
 
-def utility_indesign_shift_y_coordinates(indesign_object, shift_by):
+def utility_indesign_shift_coordinates(indesign_object, x_coordinates=None, y_coordinates=None):
     top_left = indesign_object.find(".//PathPointType[1]")
     top_right = indesign_object.find(".//PathPointType[4]")
     bottom_left = indesign_object.find(".//PathPointType[2]")
     bottom_right = indesign_object.find(".//PathPointType[3]")
 
-    set_to = []
+    x_coordinates_set_to = []
+    y_coordinates_set_to = []
 
     for i, point in enumerate([top_left, top_right, bottom_left, bottom_right]):
         x_coordinate, y_coordinate = point.attrib["Anchor"].split(" ")
-        set_to.append(float(y_coordinate) + shift_by[i])
 
-    return utility_indesign_set_y_coordinates(indesign_object, set_to)
+        if x_coordinates is not None:
+            x_coordinates_set_to.append(float(x_coordinate) + x_coordinates[i])
+        else:
+            x_coordinates_set_to.append(float(x_coordinate))
+        if y_coordinates is not None:
+            y_coordinates_set_to.append(float(y_coordinate) + y_coordinates[i])
+        else:
+            y_coordinates_set_to.append(float(y_coordinate))
+
+    return utility_indesign_change_coordinates(indesign_object, x_coordinates=x_coordinates_set_to,
+                                               y_coordinates=y_coordinates_set_to)
 
 
 def utility_sort_mana_array(mana_array):
@@ -227,6 +257,10 @@ def utility_divide_chunks(l, n):
 def utility_cleanse_id_name(card):
     cleansed_name = card.name.replace("//", "--")
     return card.collector_number + " - " + cleansed_name
+
+
+def mm_to_pt(mm):
+    return mm * 2.83464566929134
 
 
 def utility_generate_ids(name, spread, root_element, mode="standard"):
@@ -411,7 +445,7 @@ def utility_generate_ids(name, spread, root_element, mode="standard"):
 
 def utility_generate_all_ids():
     front_id = "uce"
-    back_id = "u2c16"
+    back_id = "u3490"
     print_front_id = "ue7"
     print_back_id = "u11d"
 

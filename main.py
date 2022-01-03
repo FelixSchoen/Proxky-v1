@@ -84,11 +84,16 @@ def process_card(card: Card, options):
         archive.extractall("data/memory")
 
     # General operations
-    if "fba" in options:
+    if "tba" in options:
+        if options["tba"] in ["front", "both"]:
+            card_layout_transparent_body_art(id_general_front)
+        if options["tba"] in ["back", "both"]:
+            card_layout_transparent_body_art(id_general_back)
+    elif "fba" in options:
         if options["fba"] in ["front", "both"]:
-            card_layout_full_body_art(id_general_front, card)
+            card_layout_full_body_art(id_general_front)
         if options["fba"] in ["back", "both"]:
-            card_layout_full_body_art(id_general_back, card)
+            card_layout_full_body_art(id_general_back)
 
     if card.layout not in double_sided_layouts:
         card_delete_backside(id_general_back)
