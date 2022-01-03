@@ -162,7 +162,6 @@ id_general_front = {
     "id_planeswalker_oracle_numbered_o": ['u432', 'u44f', 'u47d', 'u4b0'],
     "id_planeswalker_oracle_final_t": "u4ef",
     "id_planeswalker_oracle_final_o": "u4ec",
-    "id_mask_color_indicator_bot_o": "u2835",
 }
 id_general_split_top_front = {
     "id_spread": "uce",
@@ -224,39 +223,38 @@ id_general_front_adventure = {
     "id_adventure_oracle_right_o": "u107b",
 }
 id_general_back = {
-    "id_spread": "u2878",
-    "id_group_normal_o": "u2a07",
-    "id_group_header_o": "u2bcb",
-    "id_group_footer_o": "u2a0b",
-    "id_type_icon_o": "u2c13",
-    "id_title_t": "u2bff",
-    "id_type_line_t": "u2be8",
-    "id_mana_cost_t": "u2bd0",
-    "id_color_indicator_top_o": "u2bcc",
-    "id_gradients_o": ['u1055', 'u1057'],
-    "id_oracle_t": "u2b9f",
-    "id_oracle_o": "u2b9b",
-    "id_color_indicator_bot_o": "u2a3b",
-    "id_value_t": "u2a3f",
-    "id_value_o": "u2a3c",
-    "id_artist_t": "u2a26",
-    "id_artist_o": "u2a23",
-    "id_collector_information_t": "u2a0f",
-    "id_collector_information_o": "u2a0c",
-    "id_artwork_o": "u2a09",
-    "id_backdrop_o": "u2a0a",
-    "id_group_split_o": "u287e",
-    "id_group_planeswalker_o": "u2acb",
-    "id_group_adventure_o": "u2a54",
-    "id_modal_t": "u2bb7",
-    "id_modal_o": "u2bb3",
-    "id_planeswalker_value_t": ['u2b87', 'u2b59', 'u2b2b', 'u2afd'],
-    "id_planeswalker_value_o": ['u2b84', 'u2b56', 'u2b28', 'u2afa'],
-    "id_planeswalker_oracle_numbered_t": ['u2b70', 'u2b42', 'u2b14', 'u2ae6'],
-    "id_planeswalker_oracle_numbered_o": ['u2b6d', 'u2b3f', 'u2b11', 'u2ae3'],
-    "id_planeswalker_oracle_final_t": "u2acf",
-    "id_planeswalker_oracle_final_o": "u2acc",
-    "id_mask_color_indicator_bot_o": "u2a3a",
+    "id_spread": "u2c16",
+    "id_group_normal_o": "u2da5",
+    "id_group_header_o": "u2f6a",
+    "id_group_footer_o": "u2da9",
+    "id_type_icon_o": "u2fb0",
+    "id_title_t": "u2f9c",
+    "id_type_line_t": "u2f85",
+    "id_mana_cost_t": "u2f6e",
+    "id_color_indicator_top_o": "u2f68",
+    "id_gradients_o": ['u2fec', 'u2ff0'],
+    "id_oracle_t": "u2f3c",
+    "id_oracle_o": "u2f39",
+    "id_color_indicator_bot_o": "u2f38",
+    "id_value_t": "u2dc5",
+    "id_value_o": "u2dc1",
+    "id_artist_t": "u2ddc",
+    "id_artist_o": "u2dd9",
+    "id_collector_information_t": "u2dad",
+    "id_collector_information_o": "u2daa",
+    "id_artwork_o": "u2da7",
+    "id_backdrop_o": "u2da8",
+    "id_group_split_o": "u2c1c",
+    "id_group_planeswalker_o": "u2e68",
+    "id_group_adventure_o": "u2df1",
+    "id_modal_t": "u2f54",
+    "id_modal_o": "u2f50",
+    "id_planeswalker_value_t": ['u2f24', 'u2ef6', 'u2ec8', 'u2e9a'],
+    "id_planeswalker_value_o": ['u2f21', 'u2ef3', 'u2ec5', 'u2e97'],
+    "id_planeswalker_oracle_numbered_t": ['u2f0d', 'u2edf', 'u2eb1', 'u2e83'],
+    "id_planeswalker_oracle_numbered_o": ['u2f0a', 'u2edc', 'u2eae', 'u2e80'],
+    "id_planeswalker_oracle_final_t": "u2e6c",
+    "id_planeswalker_oracle_final_o": "u2e69",
 }
 id_general_print_front = {
     "id_spread": "ue7",
@@ -276,20 +274,20 @@ FLAG_PREFLIGHT_FAIL = 12000
 # Values
 
 # Height of the modal plus the amount of distance between oracle and the modal box
-VALUE_MODAL_HEIGHT = 9.212598425197
+VALUE_MODAL_HEIGHT = 11.33858267717
 
 # How much to shift the header for a token that has a power toughness value
-VALUE_SHIFT_WITHOUT_ORACLE_WITH_VALUE = 81.92125984252
+VALUE_SHIFT_WITHOUT_ORACLE_WITH_VALUE = 85.46456692913
 
 # How much shift to add if there is no value for the layout without oracle text
-VALUE_SHIFT_WITHOUT_ORACLE_WITHOUT_VALUE = 6.377952755906
+VALUE_SHIFT_WITHOUT_ORACLE_WITHOUT_VALUE = 0
 
 # How much to shift the artwork in order to cover the entire card
 VALUE_SHIFT_ARTWORK_FULL_BODY = 130.1102362205
 
 # Top Coordinate of the Oracle Box, in order to distribute planeswalker boxes
 COORDINATE_TOP_ORACLE = -29.55631007189999
-COORDINATE_BOT_ORACLE = 48.11298126668268
+COORDINATE_BOT_ORACLE = COORDINATE_TOP_ORACLE + 74.83464566929
 # Space between planeswalker textframes
 VALUE_SPACING_PLANESWALKER = 2.125984251969
 
@@ -313,7 +311,7 @@ f_artwork = f_main + "/Artwork"
 f_artwork_downloaded = f_main + "/Artwork Downloaded"
 
 # Enumerations
-supported_layouts = ["normal", "modal_dfc", "transform", "split", "adventure", "class", "saga", "meld",
+supported_layouts = ["normal", "modal_dfc", "transform", "split", "flip", "adventure", "class", "saga", "meld",
                      "token", "double_faced_token", "emblem"]
 double_sided_layouts = ["modal_dfc", "transform", "meld", "double_faced_token"]
 

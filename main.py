@@ -102,7 +102,7 @@ def process_card(card: Card, options):
 
         card_fill(card.card_faces[0], id_general_front, card.layout)
         card_fill(card.card_faces[1], id_general_back, card.layout)
-    elif card.layout in ["split"]:
+    elif card.layout in ["split", "flip"]:
         card_layout_split(id_general_front)
 
         card_fill(card.card_faces[0], id_general_split_top_front, card.layout)

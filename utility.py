@@ -309,7 +309,7 @@ def utility_generate_ids(name, spread, root_element, mode="standard"):
         (id_names.PLANESWALKER_ORACLE_FINAL, ids.PLANESWALKER_ORACLE_FINAL_T, "ParentStory"),
         (id_names.PLANESWALKER_ORACLE_FINAL, ids.PLANESWALKER_ORACLE_FINAL_O),
 
-        (id_names.MASK_COLOR_INDICATOR_BOT, ids.MASK_COLOR_INDICATOR_BOT_O),
+        # (id_names.MASK_COLOR_INDICATOR_BOT, ids.MASK_COLOR_INDICATOR_BOT_O),
     ]
 
     # IDs to add for adventure cards
@@ -411,7 +411,7 @@ def utility_generate_ids(name, spread, root_element, mode="standard"):
 
 def utility_generate_all_ids():
     front_id = "uce"
-    back_id = "u2878"
+    back_id = "u2c16"
     print_front_id = "ue7"
     print_back_id = "u11d"
 

@@ -66,16 +66,17 @@ def card_layout_no_value(id_set):
     value_text.set("Visible", "false")
 
     # Remove mask
-    footer = tree.find(".//Group[@Self='" + id_set[ids.GROUP_FOOTER_O] + "']")
-    mask = tree.find(".//Polygon[@Self='" + id_set[ids.MASK_COLOR_INDICATOR_BOT_O] + "']")
-    color_indicator_bot = tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_INDICATOR_BOT_O] + "']")
+    if ids.MASK_COLOR_INDICATOR_BOT_O in id_set:
+        footer = tree.find(".//Group[@Self='" + id_set[ids.GROUP_FOOTER_O] + "']")
+        mask = tree.find(".//Polygon[@Self='" + id_set[ids.MASK_COLOR_INDICATOR_BOT_O] + "']")
+        color_indicator_bot = tree.find(".//Rectangle[@Self='" + id_set[ids.COLOR_INDICATOR_BOT_O] + "']")
 
-    # Appending it to footer group incurs this movement, idk why
-    SHIFT_BY = -1.417322834646
-    utility_indesign_shift_y_coordinates(color_indicator_bot, [SHIFT_BY, SHIFT_BY, SHIFT_BY, SHIFT_BY])
+        # Appending it to footer group incurs this movement, idk why
+        SHIFT_BY = -1.417322834646
+        utility_indesign_shift_y_coordinates(color_indicator_bot, [SHIFT_BY, SHIFT_BY, SHIFT_BY, SHIFT_BY])
 
-    mask.remove(color_indicator_bot)
-    footer.append(color_indicator_bot)
+        mask.remove(color_indicator_bot)
+        footer.append(color_indicator_bot)
 
     tree.write("data/memory/Spreads/Spread_" + id_set[ids.SPREAD] + ".xml")
 
@@ -122,10 +123,10 @@ def card_layout_no_oracle_text(id_set, card):
     backdrop = tree.find(".//Rectangle[@Self='" + id_set[ids.BACKDROP_O] + "']")
 
     additional_shift = 0
+    color_indicator.set("Visible", "false")
 
     if card.power == "" and card.toughness == "":
         additional_shift = VALUE_SHIFT_WITHOUT_ORACLE_WITHOUT_VALUE
-        color_indicator.set("Visible", "false")
 
     utility_indesign_shift_y_coordinates(artwork, [0, 0, VALUE_SHIFT_WITHOUT_ORACLE_WITH_VALUE + additional_shift,
                                                    VALUE_SHIFT_WITHOUT_ORACLE_WITH_VALUE + additional_shift])

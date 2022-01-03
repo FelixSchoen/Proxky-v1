@@ -62,15 +62,8 @@ class Card:
         if "keywords" in args:
             self.keywords = args["keywords"]
         if "card_faces" in args:
-            for i, card_face in enumerate(args["card_faces"]):
+            for card_face in args["card_faces"]:
                 face = Card(card_face)
-
-                if self.layout in double_sided_layouts:
-                    if i == 0:
-                        face.side = "front"
-                    else:
-                        face.side = "back"
-
                 self.card_faces.append(face)
         if "oracle_text" in args:
             self.oracle_text = args["oracle_text"]
@@ -106,7 +99,7 @@ class Card:
                 self.card_faces.append(meld_result)
 
         # Manual fix for faces
-        for face in self.card_faces:
+        for i, face in enumerate(self.card_faces):
             if len(face.image_uris) == 0:
                 face.image_uris = self.image_uris
 
@@ -125,11 +118,8 @@ class Card:
                             for color_match in color_matches:
                                 colors.append(color_match.group("mana"))
 
-                            face.colors.extend(colors)
-                            face.produced_mana.extend(colors)
-                        # Sort and format mana
-                        face.colors = utility_mana_cost_to_color_array(face.colors)
-                        face.produced_mana = utility_mana_cost_to_color_array(face.colors)
+                            # Sort and format mana
+                            face.produced_mana = utility_mana_cost_to_color_array(colors)
                 if self.layout in ["split", "adventure"]:
                     face.colors.extend(utility_mana_cost_to_color_array(face.mana_cost))
 
@@ -148,6 +138,12 @@ class Card:
             if face.rarity == "":
                 face.rarity = self.rarity
 
+            if self.layout in double_sided_layouts:
+                if i == 0:
+                    face.side = "front"
+                else:
+                    face.side = "back"
+
     def __repr__(self) -> str:
         return "[{}]".format(self.name)
 
@@ -160,7 +156,8 @@ class Card:
             if "set" not in dictionary:
                 info_fail(dictionary["name"], "Set not provided")
             response = requests.get(
-                api_url + "/cards/" + urllib.parse.quote(dictionary["set"].lower()) + "/" + urllib.parse.quote(dictionary["cn"]))
+                api_url + "/cards/" + urllib.parse.quote(dictionary["set"].lower()) + "/" + urllib.parse.quote(
+                    dictionary["cn"]))
         elif "set" in dictionary:
             response = requests.get(
                 api_url + "/cards/named?exact=" + urllib.parse.quote(dictionary["name"]) + "&set=" + urllib.parse.quote(
