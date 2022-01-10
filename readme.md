@@ -26,7 +26,7 @@ for the third entry we used one of the optional arguments):
 > 3 Mox Diamond [set: V10]
 
 For an explanation of which optional arguments are available, what they do and how to use them, we refer to the
-section [Parameters](###Parameters).
+section [Parameters](#parameters).
 
 Generally, and entry will correspond to the card first found using a standard search
 on [Scryfall](https://scryfall.com/). Although this means that e.g. artwork, set information like rarity, and other
@@ -96,7 +96,7 @@ where the artwork is automatically retrieved from [Scryfall](https://scryfall.co
 It is usually best to assume that no such artwork already exists. In this case we recommend checking
 out [Art of MTG](https://www.artofmtg.com/), which often provide such artwork. If it does not exist on that page,
 conducting a quick Google search often yields usable results. We refer to
-section [Providing High-Resolution Artwork](##Providing High-Resolution Artwork) on information on how to provide this
+section [Providing High-Resolution Artwork](#providing-high-resolution-artwork) on information on how to provide this
 artwork yourself.
 
 This parameter takes as input either the value "front", "back" or "both", which directly correspond to which face of a
