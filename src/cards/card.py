@@ -4,10 +4,10 @@ import urllib
 
 import requests
 
-from info import info_fail
-from settings import api_url
-from utility import utility_mana_cost_to_color_array
-from variables import regex_add_mana, regex_mana
+from src.utility.util_info import info_fail
+from src.settings.settings import api_url
+from src.utility.util_magic import mana_cost_to_color_array
+from src.utility.variables import regex_add_mana, regex_mana, double_sided_layouts
 
 
 class Card:
@@ -22,6 +22,7 @@ class Card:
         self.type_line = ""
         self.colors = []
         self.color_identity = []
+        self.color_indicator = []
         self.keywords = []
         self.produced_mana = []
         self.keywords = []
@@ -36,6 +37,7 @@ class Card:
         self.rarity = ""
         self.card_faces = []
         self.image_uris = []
+        self.side = ""
 
         if "id" in args:
             self.id = args["id"]
@@ -51,6 +53,8 @@ class Card:
             self.colors = args["colors"]
         if "color_identity" in args:
             self.color_identity = args["color_identity"]
+        if "color_indicator" in args:
+            self.color_indicator = args["color_indicator"]
         if "keywords" in args:
             self.keywords = args["keywords"]
         if "produced_mana" in args:
@@ -59,7 +63,8 @@ class Card:
             self.keywords = args["keywords"]
         if "card_faces" in args:
             for card_face in args["card_faces"]:
-                self.card_faces.append(Card(card_face))
+                face = Card(card_face)
+                self.card_faces.append(face)
         if "oracle_text" in args:
             self.oracle_text = args["oracle_text"]
         if "power" in args:
@@ -81,11 +86,7 @@ class Card:
         if "image_uris" in args:
             self.image_uris = args["image_uris"]
 
-        if len(self.colors) == 0:
-            if "Land" in self.type_line:
-                self.colors.extend(self.produced_mana)
-
-        # Add meld card as backside
+        # Add meld cards as backside
         if self.layout in ["meld"] and "all_parts" in args:
             parts = args["all_parts"]
             meld_result_dict = next(obj for obj in parts if obj["component"] == "meld_result")
@@ -98,7 +99,7 @@ class Card:
                 self.card_faces.append(meld_result)
 
         # Manual fix for faces
-        for face in self.card_faces:
+        for i, face in enumerate(self.card_faces):
             if len(face.image_uris) == 0:
                 face.image_uris = self.image_uris
 
@@ -117,13 +118,10 @@ class Card:
                             for color_match in color_matches:
                                 colors.append(color_match.group("mana"))
 
-                            face.colors.extend(colors)
-                            face.produced_mana.extend(colors)
-                        # Sort and format mana
-                        face.colors = utility_mana_cost_to_color_array(face.colors)
-                        face.produced_mana = utility_mana_cost_to_color_array(face.colors)
+                            # Sort and format mana
+                            face.produced_mana = mana_cost_to_color_array(colors)
                 if self.layout in ["split", "adventure"]:
-                    face.colors.extend(utility_mana_cost_to_color_array(face.mana_cost))
+                    face.colors.extend(mana_cost_to_color_array(face.mana_cost))
 
             if len(face.keywords) == 0:
                 face.keywords = self.keywords
@@ -140,6 +138,12 @@ class Card:
             if face.rarity == "":
                 face.rarity = self.rarity
 
+            if self.layout in double_sided_layouts:
+                if i == 0:
+                    face.side = "front"
+                else:
+                    face.side = "back"
+
     def __repr__(self) -> str:
         return "[{}]".format(self.name)
 
@@ -148,6 +152,12 @@ class Card:
         if "id" in dictionary:
             response = requests.get(
                 api_url + "/cards/" + urllib.parse.quote(dictionary["id"]))
+        elif "cn" in dictionary:
+            if "set" not in dictionary:
+                info_fail(dictionary["name"], "Set not provided")
+            response = requests.get(
+                api_url + "/cards/" + urllib.parse.quote(dictionary["set"].lower()) + "/" + urllib.parse.quote(
+                    dictionary["cn"]))
         elif "set" in dictionary:
             response = requests.get(
                 api_url + "/cards/named?exact=" + urllib.parse.quote(dictionary["name"]) + "&set=" + urllib.parse.quote(
@@ -158,7 +168,7 @@ class Card:
 
         # Check status code
         if response.status_code != 200:
-            info_fail(dictionary["name"], "Could not fetch card")
+            info_fail(dictionary["name"], "Could not fetch cards")
             return None
 
         return Card(json.loads(response.text))
