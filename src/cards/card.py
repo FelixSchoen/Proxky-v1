@@ -4,10 +4,10 @@ import urllib
 
 import requests
 
-from info import info_fail
-from settings import api_url
-from utility import utility_mana_cost_to_color_array
-from variables import regex_add_mana, regex_mana, double_sided_layouts
+from src.utility.util_info import info_fail
+from src.settings.settings import api_url
+from src.utility.util_card import mana_cost_to_color_array
+from src.utility.variables import regex_add_mana, regex_mana, double_sided_layouts
 
 
 class Card:
@@ -86,7 +86,7 @@ class Card:
         if "image_uris" in args:
             self.image_uris = args["image_uris"]
 
-        # Add meld card as backside
+        # Add meld cards as backside
         if self.layout in ["meld"] and "all_parts" in args:
             parts = args["all_parts"]
             meld_result_dict = next(obj for obj in parts if obj["component"] == "meld_result")
@@ -119,9 +119,9 @@ class Card:
                                 colors.append(color_match.group("mana"))
 
                             # Sort and format mana
-                            face.produced_mana = utility_mana_cost_to_color_array(colors)
+                            face.produced_mana = mana_cost_to_color_array(colors)
                 if self.layout in ["split", "adventure"]:
-                    face.colors.extend(utility_mana_cost_to_color_array(face.mana_cost))
+                    face.colors.extend(mana_cost_to_color_array(face.mana_cost))
 
             if len(face.keywords) == 0:
                 face.keywords = self.keywords
@@ -168,7 +168,7 @@ class Card:
 
         # Check status code
         if response.status_code != 200:
-            info_fail(dictionary["name"], "Could not fetch card")
+            info_fail(dictionary["name"], "Could not fetch cards")
             return None
 
         return Card(json.loads(response.text))

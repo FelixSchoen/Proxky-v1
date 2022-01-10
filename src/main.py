@@ -1,20 +1,19 @@
 import getopt
-import json
 import shutil
 import time
-import urllib.parse
-import zipfile
 import sys
+import zipfile
 from time import sleep
 
 import win32com.client
 
-from card import *
-from carddata import *
-from info import *
-from layout import *
-from settings import api_url
-from utility import *
+from src.cards import *
+from src.cards.layout import *
+from src.utility.util_card import get_card_types, cleanse_name_with_id
+from src.utility.util_generate_id import generate_all_ids
+from src.utility.util_info import info_success
+from src.utility.util_xml import utility_divide_chunks, utility_cardfile_to_pdf
+from src.utility.variables import *
 
 
 def process_decklist(path):
@@ -57,7 +56,7 @@ def process_cards(card_names):
             continue
 
         if process_card(card, entry["options"]):
-            info_success(card.name, "Successfully processed card")
+            info_success(card.name, "Successfully processed cards")
 
         end_time = time.time()
         if (end_time - start_time) * 1000 < 100 and i < len(card_names) - 1:
@@ -65,12 +64,12 @@ def process_cards(card_names):
 
 
 def process_card(card: Card, options):
-    # Check layout of card
+    # Check layout of cards
     if card.layout not in supported_layouts:
         info_fail(card.name, "Layout not supported")
         return False
 
-    # Cleansed card name for saving file
+    # Cleansed cards name for saving file
     cleansed_name = card.name.replace("//", "--")
 
     # Folders
@@ -139,7 +138,7 @@ def process_card(card: Card, options):
 
 
 def card_fill(card: Card, id_set, layout):
-    types = utility_get_card_types(card)
+    types = get_card_types(card)
 
     # Check if basic
     if "Basic" in types and "Land" in types:
@@ -219,7 +218,7 @@ def process_print(card_names):
 
     handled_cards = []
 
-    for i, page in enumerate(list(utility_divide_chunks(list_of_cards, 9))):
+    for i, page in enumerate(list(utility_divide_chunks(list_of_cards, 8))):
         target_file_path = target_folder_path + "/" + str(i)
         target_file_full_path = target_file_path + ".idml"
 
@@ -228,7 +227,7 @@ def process_print(card_names):
             archive.extractall("data/memory_print")
 
         for j, card in enumerate(page):
-            name = utility_cleanse_id_name(card)
+            name = cleanse_name_with_id(card)
 
             # Convert to PDF
             if card.id not in handled_cards:
@@ -241,11 +240,8 @@ def process_print(card_names):
 
             # Backside
             if card.layout in double_sided_layouts:
-                modulo = j % 3
-                carry = int(j / 3)
-                result = carry * 3 + (2 - modulo)
                 insert_pdf(card, id_general_print_back[ids.SPREAD],
-                           id_general_print_back[ids.PRINTING_FRAME_O][result],
+                           id_general_print_back[ids.PRINTING_FRAME_O][j],
                            f_pdf + "/" + card.set.upper(), name, page_number=2)
 
         shutil.make_archive(target_file_path, "zip", "data/memory_print")
@@ -277,7 +273,7 @@ def main(argv):
 
         # shutil.rmtree("data/memory")
     elif mode == "generate_id":
-        utility_generate_all_ids()
+        generate_all_ids()
 
 
 if __name__ == '__main__':

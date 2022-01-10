@@ -1,4 +1,4 @@
-from initialize import keywords
+from src.settings.initialize import keywords
 
 
 class ids:
@@ -17,6 +17,7 @@ class ids:
     GRADIENTS_O = "id_gradients_o"
 
     # Header
+    NAME_T = "id_name_t"
     TYPE_ICON_O = "id_type_icon_o"
     TITLE_T = "id_title_t"
     TYPE_LINE_T = "id_type_line_t"
@@ -72,6 +73,7 @@ class id_names:
     GROUP_FOOTER = "Footer"
 
     # Header
+    NAME = "Name"
     TYPE_ICON = "Type Icon"
     TITLE = "Title"
     TYPE_LINE = "Type Line"
@@ -154,6 +156,7 @@ id_general_front = {
     "id_group_split_o": "u1835",
     "id_group_planeswalker_o": "u4ea",
     "id_group_adventure_o": "u3db",
+    "id_name_t": "u3047",
     "id_modal_t": "u3fe",
     "id_modal_o": "u3fb",
     "id_planeswalker_value_t": ['u41b', 'u469', 'u497', 'u4ca'],
@@ -223,46 +226,47 @@ id_general_front_adventure = {
     "id_adventure_oracle_right_o": "u107b",
 }
 id_general_back = {
-    "id_spread": "u3490",
-    "id_group_normal_o": "u3621",
-    "id_group_header_o": "u37e5",
-    "id_group_footer_o": "u3625",
-    "id_type_icon_o": "u382b",
-    "id_title_t": "u3817",
-    "id_type_line_t": "u3800",
-    "id_mana_cost_t": "u37e9",
-    "id_color_indicator_top_o": "u37e4",
-    "id_gradients_o": ['u384f', 'u3852'],
-    "id_oracle_t": "u37b9",
-    "id_oracle_o": "u37b5",
-    "id_color_indicator_bot_o": "u37b4",
-    "id_value_t": "u3641",
-    "id_value_o": "u363d",
-    "id_artist_t": "u3658",
-    "id_artist_o": "u3655",
-    "id_collector_information_t": "u3629",
-    "id_collector_information_o": "u3626",
-    "id_artwork_o": "u3623",
-    "id_backdrop_o": "u3624",
-    "id_group_split_o": "u3496",
-    "id_group_planeswalker_o": "u36e4",
-    "id_group_adventure_o": "u366d",
-    "id_modal_t": "u37d0",
-    "id_modal_o": "u37cd",
-    "id_planeswalker_value_t": ['u37a0', 'u3772', 'u3744', 'u3716'],
-    "id_planeswalker_value_o": ['u379d', 'u376f', 'u3741', 'u3713'],
-    "id_planeswalker_oracle_numbered_t": ['u3789', 'u375b', 'u372d', 'u36ff'],
-    "id_planeswalker_oracle_numbered_o": ['u3786', 'u3758', 'u372a', 'u36fc'],
-    "id_planeswalker_oracle_final_t": "u36e8",
-    "id_planeswalker_oracle_final_o": "u36e5",
+    "id_spread": "u4122",
+    "id_group_normal_o": "u42b3",
+    "id_group_header_o": "u4477",
+    "id_group_footer_o": "u42b7",
+    "id_type_icon_o": "u44be",
+    "id_title_t": "u44aa",
+    "id_type_line_t": "u4493",
+    "id_mana_cost_t": "u447c",
+    "id_color_indicator_top_o": "u4476",
+    "id_gradients_o": ['u44e2', 'u44e5'],
+    "id_oracle_t": "u444b",
+    "id_oracle_o": "u4448",
+    "id_color_indicator_bot_o": "u4447",
+    "id_value_t": "u42d3",
+    "id_value_o": "u42cf",
+    "id_artist_t": "u42ea",
+    "id_artist_o": "u42e7",
+    "id_collector_information_t": "u42bb",
+    "id_collector_information_o": "u42b8",
+    "id_artwork_o": "u42b5",
+    "id_backdrop_o": "u42b6",
+    "id_group_split_o": "u4128",
+    "id_group_planeswalker_o": "u4376",
+    "id_group_adventure_o": "u42ff",
+    "id_name_t": "u44c4",
+    "id_modal_t": "u4462",
+    "id_modal_o": "u445f",
+    "id_planeswalker_value_t": ['u4433', 'u4405', 'u43d7', 'u43a9'],
+    "id_planeswalker_value_o": ['u4430', 'u4402', 'u43d4', 'u43a6'],
+    "id_planeswalker_oracle_numbered_t": ['u441c', 'u43ee', 'u43c0', 'u4392'],
+    "id_planeswalker_oracle_numbered_o": ['u4419', 'u43eb', 'u43bd', 'u438f'],
+    "id_planeswalker_oracle_final_t": "u437b",
+    "id_planeswalker_oracle_final_o": "u4377",
 }
 id_general_print_front = {
     "id_spread": "ue7",
-    "pid_frame_o": ['uf5', 'u114', 'u115', 'u119', 'u118', 'u117', 'u11c', 'u11b', 'u11a'],
+    "pid_frame_o": ['uf5', 'u114', 'u115', 'u119', 'u118', 'u117', 'u11c', 'u11b'],
 }
 id_general_print_back = {
-    "id_spread": "u11d",
-    "pid_frame_o": ['u12c', 'u12b', 'u12a', 'u129', 'u127', 'u126', 'u125', 'u124', 'u123'],
+    "id_spread": "u16c",
+    "pid_frame_o": ['u17d', 'u17c', 'u17b', 'u17a', 'u179', 'u178', 'u177', 'u176'],
 }
 
 # Flags
@@ -282,7 +286,7 @@ VALUE_SHIFT_WITHOUT_ORACLE_WITH_VALUE = 85.46456692913
 # How much shift to add if there is no value for the layout without oracle text
 VALUE_SHIFT_WITHOUT_ORACLE_WITHOUT_VALUE = 0
 
-# How much to shift the artwork in order to cover the entire card
+# How much to shift the artwork in order to cover the entire cards
 VALUE_SHIFT_ARTWORK_FULL_BODY = 130.1102362205
 
 # Top Coordinate of the Oracle Box, in order to distribute planeswalker boxes

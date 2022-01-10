@@ -1,10 +1,9 @@
 import os
 import xml
 
-from utility import utility_indesign_shift_coordinates, utility_split_string_along_regex, \
+from src.utility.util_xml import utility_indesign_shift_coordinates, utility_split_string_along_regex, \
     utility_make_object_transparent, mm_to_pt, utility_change_text_color, utility_change_text_style
-from insert_xml import insert_content
-from variables import ids, VALUE_MODAL_HEIGHT, regex_template_oracle, VALUE_SHIFT_WITHOUT_ORACLE_WITHOUT_VALUE, \
+from src.utility.variables import ids, VALUE_MODAL_HEIGHT, regex_template_oracle, VALUE_SHIFT_WITHOUT_ORACLE_WITHOUT_VALUE, \
     VALUE_SHIFT_WITHOUT_ORACLE_WITH_VALUE, VALUE_SHIFT_ARTWORK_FULL_BODY
 
 

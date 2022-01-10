@@ -1,16 +1,13 @@
 import math
 import os
-from os import listdir
 
 import requests
 
-import utility
-from utility import utility_sort_mana_array, utility_indesign_change_coordinates, utility_indesign_shift_coordinates, \
-    utility_get_card_types
-from info import info_warn, info_normal
-from insert_xml import *
-from insert_xml import insert_multi_font_text
-from variables import ids, f_artwork, f_artwork_downloaded, f_icon_card_types, COORDINATE_TOP_ORACLE, \
+from src.utility.util_xml import utility_indesign_change_coordinates, utility_indesign_shift_coordinates
+from src.utility.util_card import get_card_types, sort_mana_array
+from src.utility.util_info import info_warn
+from src.utility.util_insert_xml import *
+from src.utility.variables import ids, f_artwork, f_artwork_downloaded, f_icon_card_types, COORDINATE_TOP_ORACLE, \
     VALUE_MODAL_HEIGHT, COORDINATE_BOT_ORACLE, mana_mapping, \
     regex_template_planeswalker, color_mapping, FONT_SANS, FONT_SANS_STYLE, regex_template_regular, regex_add_mana, \
     regex_card_name, VALUE_SPACING_PLANESWALKER
@@ -74,8 +71,8 @@ def set_type_icon(card, id_set):
     id_spread = id_set[ids.SPREAD]
     id_type = id_set[ids.TYPE_ICON_O]
 
-    # Get types of card
-    types = utility_get_card_types(card)
+    # Get types of cards
+    types = get_card_types(card)
     if "Legendary" in types:
         types.remove("Legendary")
     if "Basic" in types:
@@ -91,15 +88,19 @@ def set_type_icon(card, id_set):
         card_type = types[0]
 
     if not utility_file_exists(f_icon_card_types + "/" + card_type.lower() + ".svg"):
-        info_warn(card.name, "No icon for card type")
+        info_warn(card.name, "No icon for cards type")
     else:
         insert_graphic(card, id_spread, id_type, f_icon_card_types, card_type.lower())
 
 
 def set_card_name(card, id_set):
-    id_name = id_set[ids.TITLE_T]
+    id_title = id_set[ids.TITLE_T]
 
-    insert_content(id_name, card.name)
+    insert_content(id_title, card.name)
+
+    if ids.NAME_T in id_set:
+        id_name = id_set[ids.NAME_T]
+        insert_content(id_name, card.name)
 
 
 def set_type_line(card, id_set):
@@ -147,7 +148,7 @@ def set_modal(card, id_sets, modal_type="modal"):
         line_to_insert = "{◄}\t" + line_to_insert + "\t{►}"
 
         insert_multi_font_text(line_to_insert, id_set[ids.MODAL_T], align="center", font=FONT_SANS,
-                               style=FONT_SANS_STYLE, size="4.5", regex=regex_template_regular)
+                               style=FONT_SANS_STYLE, size="5", regex=regex_template_regular)
 
 
 def set_color_indicator(card, id_set):
@@ -168,7 +169,7 @@ def set_color_indicator(card, id_set):
     if len(colors_to_apply) == 1:
         colors_to_apply.append(colors_to_apply[0])
 
-    utility_sort_mana_array(colors_to_apply)
+    sort_mana_array(colors_to_apply)
 
     for id_gradient in id_gradients:
         tree = xml.etree.ElementTree.parse("data/memory/Resources/Graphic.xml")

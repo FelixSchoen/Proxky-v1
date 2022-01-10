@@ -3,11 +3,11 @@ import xml
 
 from PIL import Image
 
-from settings import PRINT_FLAVOR_TEXT
-from utility import utility_split_string_along_regex, utility_file_exists, utility_indesign_get_coordinates, \
+from src.settings.settings import PRINT_FLAVOR_TEXT
+from src.utility.util_xml import utility_split_string_along_regex, utility_file_exists, utility_indesign_get_coordinates, \
     utility_vector_bounding_box, utility_nested_reminder_text
-from info import info_fail
-from variables import image_types, regex_template_oracle, mana_mapping, regex_template_regular, FONT_STANDARD, \
+from src.utility.util_info import info_fail
+from src.utility.variables import image_types, regex_template_oracle, mana_mapping, FONT_STANDARD, \
     FONT_STANDARD_STYLE_ITALIC, regex_mana, regex_template_flavor
 
 
