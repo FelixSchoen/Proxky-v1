@@ -1,16 +1,19 @@
 import math
 import os
+import re
+import xml
 
 import requests
 
-from src.utility.util_xml import utility_indesign_change_coordinates, utility_indesign_shift_coordinates
-from src.utility.util_card import get_card_types, sort_mana_array
-from src.utility.util_info import info_warn
-from src.utility.util_insert_xml import *
+from src.utility.util_misc import does_file_exist, split_string_along_regex
+from src.utility.util_xml import ind_change_coordinates, ind_shift_coordinates, \
+    insert_content, insert_graphic, insert_multi_font_text
+from src.utility.util_magic import get_card_types, sort_mana_array
+from src.utility.util_info import info_warn, info_fail
 from src.utility.variables import ids, f_artwork, f_artwork_downloaded, f_icon_card_types, COORDINATE_TOP_ORACLE, \
     VALUE_MODAL_HEIGHT, COORDINATE_BOT_ORACLE, mana_mapping, \
     regex_template_planeswalker, color_mapping, FONT_SANS, FONT_SANS_STYLE, regex_template_regular, regex_add_mana, \
-    regex_card_name, VALUE_SPACING_PLANESWALKER
+    regex_card_name, VALUE_SPACING_PLANESWALKER, image_types
 
 
 def set_artwork(card, id_set):
@@ -27,11 +30,11 @@ def set_artwork(card, id_set):
     filename = ""
 
     for possible_image_type in image_types:
-        if utility_file_exists(path_cn + "." + possible_image_type):
+        if does_file_exist(path_cn + "." + possible_image_type):
             filename = str(card.collector_number) + " - " + card.name
             image_type = possible_image_type
             break
-        elif utility_file_exists(path_name + "." + possible_image_type):
+        elif does_file_exist(path_name + "." + possible_image_type):
             filename = card.name
             image_type = possible_image_type
             break
@@ -87,7 +90,7 @@ def set_type_icon(card, id_set):
     else:
         card_type = types[0]
 
-    if not utility_file_exists(f_icon_card_types + "/" + card_type.lower() + ".svg"):
+    if not does_file_exist(f_icon_card_types + "/" + card_type.lower() + ".svg"):
         info_warn(card.name, "No icon for cards type")
     else:
         insert_graphic(card, id_spread, id_type, f_icon_card_types, card_type.lower())
@@ -204,7 +207,7 @@ def set_color_indicator(card, id_set):
 
 
 def set_planeswalker_text(card, id_set):
-    planeswalker_text = utility_split_string_along_regex(card.oracle_text, *regex_template_planeswalker)
+    planeswalker_text = split_string_along_regex(card.oracle_text, *regex_template_planeswalker)
     amount_abilities = sum(x[2] == "loyalty" for x in planeswalker_text)
 
     if amount_abilities > 4:
@@ -245,7 +248,7 @@ def set_planeswalker_text(card, id_set):
         insert_multi_font_text(planeswalker_text[0][0], id_set[ids.ORACLE_T], align="left")
         planeswalker_text = planeswalker_text[1:]
 
-    potential_additional_box = utility_split_string_along_regex(planeswalker_text[-1][0], ("\n", "type", "break"))
+    potential_additional_box = split_string_along_regex(planeswalker_text[-1][0], ("\n", "type", "break"))
     if len(potential_additional_box) > 1:
         tf = tree.find(".//TextFrame[@Self='" + id_set[ids.PLANESWALKER_ORACLE_FINAL_O] + "']")
         tfp = tf.find(".//TextFramePreference[1]")
@@ -285,12 +288,12 @@ def set_planeswalker_text(card, id_set):
                 x_coordinate, y_coordinate = top_left.attrib["Anchor"].split(" ")
                 y_coordinate = float(y_coordinate)
 
-                utility_indesign_change_coordinates(object_box,
-                                                    y_coordinates=[y_coordinate, y_coordinate,
-                                                                   y_coordinate + box_size, y_coordinate + box_size])
+                ind_change_coordinates(object_box,
+                                       y_coordinates=[y_coordinate, y_coordinate,
+                                                      y_coordinate + box_size, y_coordinate + box_size])
                 shift_length = (box_size + VALUE_SPACING_PLANESWALKER) * i
                 shift_coordinates = [shift_length, shift_length, shift_length, shift_length]
-                utility_indesign_shift_coordinates(object_box, y_coordinates=shift_coordinates)
+                ind_shift_coordinates(object_box, y_coordinates=shift_coordinates)
             else:
                 object_box.set("Visible", "false")
 

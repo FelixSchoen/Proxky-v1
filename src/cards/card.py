@@ -6,7 +6,7 @@ import requests
 
 from src.utility.util_info import info_fail
 from src.settings.settings import api_url
-from src.utility.util_card import mana_cost_to_color_array
+from src.utility.util_magic import mana_cost_to_color_array
 from src.utility.variables import regex_add_mana, regex_mana, double_sided_layouts
 
 

@@ -14,7 +14,8 @@ def generate_ids(name, spread, root_element, mode="standard"):
     For the names, each entry consists of a string to match in the actual document, the internal ID to match it to, a
     boolean that states whether it is a text box or not or a component to extract.
     """
-    global tree
+    tree, base_tree = None, None
+
     if mode != "printing":
         tree = xml.etree.ElementTree.parse("data/memory/Spreads/Spread_" + spread + ".xml")
         base_tree = tree
